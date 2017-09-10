@@ -10,12 +10,14 @@ class GL {
 
 		if (!this.gl) return;
 
+		this.realPixels = window.devicePixelRatio || 1;
 		this.resize();
 
 		this.rotation = 0.0;
 		this._lastDT = 0;
 
 		const shaderProgram = this._createProgram(this.gl, vertexShader, fragmentShader);
+
 		if (shaderProgram === null) return;
 
 		this.programInfo = {
@@ -42,7 +44,7 @@ class GL {
 
 	}
 	render(dt) {
-		dt *= 0.001;  // convert to seconds
+		dt *= 0.001;
 		const deltaTime = dt - this._lastDT;
 		this._lastDT = dt;
 
@@ -51,11 +53,12 @@ class GL {
 	}
 
 	resize() {
-		const canvas = this._domElement;
-		const displayWidth = canvas.clientWidth;
-		const displayHeight = canvas.clientHeight;
+		const canvas = this.gl.canvas;
 
-		if (canvas.width  !== displayWidth || canvas.height !== displayHeight) {
+		const displayWidth = Math.floor(canvas.clientWidth  * this.realPixels);
+		const displayHeight = Math.floor(canvas.clientHeight  * this.realPixels);
+
+		if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
 			canvas.width  = displayWidth;
 			canvas.height = displayHeight;
 		}
@@ -283,7 +286,7 @@ class GL {
 	}
 
 	_initWebGL() {
-		const gl = this._domElement.getContext('webgl', { antialias: true});
+		const gl = this._domElement.getContext('webgl2', { antialias: true});
 
 		if (!gl) {
 			alert('Unable to initialize WebGL. Your browser may not support it.');
@@ -332,10 +335,13 @@ class GL {
 		// and 100 units away from the camera.
 
 		const fieldOfView = 45 * Math.PI / 180;   // in radians
+
 		const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
 		const zNear = 0.1;
 		const zFar = 100.0;
 		const projectionMatrix = glmatrix.mat4.create();
+
+		gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
 		// note: glmatrix.js always has the first argument
 		// as the destination to receive the result.
@@ -354,14 +360,14 @@ class GL {
 
 		glmatrix.mat4.translate(modelViewMatrix,     // destination matrix
 			modelViewMatrix,     // matrix to translate
-			[-0.0, 0.0, -6.0]);  // amount to translate
+			[0.0, 0.0, -8.0]);  // amount to translate
 		glmatrix.mat4.rotate(modelViewMatrix,  // destination matrix
 			modelViewMatrix,  // matrix to rotate
 			this.rotation,     // amount to rotate in radians
 			[0, 0, 1]);       // axis to rotate around (Z)
 		glmatrix.mat4.rotate(modelViewMatrix,  // destination matrix
 			modelViewMatrix,  // matrix to rotate
-			this.rotation * .7,// amount to rotate in radians
+			this.rotation * 0.7,// amount to rotate in radians
 			[0, 1, 0]);       // axis to rotate around (X)
 
 		const normalMatrix = glmatrix.mat4.create();
