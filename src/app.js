@@ -10,7 +10,7 @@ class App {
 
 	_addEventListeners() {
 		window.addEventListener('resize', () => {
-			this._gl.resize(window.innerWidth, window.innerWidth);
+			this._gl.resize();
 		});
 	}
 }
