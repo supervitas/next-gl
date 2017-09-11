@@ -1,6 +1,7 @@
 #version 300 es
 
 precision highp float;
+
 uniform sampler2D uSampler;
 
 in highp vec2 vTextureCoord;

@@ -16,7 +16,8 @@ class GL {
 		this.rotation = 0.0;
 		this._lastDT = 0;
 
-		const shaderProgram = this._createProgram(this.gl, vertexShader, fragmentShader);
+		const shaderProgram = this._createProgram(this._loadShader(this.gl.VERTEX_SHADER, vertexShader)
+			,this._loadShader(this.gl.FRAGMENT_SHADER, fragmentShader));
 
 		if (shaderProgram === null) return;
 
@@ -35,14 +36,14 @@ class GL {
 			},
 		};
 
-		this.buffers = this._initBuffers(this.gl);
+		this.buffers = this._initBuffers();
 		this.texture = this._loadTexture(this.gl, 'src/Engine/test_texture.jpg');
 
 		this.renderFunc = this.render.bind(this);
 
 		requestAnimationFrame(this.renderFunc);
-
 	}
+
 	render(dt) {
 		dt *= 0.001;
 		const deltaTime = dt - this._lastDT;
@@ -61,17 +62,15 @@ class GL {
 		if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
 			canvas.width  = displayWidth;
 			canvas.height = displayHeight;
+
+			this.gl.viewport(0, 0, canvas.width, canvas.height);
 		}
 	}
+
 	_loadTexture(gl, url) {
 		const texture = gl.createTexture();
 		gl.bindTexture(gl.TEXTURE_2D, texture);
 
-		// Because images have to be download over the internet
-		// they might take a moment until they are ready.
-		// Until then put a single pixel in the texture so we can
-		// use it immediately. When the image has finished downloading
-		// we'll update the texture with the contents of the image.
 		const level = 0;
 		const internalFormat = gl.RGBA;
 		const width = 1;
@@ -89,31 +88,17 @@ class GL {
 			gl.bindTexture(gl.TEXTURE_2D, texture);
 			gl.texImage2D(gl.TEXTURE_2D, level, internalFormat,
 				srcFormat, srcType, image);
+			gl.generateMipmap(gl.TEXTURE_2D);
 
-			// WebGL1 has different requirements for power of 2 images
-			// vs non power of 2 images so check if the image is a
-			// power of 2 in both dimensions.
-			if (this._isPowerOf2(image.width) && this._isPowerOf2(image.height)) {
-				// Yes, it's a power of 2. Generate mips.
-				gl.generateMipmap(gl.TEXTURE_2D);
-			} else {
-				// No, it's not a power of 2. Turn of mips and set
-				// wrapping to clamp to edge
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-			}
 		};
+
 		image.src = url;
 
 		return texture;
 	}
-	_isPowerOf2(value) {
-		return (value & (value - 1)) === 0;
-	}
 
-	_initBuffers(gl) {
-		// Create a buffer for the cube's vertex positions.
+	_initBuffers() {
+		const gl = this.gl;
 
 		const positionBuffer = gl.createBuffer();
 
@@ -293,23 +278,23 @@ class GL {
 			return null;
 		}
 
+		gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
+		gl.clearDepth(1.0);                 // Clear everything
+		gl.enable(gl.DEPTH_TEST);           // Enable depth testing
+		gl.depthFunc(gl.LEQUAL);            // Near things obscure far things
+
 		return gl;
 	}
 
-	_createProgram(gl, vertexShader, fragmentShader) {
-		const vert = this._loadShader(gl, gl.VERTEX_SHADER, vertexShader);
-		const frag = this._loadShader(gl, gl.FRAGMENT_SHADER, fragmentShader);
+	_createProgram(vertexShader, fragmentShader) {
+		const shaderProgram = this.gl.createProgram();
 
+		this.gl.attachShader(shaderProgram, vertexShader);
+		this.gl.attachShader(shaderProgram, fragmentShader);
+		this.gl.linkProgram(shaderProgram);
 
-		const shaderProgram = gl.createProgram();
-		gl.attachShader(shaderProgram, vert);
-		gl.attachShader(shaderProgram, frag);
-		gl.linkProgram(shaderProgram);
-
-		// If creating the shader program failed, alert
-
-		if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-			alert('Unable to initialize the shader program: ' + gl.getProgramInfoLog(shaderProgram));
+		if (!this.gl.getProgramParameter(shaderProgram, this.gl.LINK_STATUS)) {
+			console.error(`Unable to initialize the shader program: ${this.gl.getProgramInfoLog(shaderProgram)}`);
 			return null;
 		}
 
@@ -317,22 +302,7 @@ class GL {
 	}
 
 	drawScene(gl, programInfo, buffers, texture, deltaTime) {
-
-		gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
-		gl.clearDepth(1.0);                 // Clear everything
-		gl.enable(gl.DEPTH_TEST);           // Enable depth testing
-		gl.depthFunc(gl.LEQUAL);            // Near things obscure far things
-
-		// Clear the canvas before we start drawing on it.
-
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-		// Create a perspective matrix, a special matrix that is
-		// used to simulate the distortion of perspective in a camera.
-		// Our field of view is 45 degrees, with a width/height
-		// ratio that matches the display size of the canvas
-		// and we only want to see objects between 0.1 units
-		// and 100 units away from the camera.
 
 		const fieldOfView = 45 * Math.PI / 180;   // in radians
 
@@ -341,7 +311,6 @@ class GL {
 		const zFar = 100.0;
 		const projectionMatrix = glmatrix.mat4.create();
 
-		gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
 		// note: glmatrix.js always has the first argument
 		// as the destination to receive the result.
@@ -480,13 +449,13 @@ class GL {
 	}
 
 
-	_loadShader(gl, type, source) {
-		const shader = gl.createShader(type);
-		gl.shaderSource(shader, source);
-		gl.compileShader(shader);
-		if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-			console.error('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));
-			gl.deleteShader(shader);
+	_loadShader(type, source) {
+		const shader = this.gl.createShader(type);
+		this.gl.shaderSource(shader, source);
+		this.gl.compileShader(shader);
+		if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
+			console.error('An error occurred compiling the shaders: ' + this.gl.getShaderInfoLog(shader));
+			this.gl.deleteShader(shader);
 			return null;
 		}
 		return shader;

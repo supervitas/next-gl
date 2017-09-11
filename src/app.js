@@ -5,13 +5,12 @@ class App {
 	constructor() {
 		this._canvas = document.getElementById('glcanvas');
 		this._gl = new GL(this._canvas);
-		this._addEventListeners();		
+		this._addEventListeners();
 	}
 
 	_addEventListeners() {
-		window.addEventListener('resize', () => {
-			this._gl.resize();
-		});
+		window.addEventListener('resize', () => this._gl.resize());
+
 	}
 }
 
