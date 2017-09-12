@@ -16,8 +16,9 @@ class GL {
 		this.rotation = 0.0;
 		this._lastDT = 0;
 
-		const shaderProgram = this._createProgram(this._loadShader(this.gl.VERTEX_SHADER, vertexShader)
-			,this._loadShader(this.gl.FRAGMENT_SHADER, fragmentShader));
+		const shaderProgram = this._createProgram(
+			this._loadShader(this.gl.VERTEX_SHADER, vertexShader),
+			this._loadShader(this.gl.FRAGMENT_SHADER, fragmentShader));
 
 		if (shaderProgram === null) return;
 
