@@ -11,7 +11,7 @@ class FirstExample {
 
 		this.gl = new GL(this._domElement);
 		this.scene = new Scene();
-		this.renderer = new Renderer({gl: this.gl.gl, scene: this.scene});
+		this.renderer = new Renderer({gl: this.gl.glContext, scene: this.scene});
 
 		const cube = new Cube(this.gl);
 		this.scene.addToScene(cube);
@@ -32,7 +32,7 @@ class FirstExample {
 	}
 
 	resize() {
-		this._gl.resize();
+		this.gl.resize();
 	}
 }
 export {FirstExample};

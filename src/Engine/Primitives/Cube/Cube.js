@@ -9,29 +9,27 @@ class Cube extends SceneObject {
 
 		this.program = this.gl.initProgram(vertexShader, fragmentShader);
 
-		const gl2 = this.gl.gl;
-
 		this.programInfo = {
 			program: this.program,
 			attribLocations: {
-				vertexPosition: gl2.getAttribLocation(this.program, 'aVertexPosition'),
-				vertexNormal: gl2.getAttribLocation(this.program, 'aVertexNormal'),
-				textureCoord: gl2.getAttribLocation(this.program, 'aTextureCoord'),
+				vertexPosition: this.glContext.getAttribLocation(this.program, 'aVertexPosition'),
+				vertexNormal: this.glContext.getAttribLocation(this.program, 'aVertexNormal'),
+				textureCoord: this.glContext.getAttribLocation(this.program, 'aTextureCoord'),
 			},
 			uniformLocations: {
-				projectionMatrix: gl2.getUniformLocation(this.program, 'uProjectionMatrix'),
-				modelViewMatrix: gl2.getUniformLocation(this.program, 'uModelViewMatrix'),
-				normalMatrix: gl2.getUniformLocation(this.program, 'uNormalMatrix'),
-				uSampler: gl2.getUniformLocation(this.program, 'uSampler'),
+				projectionMatrix: this.glContext.getUniformLocation(this.program, 'uProjectionMatrix'),
+				modelViewMatrix: this.glContext.getUniformLocation(this.program, 'uModelViewMatrix'),
+				normalMatrix: this.glContext.getUniformLocation(this.program, 'uNormalMatrix'),
+				uSampler: this.glContext.getUniformLocation(this.program, 'uSampler'),
 			},
 		};
 
-		this.texture = this.gl.loadTexture(gl2, 'src/Engine/Primitives/Cube/test_texture.jpg');
+		this.texture = this.gl.loadTexture(this.glContext, 'src/Engine/Primitives/Cube/test_texture.jpg');
 		this._initBuffersAndVao();
 	}
 
 	_initBuffersAndVao() {
-		const gl = this.gl.gl;
+		const gl = this.glContext;
 
 		const positionBuffer = gl.createBuffer();
 
@@ -266,4 +264,3 @@ class Cube extends SceneObject {
 	}
 }
 export {Cube};
-

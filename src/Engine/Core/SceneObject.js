@@ -4,7 +4,7 @@ class SceneObject {
 		this.program = null;
 		this.vao = null;
 		this.gl = gl;
-
+		this.glContext = gl.glContext;
 	}
 
 }
