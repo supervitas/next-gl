@@ -26,7 +26,8 @@ class GL {
 			canvas.width  = displayWidth;
 			canvas.height = displayHeight;
 
-			this.glContext.viewport(0, 0, canvas.width, canvas.height);
+			this.glContext.viewport(0, 0, this.glContext.drawingBufferWidth,
+				this.glContext.drawingBufferHeight);
 		}
 	}
 

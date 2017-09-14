@@ -22,6 +22,7 @@ class FirstExample {
 	}
 
 	render(dt) {
+		this.gl.resize();
 		dt *= 0.001;
 		const deltaTime = dt - this._lastDT;
 		this._lastDT = dt;
