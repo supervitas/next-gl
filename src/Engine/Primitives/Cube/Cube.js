@@ -26,9 +26,8 @@ class Cube extends SceneObject {
 			},
 		};
 
-		this._initBuffersAndVao();
-
 		this.texture = this.gl.loadTexture(gl2, 'src/Engine/Primitives/Cube/test_texture.jpg');
+		this._initBuffersAndVao();
 	}
 
 	_initBuffersAndVao() {
@@ -194,22 +193,6 @@ class Cube extends SceneObject {
 		// Now send the element array to GL
 
 		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
-
-		gl.activeTexture(gl.TEXTURE0);
-
-		// Bind the texture to texture unit 0
-		gl.bindTexture(gl.TEXTURE_2D, this.texture);
-
-		// Tell the shader we bound the texture to texture unit 0
-		gl.uniform1i(this.programInfo.uniformLocations.uSampler, 0);
-
-		{
-			const vertexCount = 36;
-			const type = gl.UNSIGNED_SHORT;
-			const offset = 0;
-			gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
-		}
-
 
 		// -- Init VAO
 		this.vao = gl.createVertexArray();

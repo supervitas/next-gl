@@ -1,8 +1,8 @@
-import {GL} from "../Engine/Core/GL";
-import {Renderer} from "../Engine/Core/Renderer";
-import {Scene} from "../Engine/Core/Scene";
+import {GL} from '../Engine/Core/GL';
+import {Renderer} from '../Engine/Core/Renderer';
+import {Scene} from '../Engine/Core/Scene';
 
-import {Cube} from "../Engine/Primitives/Cube/Cube";
+import {Cube} from '../Engine/Primitives/Cube/Cube';
 
 class FirstExample {
 	constructor(domElement) {

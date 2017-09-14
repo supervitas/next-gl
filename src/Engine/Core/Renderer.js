@@ -18,11 +18,7 @@ class Renderer {
 
 		// note: glmatrix.js always has the first argument
 		// as the destination to receive the result.
-		glmatrix.mat4.perspective(projectionMatrix,
-			fieldOfView,
-			aspect,
-			zNear,
-			zFar);
+		glmatrix.mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
 
 		// Set the drawing position to the "identity" point, which is
 		// the center of the scene.
@@ -50,6 +46,7 @@ class Renderer {
 		for (const renderObject of this._scene.objects) {
 
 			this.gl.bindVertexArray(renderObject.vao);
+
 			this.gl.useProgram(renderObject.program);
 
 
