@@ -1,10 +1,8 @@
-import fragmentShader from './shaders/example.frag';
-import vertexShader from './shaders/example.vert';
-
 import * as glmatrix from 'gl-matrix';
 
 class GL {
 	constructor(domElement) {
+		this.test();
 		this._domElement = domElement;
 		this.gl = this._initWebGL();
 
@@ -16,33 +14,43 @@ class GL {
 		this.rotation = 0.0;
 		this._lastDT = 0;
 
-		const shaderProgram = this._createProgram(
+		// const shaderProgram = this._createProgram(
+		// 	this._loadShader(this.gl.VERTEX_SHADER, vertexShader),
+		// 	this._loadShader(this.gl.FRAGMENT_SHADER, fragmentShader));
+
+		// if (shaderProgram === null) return;
+        //
+		// this.programInfo = {
+		// 	program: shaderProgram,
+		// 	attribLocations: {
+		// 		vertexPosition: this.gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
+		// 		vertexNormal: this.gl.getAttribLocation(shaderProgram, 'aVertexNormal'),
+		// 		textureCoord: this.gl.getAttribLocation(shaderProgram, 'aTextureCoord'),
+		// 	},
+		// 	uniformLocations: {
+		// 		projectionMatrix: this.gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
+		// 		modelViewMatrix: this.gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
+		// 		normalMatrix: this.gl.getUniformLocation(shaderProgram, 'uNormalMatrix'),
+		// 		uSampler: this.gl.getUniformLocation(shaderProgram, 'uSampler'),
+		// 	},
+		// };
+        //
+		// this.buffers = this._initBuffers();
+		// this.texture = this._loadTexture(this.gl, 'src/Engine/test_texture.jpg');
+
+		// this.renderFunc = this.render.bind(this);
+
+		// requestAnimationFrame(this.renderFunc);
+	}
+
+	initProgram(vertexShader, fragmentShader){
+		return this._createProgram(
 			this._loadShader(this.gl.VERTEX_SHADER, vertexShader),
-			this._loadShader(this.gl.FRAGMENT_SHADER, fragmentShader));
-
-		if (shaderProgram === null) return;
-
-		this.programInfo = {
-			program: shaderProgram,
-			attribLocations: {
-				vertexPosition: this.gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
-				vertexNormal: this.gl.getAttribLocation(shaderProgram, 'aVertexNormal'),
-				textureCoord: this.gl.getAttribLocation(shaderProgram, 'aTextureCoord'),
-			},
-			uniformLocations: {
-				projectionMatrix: this.gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
-				modelViewMatrix: this.gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
-				normalMatrix: this.gl.getUniformLocation(shaderProgram, 'uNormalMatrix'),
-				uSampler: this.gl.getUniformLocation(shaderProgram, 'uSampler'),
-			},
-		};
-
-		this.buffers = this._initBuffers();
-		this.texture = this._loadTexture(this.gl, 'src/Engine/test_texture.jpg');
-
-		this.renderFunc = this.render.bind(this);
-
-		requestAnimationFrame(this.renderFunc);
+			this._loadShader(this.gl.FRAGMENT_SHADER, fragmentShader)
+		);
+	}
+	test() {
+		// const mat = Matrix.identityMatrix4();
 	}
 
 	render(dt) {
@@ -50,7 +58,7 @@ class GL {
 		const deltaTime = dt - this._lastDT;
 		this._lastDT = dt;
 
-		this.drawScene(this.gl, this.programInfo, this.buffers, this.texture, deltaTime);
+		this.drawScene(this.programInfo, this.buffers, this.texture, deltaTime);
 		requestAnimationFrame(this.renderFunc);
 	}
 
@@ -68,7 +76,7 @@ class GL {
 		}
 	}
 
-	_loadTexture(gl, url) {
+	loadTexture(gl, url) {
 		const texture = gl.createTexture();
 		gl.bindTexture(gl.TEXTURE_2D, texture);
 
@@ -98,179 +106,6 @@ class GL {
 		return texture;
 	}
 
-	_initBuffers() {
-		const gl = this.gl;
-
-		const positionBuffer = gl.createBuffer();
-
-		// Select the positionBuffer as the one to apply buffer
-		// operations to from here out.
-
-		gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-
-		// Now create an array of positions for the cube.
-
-		const positions = [
-			// Front face
-			-1.0, -1.0,  1.0,
-			1.0, -1.0,  1.0,
-			1.0,  1.0,  1.0,
-			-1.0,  1.0,  1.0,
-
-			// Back face
-			-1.0, -1.0, -1.0,
-			-1.0,  1.0, -1.0,
-			1.0,  1.0, -1.0,
-			1.0, -1.0, -1.0,
-
-			// Top face
-			-1.0,  1.0, -1.0,
-			-1.0,  1.0,  1.0,
-			1.0,  1.0,  1.0,
-			1.0,  1.0, -1.0,
-
-			// Bottom face
-			-1.0, -1.0, -1.0,
-			1.0, -1.0, -1.0,
-			1.0, -1.0,  1.0,
-			-1.0, -1.0,  1.0,
-
-			// Right face
-			1.0, -1.0, -1.0,
-			1.0,  1.0, -1.0,
-			1.0,  1.0,  1.0,
-			1.0, -1.0,  1.0,
-
-			// Left face
-			-1.0, -1.0, -1.0,
-			-1.0, -1.0,  1.0,
-			-1.0,  1.0,  1.0,
-			-1.0,  1.0, -1.0,
-		];
-
-		// Now pass the list of positions into WebGL to build the
-		// shape. We do this by creating a Float32Array from the
-		// JavaScript array, then use it to fill the current buffer.
-
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-
-		// Set up the normals for the vertices, so that we can compute lighting.
-
-		const normalBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-
-		const vertexNormals = [
-			// Front
-			0.0,  0.0,  1.0,
-			0.0,  0.0,  1.0,
-			0.0,  0.0,  1.0,
-			0.0,  0.0,  1.0,
-
-			// Back
-			0.0,  0.0, -1.0,
-			0.0,  0.0, -1.0,
-			0.0,  0.0, -1.0,
-			0.0,  0.0, -1.0,
-
-			// Top
-			0.0,  1.0,  0.0,
-			0.0,  1.0,  0.0,
-			0.0,  1.0,  0.0,
-			0.0,  1.0,  0.0,
-
-			// Bottom
-			0.0, -1.0,  0.0,
-			0.0, -1.0,  0.0,
-			0.0, -1.0,  0.0,
-			0.0, -1.0,  0.0,
-
-			// Right
-			1.0,  0.0,  0.0,
-			1.0,  0.0,  0.0,
-			1.0,  0.0,  0.0,
-			1.0,  0.0,  0.0,
-
-			// Left
-			-1.0,  0.0,  0.0,
-			-1.0,  0.0,  0.0,
-			-1.0,  0.0,  0.0,
-			-1.0,  0.0,  0.0
-		];
-
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals), gl.STATIC_DRAW);
-
-		// Now set up the texture coordinates for the faces.
-
-		const textureCoordBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
-
-		const textureCoordinates = [
-			// Front
-			0.0,  0.0,
-			1.0,  0.0,
-			1.0,  1.0,
-			0.0,  1.0,
-			// Back
-			0.0,  0.0,
-			1.0,  0.0,
-			1.0,  1.0,
-			0.0,  1.0,
-			// Top
-			0.0,  0.0,
-			1.0,  0.0,
-			1.0,  1.0,
-			0.0,  1.0,
-			// Bottom
-			0.0,  0.0,
-			1.0,  0.0,
-			1.0,  1.0,
-			0.0,  1.0,
-			// Right
-			0.0,  0.0,
-			1.0,  0.0,
-			1.0,  1.0,
-			0.0,  1.0,
-			// Left
-			0.0,  0.0,
-			1.0,  0.0,
-			1.0,  1.0,
-			0.0,  1.0,
-		];
-
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates), gl.STATIC_DRAW);
-
-		// Build the element array buffer; this specifies the indices
-		// into the vertex arrays for each face's vertices.
-
-		const indexBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-
-		// This array defines each face as two triangles, using the
-		// indices into the vertex array to specify each triangle's
-		// position.
-
-		const indices = [
-			0,  1,  2,      0,  2,  3,    // front
-			4,  5,  6,      4,  6,  7,    // back
-			8,  9,  10,     8,  10, 11,   // top
-			12, 13, 14,     12, 14, 15,   // bottom
-			16, 17, 18,     16, 18, 19,   // right
-			20, 21, 22,     20, 22, 23,   // left
-		];
-
-		// Now send the element array to GL
-
-		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
-			new Uint16Array(indices), gl.STATIC_DRAW);
-
-		return {
-			position: positionBuffer,
-			normal: normalBuffer,
-			textureCoord: textureCoordBuffer,
-			indices: indexBuffer,
-		};
-	}
-
 	_initWebGL() {
 		const gl = this._domElement.getContext('webgl2', { antialias: true});
 
@@ -285,6 +120,19 @@ class GL {
 		gl.depthFunc(gl.LEQUAL);            // Near things obscure far things
 
 		return gl;
+	}
+
+
+	_loadShader(type, source) {
+		const shader = this.gl.createShader(type);
+		this.gl.shaderSource(shader, source);
+		this.gl.compileShader(shader);
+		if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
+			console.error('An error occurred compiling the shaders: ' + this.gl.getShaderInfoLog(shader));
+			this.gl.deleteShader(shader);
+			return null;
+		}
+		return shader;
 	}
 
 	_createProgram(vertexShader, fragmentShader) {
@@ -302,12 +150,12 @@ class GL {
 		return shaderProgram;
 	}
 
-	drawScene(gl, programInfo, buffers, texture, deltaTime) {
-		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+	drawScene(programInfo, buffers, texture, deltaTime) {
+		this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
 		const fieldOfView = 45 * Math.PI / 180;   // in radians
 
-		const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+		const aspect = this.gl.canvas.clientWidth / this.gl.canvas.clientHeight;
 		const zNear = 0.1;
 		const zFar = 100.0;
 		const projectionMatrix = glmatrix.mat4.create();
@@ -409,19 +257,19 @@ class GL {
 
 		// Tell WebGL to use our program when drawing
 
-		gl.useProgram(programInfo.program);
+		this.gl.useProgram(programInfo.program);
 
 		// Set the shader uniforms
 
-		gl.uniformMatrix4fv(
+		this.gl.uniformMatrix4fv(
 			programInfo.uniformLocations.projectionMatrix,
 			false,
 			projectionMatrix);
-		gl.uniformMatrix4fv(
+		this.gl.uniformMatrix4fv(
 			programInfo.uniformLocations.modelViewMatrix,
 			false,
 			modelViewMatrix);
-		gl.uniformMatrix4fv(
+		this.gl.uniformMatrix4fv(
 			programInfo.uniformLocations.normalMatrix,
 			false,
 			normalMatrix);
@@ -429,37 +277,24 @@ class GL {
 		// Specify the texture to map onto the faces.
 
 		// Tell WebGL we want to affect texture unit 0
-		gl.activeTexture(gl.TEXTURE0);
+		this.gl.activeTexture(this.gl.TEXTURE0);
 
 		// Bind the texture to texture unit 0
-		gl.bindTexture(gl.TEXTURE_2D, texture);
+		this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
 
 		// Tell the shader we bound the texture to texture unit 0
-		gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
+		this.gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
 
 		{
 			const vertexCount = 36;
-			const type = gl.UNSIGNED_SHORT;
+			const type = this.gl.UNSIGNED_SHORT;
 			const offset = 0;
-			gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
+			this.gl.drawElements(this.gl.TRIANGLES, vertexCount, type, offset);
 		}
 
 		// Update the rotation for the next draw
 
 		this.rotation += deltaTime;
-	}
-
-
-	_loadShader(type, source) {
-		const shader = this.gl.createShader(type);
-		this.gl.shaderSource(shader, source);
-		this.gl.compileShader(shader);
-		if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
-			console.error('An error occurred compiling the shaders: ' + this.gl.getShaderInfoLog(shader));
-			this.gl.deleteShader(shader);
-			return null;
-		}
-		return shader;
 	}
 }
 export {GL};

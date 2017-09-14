@@ -1,15 +1,15 @@
 import './app.css';
-import {GL} from './Engine/GL';
+import {FirstExample} from './Example/FirstExample';
 
 class App {
 	constructor() {
 		this._canvas = document.getElementById('glcanvas');
-		this._gl = new GL(this._canvas);
+		this._example = new FirstExample(this._canvas);
 		this._addEventListeners();
 	}
 
 	_addEventListeners() {
-		window.addEventListener('resize', () => this._gl.resize());
+		window.addEventListener('resize', () => this._example.resize());
 
 	}
 }
