@@ -5,6 +5,8 @@ class SceneObject {
 		this.vao = null;
 		this.gl = gl;
 		this.glContext = gl.glContext;
+
+		this.visible = true;
 	}
 
 }

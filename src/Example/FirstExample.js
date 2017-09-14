@@ -11,7 +11,7 @@ class FirstExample {
 
 		this.gl = new GL(this._domElement);
 		this.scene = new Scene();
-		this.renderer = new Renderer({gl: this.gl.glContext, scene: this.scene});
+		this.renderer = new Renderer({glContext: this.gl.glContext, scene: this.scene});
 
 		const cube = new Cube(this.gl);
 		this.scene.addToScene(cube);

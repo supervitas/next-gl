@@ -1,14 +1,17 @@
 class Scene {
 	constructor() {
-		this.objects = [];
+		this.sceneObjects = [];
 	}
 
 	addToScene(sceneObject) {
-		this.objects.push(sceneObject);
+		this.sceneObjects.push(sceneObject);
 	}
 
 	removeFromScene(sceneObject) {
-		this.objects.remove(sceneObject);
+		const index = this.sceneObjects.indexOf(sceneObject);
+		if (index !== -1) {
+			this.sceneObjects.splice(index, 1);
+		}
 	}
 }
 export {Scene};
