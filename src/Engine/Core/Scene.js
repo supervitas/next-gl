@@ -12,10 +12,14 @@ class Scene {
 		this.sceneObjects.set(renderable.program.name, {program: renderable.program, renderables: [renderable]});
 	}
 
-	removeFromScene(sceneObject) {
-		const index = this.sceneObjects.indexOf(sceneObject);
+	removeFromScene(renderable) {
+		if (!this.sceneObjects.has(renderable.program.name)) return;
+
+		const sceneObject = this.sceneObjects.get(renderable.program.name);
+
+		const index = sceneObject.renderables.indexOf(renderable);
 		if (index !== -1) {
-			this.sceneObjects.splice(index, 1);
+			sceneObject.renderables.splice(index, 1);
 		}
 	}
 }

@@ -26,7 +26,6 @@ class FirstExample {
 		this.scene.addToScene(cube3);
 
 
-
 		this.cubes = [cube, cube2, cube3];
 
 		this.renderFunc = this.render.bind(this);
