@@ -18,49 +18,52 @@ class Renderer {
 		glmatrix.mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
 
 
-		for (const renderObject of this._scene.sceneObjects) {
+		for (const sceneObject of this._scene.sceneObjects.values()) {
 
-			if (!renderObject.visible) continue;
+			this._glContext.useProgram(sceneObject.program);
 
-			const modelViewMatrix = renderObject.modelViewMatrix;
+			for (const renderObject of sceneObject.renderables) {
 
-			const normalMatrix = glmatrix.mat4.create();
-			glmatrix.mat4.invert(normalMatrix, modelViewMatrix);
-			glmatrix.mat4.transpose(normalMatrix, normalMatrix);
+				if (!renderObject.visible) continue;
 
-			this._glContext.bindVertexArray(renderObject.vao);
+				const modelViewMatrix = renderObject.modelViewMatrix;
 
-			this._glContext.useProgram(renderObject.program);
+				const normalMatrix = glmatrix.mat4.create();
+				glmatrix.mat4.invert(normalMatrix, modelViewMatrix);
+				glmatrix.mat4.transpose(normalMatrix, normalMatrix);
 
-
-			this._glContext.uniformMatrix4fv(
-				renderObject.programInfo.uniformLocations.projectionMatrix,
-				false,
-				projectionMatrix);
-			this._glContext.uniformMatrix4fv(
-				renderObject.programInfo.uniformLocations.modelViewMatrix,
-				false,
-				modelViewMatrix);
-			this._glContext.uniformMatrix4fv(
-				renderObject.programInfo.uniformLocations.normalMatrix,
-				false,
-				normalMatrix);
+				this._glContext.bindVertexArray(renderObject.vao);
 
 
-			if (renderObject.texture) {
-				this._glContext.activeTexture(this._glContext.TEXTURE0);
+				this._glContext.uniformMatrix4fv(
+					renderObject.programInfo.uniformLocations.projectionMatrix,
+					false,
+					projectionMatrix);
+				this._glContext.uniformMatrix4fv(
+					renderObject.programInfo.uniformLocations.modelViewMatrix,
+					false,
+					modelViewMatrix);
+				this._glContext.uniformMatrix4fv(
+					renderObject.programInfo.uniformLocations.normalMatrix,
+					false,
+					normalMatrix);
 
-				// Bind the texture to texture unit 0
-				this._glContext.bindTexture(this._glContext.TEXTURE_2D, renderObject.texture);
 
-				// Tell the shader we bound the texture to texture unit 0
-				this._glContext.uniform1i(renderObject.programInfo.uniformLocations.uSampler, 0);
+				if (renderObject.texture) {
+					this._glContext.activeTexture(this._glContext.TEXTURE0);
 
-				{
+					// Bind the texture to texture unit 0
+					this._glContext.bindTexture(this._glContext.TEXTURE_2D, renderObject.texture);
+
+					// Tell the shader we bound the texture to texture unit 0
+					this._glContext.uniform1i(renderObject.programInfo.uniformLocations.uSampler, 0);
+
 					const vertexCount = 36;
 					const type = this._glContext.UNSIGNED_SHORT;
 					const offset = 0;
+
 					this._glContext.drawElements(this._glContext.TRIANGLES, vertexCount, type, offset);
+
 				}
 			}
 		}

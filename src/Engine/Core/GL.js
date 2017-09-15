@@ -6,14 +6,26 @@ class GL {
 		if (!this.glContext) return;
 
 		this.realPixels = window.devicePixelRatio || 1;
-		this.resize();
+
+		this._programs = new Map();
 	}
 
-	initProgram(vertexShader, fragmentShader){
-		return this._createProgram (
+	initProgram(vertexShader, fragmentShader) {
+		const programHash = this._computeHash(vertexShader + fragmentShader);
+
+		if (this._programs.has(programHash)) {
+			return this._programs.get(programHash);
+		}
+
+		const program = this._createProgram(
 			this._loadShader(this.glContext.VERTEX_SHADER, vertexShader),
-			this._loadShader(this.glContext.FRAGMENT_SHADER, fragmentShader)
+			this._loadShader(this.glContext.FRAGMENT_SHADER, fragmentShader),
+			programHash
 		);
+
+		this._programs.set(programHash, program);
+
+		return program;
 	}
 
 	resize() {
@@ -90,8 +102,9 @@ class GL {
 		return shader;
 	}
 
-	_createProgram(vertexShader, fragmentShader) {
+	_createProgram(vertexShader, fragmentShader, name) {
 		const shaderProgram = this.glContext.createProgram();
+		shaderProgram.name = name;
 
 		this.glContext.attachShader(shaderProgram, vertexShader);
 		this.glContext.attachShader(shaderProgram, fragmentShader);
@@ -104,5 +117,17 @@ class GL {
 
 		return shaderProgram;
 	}
+
+	_computeHash(str) {
+		let hash = 0, i, chr;
+		if (str === 0) return hash;
+		for (i = 0; i < str.length; i++) {
+			chr   = str.charCodeAt(i);
+			hash  = ((hash << 5) - hash) + chr;
+			hash |= 0; // Convert to 32bit integer
+		}
+		return hash;
+	}
+
 }
 export {GL};
