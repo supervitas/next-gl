@@ -37,15 +37,13 @@ class SceneObject {
 		return this._position;
 	}
 
-	set rotation(rotationVec) {
-		Object.keys(rotationVec).forEach((key) => {
-			this._position[key] = rotationVec[key];
+	rotate(vecRotateAxis, angle) {
+		Object.keys(vecRotateAxis).forEach((key) => {
+			this._rotation[key] = vecRotateAxis[key];
 		});
 
 		this.rotateionMatrix = glmatrix.mat4.rotate(this.modelViewMatrix,
-			this.modelViewMatrix,
-			0,     // amount to rotate in radians
-			this._rotation.asArray());
+			this.modelViewMatrix, angle, this._rotation.asArray());
 	}
 
 	get rotation() {

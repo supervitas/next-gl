@@ -16,7 +16,18 @@ class FirstExample {
 		const cube = new Cube(this.gl);
 		cube.position = {x: 0, y: 0, z: -8};
 		this.scene.addToScene(cube);
-		// this.scene.addToScene(new Cube(this.gl));
+
+		const cube2 = new Cube(this.gl);
+		cube2.position = {x: 5, y: 0, z: -8};
+		this.scene.addToScene(cube2);
+
+		const cube3 = new Cube(this.gl);
+		cube3.position = {x: -5, y: 0, z: -8};
+		this.scene.addToScene(cube3);
+
+
+
+		this.cubes = [cube, cube2, cube3];
 
 		this.renderFunc = this.render.bind(this);
 
@@ -28,14 +39,15 @@ class FirstExample {
 		dt *= 0.001;
 		const deltaTime = dt - this._lastDT;
 		this._lastDT = dt;
+		for (let [index, cube] of this.cubes.entries()) {
 
+			cube.rotate({x: 0, y: 1, z: 0}, deltaTime);
+			cube.rotate({x: 1, y: 0, z: 1}, deltaTime * 0.2 * index);
+		}
 
 		this.renderer.drawScene();
 		requestAnimationFrame(this.renderFunc);
 	}
 
-	resize() {
-		this.gl.resize();
-	}
 }
 export {FirstExample};
