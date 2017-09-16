@@ -3,6 +3,7 @@ import {Renderer} from '../Engine/Core/Renderer';
 import {Scene} from '../Engine/Core/Scene';
 
 import {Cube} from '../Engine/Primitives/Cube/Cube';
+import {Camera} from '../Engine/Core/Camera';
 
 class FirstExample {
 	constructor(domElement) {
@@ -10,25 +11,17 @@ class FirstExample {
 		this._lastDT = 0;
 
 		this.gl = new GL(this._domElement);
+
 		this.scene = new Scene();
-		this.renderer = new Renderer({glContext: this.gl.glContext, scene: this.scene});
 
-		const cube = new Cube(this.gl);
-		cube.position = {x: 0, y: 0, z: -8};
-		this.scene.addToScene(cube);
+		const aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
+		this.camera = new Camera({aspect});
 
-		const cube2 = new Cube(this.gl);
-		cube2.position = {x: 5, y: 0, z: -8};
-		this.scene.addToScene(cube2);
-
-		const cube3 = new Cube(this.gl);
-		cube3.position = {x: -5, y: 0, z: -8};
-		this.scene.addToScene(cube3);
-
-
-		this.cubes = [cube, cube2, cube3];
+		this.renderer = new Renderer({glContext: this.gl.glContext, scene: this.scene, camera: this.camera});
 
 		this.renderFunc = this.render.bind(this);
+
+		this.addCubes();
 
 		requestAnimationFrame(this.renderFunc);
 	}
@@ -46,6 +39,23 @@ class FirstExample {
 
 		this.renderer.drawScene();
 		requestAnimationFrame(this.renderFunc);
+	}
+
+	addCubes() {
+		const cube = new Cube(this.gl);
+		cube.position = {x: 0, y: 0, z: -8};
+		this.scene.addToScene(cube);
+
+		const cube2 = new Cube(this.gl);
+		cube2.position = {x: 5, y: 0, z: -8};
+		this.scene.addToScene(cube2);
+
+		const cube3 = new Cube(this.gl);
+		cube3.position = {x: -5, y: 0, z: -8};
+		this.scene.addToScene(cube3);
+
+
+		this.cubes = [cube, cube2, cube3];
 	}
 
 }

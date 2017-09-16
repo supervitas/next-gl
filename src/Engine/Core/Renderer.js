@@ -1,21 +1,15 @@
 import * as glmatrix from 'gl-matrix';
 
 class Renderer {
-	constructor({glContext, scene}) {
+	constructor({glContext, scene, camera}) {
 		this._glContext = glContext;
 		this._scene = scene;
+		this._camera = camera;
 	}
 	drawScene() {
 		this._glContext.clear(this._glContext.COLOR_BUFFER_BIT | this._glContext.DEPTH_BUFFER_BIT);
 
-		const fieldOfView = 45 * Math.PI / 180;   // in radians
-
-		const aspect = this._glContext.canvas.clientWidth / this._glContext.canvas.clientHeight;
-		const zNear = 0.1;
-		const zFar = 100.0;
-		const projectionMatrix = glmatrix.mat4.create();
-
-		glmatrix.mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
+		const projectionMatrix = this._camera.projectionMatrix;
 
 
 		for (const sceneObject of this._scene.sceneObjects.values()) {
