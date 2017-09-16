@@ -51,14 +51,13 @@ class Renderer {
 
 					// Tell the shader we bound the texture to texture unit 0
 					this._glContext.uniform1i(renderObject.programInfo.uniformLocations.uSampler, 0);
-
-					const vertexCount = 36;
-					const type = this._glContext.UNSIGNED_SHORT;
-					const offset = 0;
-
-					this._glContext.drawElements(this._glContext.TRIANGLES, vertexCount, type, offset);
-
 				}
+
+				const vertexCount = 36;
+				const type = this._glContext.UNSIGNED_SHORT;
+				const offset = 0;
+
+				this._glContext.drawElements(this._glContext.TRIANGLES, vertexCount, type, offset);
 			}
 		}
 	}
