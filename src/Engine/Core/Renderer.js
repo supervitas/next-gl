@@ -9,7 +9,7 @@ class Renderer {
 	drawScene() {
 		this._glContext.clear(this._glContext.COLOR_BUFFER_BIT | this._glContext.DEPTH_BUFFER_BIT);
 
-		const projectionMatrix = this._camera.projectionMatrix;
+		const projectionMatrix = this._camera.viewProjectionMatrix;
 
 
 		for (const sceneObject of this._scene.sceneObjects.values()) {
@@ -53,11 +53,8 @@ class Renderer {
 					this._glContext.uniform1i(renderObject.programInfo.uniformLocations.uSampler, 0);
 				}
 
-				const vertexCount = 36;
-				const type = this._glContext.UNSIGNED_SHORT;
-				const offset = 0;
 
-				this._glContext.drawElements(this._glContext.TRIANGLES, vertexCount, type, offset);
+				this._glContext.drawElements(this._glContext.TRIANGLES, renderObject.vertexCount, renderObject.type, renderObject.offset);
 			}
 		}
 	}

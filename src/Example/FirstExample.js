@@ -37,21 +37,23 @@ class FirstExample {
 			cube.rotate({x: 1, y: 0, z: 1}, deltaTime * 0.2 * index);
 		}
 
+		// this.camera.rotate({x: 0, y: 1, z: 0}, deltaTime);
+
 		this.renderer.drawScene();
 		requestAnimationFrame(this.renderFunc);
 	}
 
 	addCubes() {
 		const cube = new Cube(this.gl);
-		cube.position = {x: 0, y: 0, z: -8};
+		cube.position = {x: 0, y: 0, z: -18};
 		this.scene.addToScene(cube);
 
 		const cube2 = new Cube(this.gl);
-		cube2.position = {x: 5, y: 0, z: -8};
+		cube2.position = {x: 5, y: 0, z: -18};
 		this.scene.addToScene(cube2);
 
 		const cube3 = new Cube(this.gl);
-		cube3.position = {x: -5, y: 0, z: -8};
+		cube3.position = {x: -5, y: 0, z: -18};
 		this.scene.addToScene(cube3);
 
 

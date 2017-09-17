@@ -24,6 +24,10 @@ class Cube extends SceneObject {
 			},
 		};
 
+		this.vertexCount = 36;
+		this.type = this.glContext.UNSIGNED_SHORT;
+		this.offset = 0;
+
 		this.texture = this.gl.loadTexture(this.glContext, 'src/Engine/Primitives/Cube/test_texture.jpg');
 		this._initBuffersAndVao();
 	}

@@ -8,40 +8,84 @@ class Camera {
 		this._zFar = far;
 		this._aspect = aspect;
 
+		this.lookAtVec = GLMath.createVec3();
+		this.cameraPosition = GLMath.createVec3();
+		this._rotationAxis = GLMath.createVec3();
 
 		this._fov = GLMath.degToRad(fov);
 
-		const radius = 200;
 
 		this.projectionMatrix = glmatrix.mat4.create();
 
-		this._updateMatrix();
+		this._updateProjectionMatrix();
 
-		// this.cameraMatrix =
+		this.cameraMatrix = glmatrix.mat4.create();
+
+
+		this.viewMatrix = glmatrix.mat4.create();
+
+		glmatrix.mat4.invert(this.viewMatrix, this.cameraMatrix);
+
+
+		this.viewProjectionMatrix = glmatrix.mat4.create();
+
+		glmatrix.mat4.multiply(this.viewProjectionMatrix, this.projectionMatrix, this.viewMatrix);
 	}
 
 	set zNear(near) {
 		this._zNear = near;
-		this._updateMatrix();
+		this._updateProjectionMatrix();
 	}
 
 	set zFar(far) {
 		this._zFar = far;
-		this._updateMatrix();
+		this._updateProjectionMatrix();
 	}
 
 	set fov(fov) {
 		this._fov = fov;
-		this._updateMatrix();
+		this._updateProjectionMatrix();
 	}
 
 	set aspect(aspect) {
 		this._aspect = aspect;
-		this._updateMatrix();
+		this._updateProjectionMatrix();
 	}
 
-	_updateMatrix() {
+	set position(positionVec) {
+		Object.keys(positionVec).forEach((key) => {
+			this.cameraPosition[key] = positionVec[key];
+		});
+
+		glmatrix.mat4.translate(this.cameraMatrix, this.cameraMatrix, this.cameraPosition.asArray());
+		this._updateCameraMatrix();
+	}
+
+	lookAt(vecWhere) {
+		Object.keys(vecWhere).forEach((key) => {
+			this.lookAtVec[key] = vecWhere[key];
+		});
+
+		glmatrix.mat4.lookAt(this.cameraMatrix, this.cameraPosition.asArray(), this.lookAtVec.asArray(), [0, 1, 0]);
+
+		this._updateCameraMatrix();
+	}
+	rotate(vecRotateAxis, angle) {
+		Object.keys(vecRotateAxis).forEach((key) => {
+			this._rotationAxis[key] = vecRotateAxis[key];
+		});
+
+		glmatrix.mat4.rotate(this.cameraMatrix, this.cameraMatrix, angle, this._rotationAxis.asArray());
+		this._updateCameraMatrix();
+	}
+
+	_updateProjectionMatrix() {
 		glmatrix.mat4.perspective(this.projectionMatrix, this._fov, this._aspect, this._zNear, this._zFar);
+	}
+
+	_updateCameraMatrix() {
+		glmatrix.mat4.invert(this.viewMatrix, this.cameraMatrix);
+		glmatrix.mat4.multiply(this.viewProjectionMatrix, this.projectionMatrix, this.viewMatrix);
 	}
 
 
