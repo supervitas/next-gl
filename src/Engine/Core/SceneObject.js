@@ -10,6 +10,8 @@ class SceneObject {
 		this.glContext = gl.glContext;
 
 		this.visible = true;
+		this.frustrumCulled = true;
+
 		this._position = new Vec3();
 		this._rotationAxis = new Vec3();
 

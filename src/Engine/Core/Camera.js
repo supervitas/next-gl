@@ -8,8 +8,8 @@ class Camera {
 		this._zFar = far;
 		this._aspect = aspect;
 
-		this.lookAtVec = GLMath.createVec3();
-		this.cameraPosition = GLMath.createVec3();
+		this._lookAtVec = GLMath.createVec3();
+		this._cameraPosition = GLMath.createVec3();
 		this._rotationAxis = GLMath.createVec3();
 
 		this._fov = GLMath.degToRad(fov);
@@ -54,19 +54,19 @@ class Camera {
 
 	set position(positionVec) {
 		Object.keys(positionVec).forEach((key) => {
-			this.cameraPosition[key] = positionVec[key];
+			this._cameraPosition[key] = positionVec[key];
 		});
 
-		glmatrix.mat4.translate(this.cameraMatrix, this.cameraMatrix, this.cameraPosition.asArray());
+		glmatrix.mat4.translate(this.cameraMatrix, this.cameraMatrix, this._cameraPosition.asArray());
 		this._updateCameraMatrix();
 	}
 
 	lookAt(vecWhere) {
 		Object.keys(vecWhere).forEach((key) => {
-			this.lookAtVec[key] = vecWhere[key];
+			this._lookAtVec[key] = vecWhere[key];
 		});
 
-		glmatrix.mat4.lookAt(this.cameraMatrix, this.cameraPosition.asArray(), this.lookAtVec.asArray(), [0, 1, 0]);
+		glmatrix.mat4.lookAt(this.cameraMatrix, this._cameraPosition.asArray(), this._lookAtVec.asArray(), [0, 1, 0]);
 
 		this._updateCameraMatrix();
 	}

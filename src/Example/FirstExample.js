@@ -38,6 +38,7 @@ class FirstExample {
 		}
 
 		// this.camera.rotate({x: 0, y: 1, z: 0}, deltaTime);
+		// this.camera.lookAt(this.cubes[0].position);
 
 		this.renderer.drawScene();
 		requestAnimationFrame(this.renderFunc);
