@@ -11,11 +11,27 @@ class GL {
 	}
 
 	initProgram(vertexShader, fragmentShader, defines) {
-		for (let [key, value] of defines) {
-			vertexShader.replace(`/${key}/g`, value);
-			fragmentShader.replace(`/${key}/g`, value);
-		}
+		if (defines.size !== 0) {
+			const insertAt = (src, index, str) => {
+				return src.substr(0, index) + str + src.substr(index);
+			};
 
+			let programDefines = '';
+
+			for (let [key, value] of defines) {
+				programDefines += `#define ${key} = ${value};\n`;
+			}
+
+			const firstLine = vertexShader.split('\n')[0];
+			let indexWhereDefinesWillInjected = 0;
+
+			if (firstLine === '#version 300 es') {
+				indexWhereDefinesWillInjected = firstLine.length + 1;
+			}
+
+			vertexShader = insertAt(vertexShader, indexWhereDefinesWillInjected, programDefines);
+			fragmentShader = insertAt(fragmentShader, indexWhereDefinesWillInjected, programDefines);
+		}
 
 		const programHash = this._computeHash(vertexShader + fragmentShader);
 

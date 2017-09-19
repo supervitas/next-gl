@@ -6,14 +6,17 @@ class SceneObject {
 		this.programInfo = {};
 		this.program = null;
 		this.defines = new Map();
+
 		this.vao = null;
+
 		this.gl = gl;
 		this.glContext = gl.glContext;
 
 
 		this.color = color;
 		if (map !== null) {
-			this.defines.set('useMap', true);
+			this.defines.set('USE_MAP', true);
+			this.map = map;
 		}
 
 

@@ -54,10 +54,11 @@ class Renderer {
 					this._glContext.bindTexture(this._glContext.TEXTURE_2D, renderObject.map);
 
 					// Tell the shader we bound the texture to texture unit 0
-					this._glContext.uniform1i(renderObject.programInfo.uniformLocations.uSampler, 0);
+					this._glContext.uniform1i(renderObject.programInfo.uniformLocations.map, 0);
 				}
 
-				this._glContext.uniform4f(renderObject.programInfo.uniformLocations.color, 1, 0, 0.5, 1);  //color
+
+				this._glContext.uniform4f(renderObject.programInfo.uniformLocations.color, 1, 1, 1, 1);  //color todo
 
 
 				this._glContext.drawElements(this._glContext.TRIANGLES, renderObject.vertexCount, renderObject.type, renderObject.offset);

@@ -10,7 +10,6 @@ class Cube extends SceneObject {
 		this.program = this.gl.initProgram(vertexShader, fragmentShader, this.defines);
 
 		this.programInfo = {
-			program: this.program,
 			attribLocations: {
 				vertexPosition: this.glContext.getAttribLocation(this.program, 'aVertexPosition'),
 				vertexNormal: this.glContext.getAttribLocation(this.program, 'aVertexNormal'),
@@ -24,7 +23,6 @@ class Cube extends SceneObject {
 			},
 		};
 
-		//todo color
 		if (map !== null) {
 			this.programInfo.uniformLocations.map = this.glContext.getUniformLocation(this.program, 'map');
 		}
@@ -34,7 +32,6 @@ class Cube extends SceneObject {
 		this.offset = 0;
 
 
-		this.map = map;
 		this._initBuffersAndVao();
 	}
 

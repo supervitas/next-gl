@@ -17,6 +17,10 @@ class Vec3 {
 		};
 	}
 
+	dotProduct(vec) {
+		return this.x * vec.x + this.y * vec.y + this.z * vec.z;
+	}
+
 	sub(vec) {
 		return {
 			x: this.x - vec.x,
@@ -24,6 +28,7 @@ class Vec3 {
 			z: this.z - vec.z
 		};
 	}
+
 	add(vec) {
 		return {
 			x: this.x + vec.x,
@@ -45,6 +50,7 @@ class Vec3 {
 		};
 
 	}
+
 	magnitude() {
 		return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2) + Math.pow(this.z, 2));
 	}

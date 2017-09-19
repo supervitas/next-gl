@@ -17,7 +17,7 @@ void main(void) {
   highp vec4 texelColor = uColor;
 
   #ifdef USE_MAP
-  	texelColor = texture(uSampler, vTextureCoord) * vColor;
+  	texelColor = texture(map, vTextureCoord) * texelColor;
   #endif
 
   resultColor = vec4(texelColor.rgb * vLighting, texelColor.a);
