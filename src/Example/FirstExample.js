@@ -45,15 +45,15 @@ class FirstExample {
 	}
 
 	addCubes() {
-		const cube = new Cube(this.gl);
+		const cube = new Cube({gl: this.gl, map: this.gl.loadTexture(this.gl.glContext, 'src/Example/test_texture.jpg')});
 		cube.position = {x: 0, y: 0, z: -18};
 		this.scene.addToScene(cube);
 
-		const cube2 = new Cube(this.gl);
+		const cube2 = new Cube({gl: this.gl});
 		cube2.position = {x: 5, y: 0, z: -18};
 		this.scene.addToScene(cube2);
 
-		const cube3 = new Cube(this.gl);
+		const cube3 = new Cube({gl:this.gl, color: 0xeeeeee});
 		cube3.position = {x: -5, y: 0, z: -18};
 		this.scene.addToScene(cube3);
 

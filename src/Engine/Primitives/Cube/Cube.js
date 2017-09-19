@@ -4,10 +4,10 @@ import fragmentShader from './shaders/example.frag';
 import vertexShader from './shaders/example.vert';
 
 class Cube extends SceneObject {
-	constructor(gl) {
-		super(gl);
+	constructor({gl, color = 0xffffff, map = null}) {
+		super({gl, color, map});
 
-		this.program = this.gl.initProgram(vertexShader, fragmentShader);
+		this.program = this.gl.initProgram(vertexShader, fragmentShader, this.defines);
 
 		this.programInfo = {
 			program: this.program,
@@ -20,15 +20,21 @@ class Cube extends SceneObject {
 				viewProjectionMatrix: this.glContext.getUniformLocation(this.program, 'uProjectionMatrix'),
 				modelViewMatrix: this.glContext.getUniformLocation(this.program, 'uModelViewMatrix'),
 				normalMatrix: this.glContext.getUniformLocation(this.program, 'uNormalMatrix'),
-				uSampler: this.glContext.getUniformLocation(this.program, 'uSampler'),
+				color: this.glContext.getUniformLocation(this.program, 'uColor')
 			},
 		};
+
+		//todo color
+		if (map !== null) {
+			this.programInfo.uniformLocations.map = this.glContext.getUniformLocation(this.program, 'map');
+		}
 
 		this.vertexCount = 36;
 		this.type = this.glContext.UNSIGNED_SHORT;
 		this.offset = 0;
 
-		this.texture = this.gl.loadTexture(this.glContext, 'src/Engine/Primitives/Cube/test_texture.jpg');
+
+		this.map = map;
 		this._initBuffersAndVao();
 	}
 

@@ -2,12 +2,20 @@ import * as glmatrix from 'gl-matrix';
 import {Vec3} from '../Math/Vec3';
 
 class SceneObject {
-	constructor(gl) {
+	constructor({gl, color = 0xffffff, map = null}) {
 		this.programInfo = {};
 		this.program = null;
+		this.defines = new Map();
 		this.vao = null;
 		this.gl = gl;
 		this.glContext = gl.glContext;
+
+
+		this.color = color;
+		if (map !== null) {
+			this.defines.set('useMap', true);
+		}
+
 
 		this.visible = true;
 		this.frustrumCulled = true;

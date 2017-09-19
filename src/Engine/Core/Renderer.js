@@ -47,15 +47,17 @@ class Renderer {
 					normalMatrix);
 
 
-				if (renderObject.texture) {
+				if (renderObject.map) {
 					this._glContext.activeTexture(this._glContext.TEXTURE0);
 
 					// Bind the texture to texture unit 0
-					this._glContext.bindTexture(this._glContext.TEXTURE_2D, renderObject.texture);
+					this._glContext.bindTexture(this._glContext.TEXTURE_2D, renderObject.map);
 
 					// Tell the shader we bound the texture to texture unit 0
 					this._glContext.uniform1i(renderObject.programInfo.uniformLocations.uSampler, 0);
 				}
+
+				this._glContext.uniform4f(renderObject.programInfo.uniformLocations.color, 1, 0, 0.5, 1);  //color
 
 
 				this._glContext.drawElements(this._glContext.TRIANGLES, renderObject.vertexCount, renderObject.type, renderObject.offset);
@@ -64,13 +66,7 @@ class Renderer {
 	}
 
 	shouldBeFrustrumCulled(viewProjection, objectPosition) {
-		const mat = glmatrix.mat4.create();
 
-		glmatrix.mat4.multiply(mat, viewProjection,[objectPosition.x,objectPosition.y,objectPosition.z, 1]);
-		return abs(Pclip.x) < Pclip.w &&
-			abs(Pclip.y) < Pclip.w &&
-			0 < Pclip.z &&
-			Pclip.z < Pclip.w;
 	}
 }
 export {Renderer};

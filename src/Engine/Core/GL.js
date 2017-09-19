@@ -10,7 +10,13 @@ class GL {
 		this._programs = new Map();
 	}
 
-	initProgram(vertexShader, fragmentShader) {
+	initProgram(vertexShader, fragmentShader, defines) {
+		for (let [key, value] of defines) {
+			vertexShader.replace(`/${key}/g`, value);
+			fragmentShader.replace(`/${key}/g`, value);
+		}
+
+
 		const programHash = this._computeHash(vertexShader + fragmentShader);
 
 		if (this._programs.has(programHash)) {
