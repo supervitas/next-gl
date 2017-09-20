@@ -1,14 +1,10 @@
 import {SceneObject} from '../../Core/SceneObject';
-
-import fragmentShader from './shaders/example.frag';
-import vertexShader from './shaders/example.vert';
-import {Color} from '../../Core/Color';
+import {StandardMaterial} from '../../Core/Materials/StandardMaterial';
 
 class Cube extends SceneObject {
-	constructor({gl, color = new Color(255, 255, 255, 1), map = null}) {
-		super({gl, color, map});
+	constructor({gl, material = new StandardMaterial({gl})}) {
+		super({gl, material});
 
-		this.program = this.gl.initProgram(vertexShader, fragmentShader, this.defines);
 
 		this.programInfo = {
 			attribLocations: {
@@ -20,13 +16,10 @@ class Cube extends SceneObject {
 				viewProjectionMatrix: this.glContext.getUniformLocation(this.program, 'uProjectionMatrix'),
 				modelViewMatrix: this.glContext.getUniformLocation(this.program, 'uModelViewMatrix'),
 				normalMatrix: this.glContext.getUniformLocation(this.program, 'uNormalMatrix'),
-				color: this.glContext.getUniformLocation(this.program, 'uColor')
+				color: this.glContext.getUniformLocation(this.program, 'uColor'),
+				map: material.map !== null ? this.glContext.getUniformLocation(this.program, 'map') : null
 			},
 		};
-
-		if (map) {
-			this.programInfo.uniformLocations.map = this.glContext.getUniformLocation(this.program, 'map');
-		}
 
 		this.vertexCount = 36;
 		this.type = this.glContext.UNSIGNED_SHORT;

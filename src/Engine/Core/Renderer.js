@@ -47,11 +47,11 @@ class Renderer {
 					normalMatrix);
 
 
-				if (renderObject.map) {
+				if (renderObject.material.map) {
 					this._glContext.activeTexture(this._glContext.TEXTURE0);
 
 					// Bind the texture to texture unit 0
-					this._glContext.bindTexture(this._glContext.TEXTURE_2D, renderObject.map);
+					this._glContext.bindTexture(this._glContext.TEXTURE_2D, renderObject.material.map);
 
 					// Tell the shader we bound the texture to texture unit 0
 					this._glContext.uniform1i(renderObject.programInfo.uniformLocations.map, 0);
@@ -59,10 +59,10 @@ class Renderer {
 
 
 				this._glContext.uniform4f(renderObject.programInfo.uniformLocations.color,
-					renderObject.color.r,
-					renderObject.color.g,
-					renderObject.color.b,
-					renderObject.color.a);
+					renderObject.material.color.r,
+					renderObject.material.color.g,
+					renderObject.material.color.b,
+					renderObject.material.color.a);
 
 
 				this._glContext.drawElements(this._glContext.TRIANGLES, renderObject.vertexCount, renderObject.type, renderObject.offset);

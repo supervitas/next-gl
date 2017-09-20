@@ -5,6 +5,7 @@ import {Scene} from '../Engine/Core/Scene';
 import {Cube} from '../Engine/Primitives/Cube/Cube';
 import {Camera} from '../Engine/Core/Camera';
 import {Color} from '../Engine/Core/Color';
+import {StandardMaterial} from "../Engine/Core/Materials/StandardMaterial";
 
 class FirstExample {
 	constructor(domElement) {
@@ -46,15 +47,25 @@ class FirstExample {
 	}
 
 	addCubes() {
-		const cube = new Cube({gl: this.gl, map: this.gl.loadTexture(this.gl.glContext, 'src/Example/test_texture.jpg')});
+		const material = new StandardMaterial({
+			gl: this.gl,
+			map: this.gl.loadTexture(this.gl.glContext, 'src/Example/test_texture.jpg')
+		});
+
+		const materialWithColor = new StandardMaterial({
+			color: new Color(50,60, 10),
+			gl: this.gl
+		});
+
+		const cube = new Cube({gl: this.gl, material });
 		cube.position = {x: 0, y: 0, z: -18};
 		this.scene.addToScene(cube);
 
-		const cube2 = new Cube({gl: this.gl});
+		const cube2 = new Cube({gl: this.gl, material: materialWithColor});
 		cube2.position = {x: 5, y: 0, z: -18};
 		this.scene.addToScene(cube2);
 
-		const cube3 = new Cube({gl:this.gl, color: new Color(100, 50, 100)});
+		const cube3 = new Cube({gl:this.gl, material});
 		cube3.position = {x: -5, y: 0, z: -18};
 		this.scene.addToScene(cube3);
 

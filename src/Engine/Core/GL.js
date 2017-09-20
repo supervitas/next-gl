@@ -16,6 +16,7 @@ class GL {
 				return src.substr(0, index) + str + src.substr(index);
 			};
 
+			defines = new Map([...defines.entries()].sort()); // sorting
 			let programDefines = '';
 
 			for (let [key, value] of defines) {
