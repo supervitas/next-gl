@@ -1,8 +1,9 @@
 import * as glmatrix from 'gl-matrix';
 import {Vec3} from '../Math/Vec3';
+import {Color} from './Color';
 
 class SceneObject {
-	constructor({gl, color = 0xffffff, map = null}) {
+	constructor({gl, color = new Color(255, 255, 255, 1), map = null}) {
 		this.programInfo = {};
 		this.program = null;
 		this.defines = new Map();
@@ -13,7 +14,7 @@ class SceneObject {
 		this.glContext = gl.glContext;
 
 
-		this.color = color;
+		this.color = color.toVec4();
 		if (map !== null) {
 			this.defines.set('USE_MAP', true);
 			this.map = map;

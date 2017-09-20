@@ -58,7 +58,11 @@ class Renderer {
 				}
 
 
-				this._glContext.uniform4f(renderObject.programInfo.uniformLocations.color, 1, 1, 1, 1);  //color todo
+				this._glContext.uniform4f(renderObject.programInfo.uniformLocations.color,
+					renderObject.color.r,
+					renderObject.color.g,
+					renderObject.color.b,
+					renderObject.color.a);
 
 
 				this._glContext.drawElements(this._glContext.TRIANGLES, renderObject.vertexCount, renderObject.type, renderObject.offset);

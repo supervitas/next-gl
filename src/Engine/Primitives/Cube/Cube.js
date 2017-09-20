@@ -2,9 +2,10 @@ import {SceneObject} from '../../Core/SceneObject';
 
 import fragmentShader from './shaders/example.frag';
 import vertexShader from './shaders/example.vert';
+import {Color} from '../../Core/Color';
 
 class Cube extends SceneObject {
-	constructor({gl, color = 0xffffff, map = null}) {
+	constructor({gl, color = new Color(255, 255, 255, 1), map = null}) {
 		super({gl, color, map});
 
 		this.program = this.gl.initProgram(vertexShader, fragmentShader, this.defines);
@@ -23,7 +24,7 @@ class Cube extends SceneObject {
 			},
 		};
 
-		if (map !== null) {
+		if (map) {
 			this.programInfo.uniformLocations.map = this.glContext.getUniformLocation(this.program, 'map');
 		}
 
@@ -190,8 +191,9 @@ class Cube extends SceneObject {
 			const normalize = false;
 			const stride = 0;
 			const offset = 0;
-			gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
+			gl.enableVertexAttribArray(this.programInfo.attribLocations.vertexPosition);
+			gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 			gl.vertexAttribPointer(
 				this.programInfo.attribLocations.vertexPosition,
 				numComponents,
@@ -199,7 +201,6 @@ class Cube extends SceneObject {
 				normalize,
 				stride,
 				offset);
-			gl.enableVertexAttribArray(this.programInfo.attribLocations.vertexPosition);
 		}
 
 		// Tell WebGL how to pull out the texture coordinates from
@@ -210,6 +211,8 @@ class Cube extends SceneObject {
 			const normalize = false;
 			const stride = 0;
 			const offset = 0;
+
+			gl.enableVertexAttribArray(this.programInfo.attribLocations.textureCoord);
 			gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
 			gl.vertexAttribPointer(
 				this.programInfo.attribLocations.textureCoord,
@@ -218,7 +221,6 @@ class Cube extends SceneObject {
 				normalize,
 				stride,
 				offset);
-			gl.enableVertexAttribArray(this.programInfo.attribLocations.textureCoord);
 		}
 
 
@@ -231,6 +233,8 @@ class Cube extends SceneObject {
 			const normalize = false;
 			const stride = 0;
 			const offset = 0;
+
+			gl.enableVertexAttribArray(this.programInfo.attribLocations.vertexNormal);
 			gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
 			gl.vertexAttribPointer(
 				this.programInfo.attribLocations.vertexNormal,
@@ -239,7 +243,6 @@ class Cube extends SceneObject {
 				normalize,
 				stride,
 				offset);
-			gl.enableVertexAttribArray(this.programInfo.attribLocations.vertexNormal);
 		}
 
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);

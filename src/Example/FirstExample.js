@@ -4,6 +4,7 @@ import {Scene} from '../Engine/Core/Scene';
 
 import {Cube} from '../Engine/Primitives/Cube/Cube';
 import {Camera} from '../Engine/Core/Camera';
+import {Color} from '../Engine/Core/Color';
 
 class FirstExample {
 	constructor(domElement) {
@@ -53,7 +54,7 @@ class FirstExample {
 		cube2.position = {x: 5, y: 0, z: -18};
 		this.scene.addToScene(cube2);
 
-		const cube3 = new Cube({gl:this.gl, color: 0xeeeeee});
+		const cube3 = new Cube({gl:this.gl, color: new Color(100, 50, 100)});
 		cube3.position = {x: -5, y: 0, z: -18};
 		this.scene.addToScene(cube3);
 
