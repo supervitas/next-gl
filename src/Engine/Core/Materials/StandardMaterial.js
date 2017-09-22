@@ -16,7 +16,7 @@ class StandardMaterial {
 		this.program = this.gl.initProgram(vertexShader, fragmentShader, this.defines);
 
 
-
+		this.depthTest = true;
 		this.color = color.toVec4();
 	}
 }

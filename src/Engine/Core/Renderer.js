@@ -24,6 +24,12 @@ class Renderer {
 
 				if (!renderObject.visible) continue;
 
+				if(!renderObject.material.depthTest) {
+					this._glContext.disable(this._glContext.DEPTH_TEST);
+				} else {
+					this._glContext.enable(this._glContext.DEPTH_TEST);
+				}
+
 
 				const normalMatrix = glmatrix.mat4.create();
 				glmatrix.mat4.invert(normalMatrix, modelViewMatrix);

@@ -47,6 +47,7 @@ class FirstExample {
 			gl: this.gl,
 			map: this.gl.loadTexture(this.gl.glContext, 'src/Example/test_texture.jpg')
 		});
+		material.depthTest = false;
 
 		const materialWithColor = new StandardMaterial({
 			color: new Color(50,60, 10),
