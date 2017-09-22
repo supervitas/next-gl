@@ -1,5 +1,5 @@
-import {SceneObject} from '../../Core/SceneObject';
-import {StandardMaterial} from '../../Core/Materials/StandardMaterial';
+import {SceneObject} from '../Core/SceneObject';
+import {StandardMaterial} from '../Core/Materials/StandardMaterial';
 
 class Cube extends SceneObject {
 	constructor({gl, material = new StandardMaterial({gl})}) {

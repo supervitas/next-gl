@@ -1,20 +1,11 @@
-import {GL} from '../Engine/Core/GL';
-import {Renderer} from '../Engine/Core/Renderer';
-import {Scene} from '../Engine/Core/Scene';
-
-import {Cube} from '../Engine/Primitives/Cube/Cube';
-import {Camera} from '../Engine/Core/Camera/Camera';
-import {CameraOrbitController} from '../Engine/Core/Camera/CameraOrbitController';
-import {Color} from '../Engine/Core/Color';
-import {StandardMaterial} from '../Engine/Core/Materials/StandardMaterial';
-
+import {StandardMaterial, GL, Renderer, Cube, Color, Camera, CameraOrbitController, Scene} from '../Engine/nextGL';
 
 class FirstExample {
 	constructor(domElement) {
 		this._domElement = domElement;
 		this._lastDT = 0;
 
-		this.gl = new GL(this._domElement);
+		this.gl = new GL({domElement: this._domElement});
 
 		this.scene = new Scene();
 

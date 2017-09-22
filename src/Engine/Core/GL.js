@@ -1,6 +1,11 @@
+import {Color} from './Color';
+
 class GL {
-	constructor(domElement) {
+	constructor({domElement, clearColor = new Color(), transparent = true }) {
 		this._domElement = domElement;
+		this._clearColor = clearColor.toVec4();
+		this._transparent = transparent ? 0.0 : 1.0;
+
 		this.glContext = this._initWebGL();
 
 		if (!this.glContext) return;
@@ -54,8 +59,8 @@ class GL {
 	checkAndResize() {
 		const canvas = this.glContext.canvas;
 
-		const displayWidth = Math.floor(canvas.clientWidth  * this.realPixels);
-		const displayHeight = Math.floor(canvas.clientHeight  * this.realPixels);
+		const displayWidth = Math.floor(canvas.clientWidth * this.realPixels);
+		const displayHeight = Math.floor(canvas.clientHeight * this.realPixels);
 
 		if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
 			canvas.width  = displayWidth;
@@ -106,10 +111,10 @@ class GL {
 			return null;
 		}
 
-		gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
-		gl.clearDepth(1.0);                 // Clear everything
-		gl.enable(gl.DEPTH_TEST);           // Enable depth testing
-		gl.depthFunc(gl.LEQUAL);            // Near things obscure far things
+		gl.clearColor(this._clearColor.x, this._clearColor.y, this._clearColor.z, this._transparent);
+		gl.clearDepth(1.0);
+		gl.enable(gl.DEPTH_TEST);
+		gl.depthFunc(gl.LEQUAL);
 
 		return gl;
 	}

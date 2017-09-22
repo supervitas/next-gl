@@ -10,3 +10,8 @@ body {
 	width: 100vw;
 	height: 100vh;
 }
+.canvas-container  {
+	-webkit-tap-highlight-color: transparent;
+	user-select: none;
+	background: radial-gradient(ellipse at center, #ffffff 0%, #d8e9f3 100%);
+  }
