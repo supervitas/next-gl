@@ -51,7 +51,7 @@ class GL {
 		return program;
 	}
 
-	resize() {
+	checkAndResize() {
 		const canvas = this.glContext.canvas;
 
 		const displayWidth = Math.floor(canvas.clientWidth  * this.realPixels);
@@ -61,9 +61,11 @@ class GL {
 			canvas.width  = displayWidth;
 			canvas.height = displayHeight;
 
-			this.glContext.viewport(0, 0, this.glContext.drawingBufferWidth,
-				this.glContext.drawingBufferHeight);
+			this.glContext.viewport(0, 0, this.glContext.drawingBufferWidth, this.glContext.drawingBufferHeight);
+
+			return true;
 		}
+		return false;
 	}
 
 	loadTexture(gl, url) {

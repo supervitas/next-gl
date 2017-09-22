@@ -3,9 +3,11 @@ import {Renderer} from '../Engine/Core/Renderer';
 import {Scene} from '../Engine/Core/Scene';
 
 import {Cube} from '../Engine/Primitives/Cube/Cube';
-import {Camera} from '../Engine/Core/Camera';
+import {Camera} from '../Engine/Core/Camera/Camera';
+import {CameraOrbitController} from '../Engine/Core/Camera/CameraOrbitController';
 import {Color} from '../Engine/Core/Color';
-import {StandardMaterial} from "../Engine/Core/Materials/StandardMaterial";
+import {StandardMaterial} from '../Engine/Core/Materials/StandardMaterial';
+
 
 class FirstExample {
 	constructor(domElement) {
@@ -18,6 +20,7 @@ class FirstExample {
 
 		const aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
 		this.camera = new Camera({aspect});
+		this.cameraOrbitController = new CameraOrbitController({camera: this.camera, domElement: this._domElement});
 
 		this.renderer = new Renderer({glContext: this.gl.glContext, scene: this.scene, camera: this.camera});
 
@@ -29,7 +32,9 @@ class FirstExample {
 	}
 
 	render(dt) {
-		this.gl.resize();
+		if (this.gl.checkAndResize()) {
+			this.camera.aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
+		}
 		dt *= 0.001;
 		const deltaTime = dt - this._lastDT;
 		this._lastDT = dt;

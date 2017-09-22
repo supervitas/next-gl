@@ -1,5 +1,5 @@
 import * as glmatrix from 'gl-matrix';
-import {GLMath} from '../Math/GLMath';
+import {GLMath} from '../../Math/GLMath';
 
 class Camera {
 	constructor({near = 0.1, far = 1000, aspect = 0, fov = 45}) {
@@ -34,22 +34,22 @@ class Camera {
 
 	set zNear(near) {
 		this._zNear = near;
-		this._updateProjectionMatrix();
+		this._updateProjectionAndCamera();
 	}
 
 	set zFar(far) {
 		this._zFar = far;
-		this._updateProjectionMatrix();
+		this._updateProjectionAndCamera();
 	}
 
 	set fov(fov) {
 		this._fov = fov;
-		this._updateProjectionMatrix();
+		this._updateProjectionAndCamera();
 	}
 
 	set aspect(aspect) {
 		this._aspect = aspect;
-		this._updateProjectionMatrix();
+		this._updateProjectionAndCamera();
 	}
 
 	set position(positionVec) {
@@ -76,6 +76,11 @@ class Camera {
 		});
 
 		glmatrix.mat4.rotate(this.cameraMatrix, this.cameraMatrix, angle, this._rotationAxis.asArray());
+		this._updateCameraMatrix();
+	}
+
+	_updateProjectionAndCamera() {
+		this._updateProjectionMatrix();
 		this._updateCameraMatrix();
 	}
 

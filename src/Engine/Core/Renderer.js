@@ -21,7 +21,6 @@ class Renderer {
 
 				const modelViewMatrix = renderObject.modelViewMatrix;
 
-				// if()
 
 				if (!renderObject.visible) continue;
 
