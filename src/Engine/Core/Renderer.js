@@ -24,12 +24,7 @@ class Renderer {
 
 				if (!renderObject.visible) continue;
 
-				if(!renderObject.material.depthTest) {
-					this._glContext.disable(this._glContext.DEPTH_TEST);
-				} else {
-					this._glContext.enable(this._glContext.DEPTH_TEST);
-				}
-
+				this._useMaterialDepthTest(renderObject.material.depthTest);
 
 				const normalMatrix = glmatrix.mat4.create();
 				glmatrix.mat4.invert(normalMatrix, modelViewMatrix);
@@ -73,6 +68,12 @@ class Renderer {
 				this._glContext.drawElements(this._glContext.TRIANGLES, renderObject.vertexCount, renderObject.type, renderObject.offset);
 			}
 		}
+	}
+
+	_useMaterialDepthTest(useDepthTest) {
+		if (this._glContext.getParameter(this._glContext.DEPTH_TEST) === useDepthTest) return;
+
+		useDepthTest ? this._glContext.enable(this._glContext.DEPTH_TEST) : this._glContext.disable(this._glContext.DEPTH_TEST);
 	}
 
 	shouldBeFrustrumCulled(viewProjection, objectPosition) {
