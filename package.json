@@ -10,10 +10,10 @@
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
     "webpack": "^3.5.5",
+		"orbit-controls": "^1.2.0",
     "webpack-dev-server": "^2.7.1",
     "webpack-glsl-loader": "^1.0.1"
   },
-  "dependencies": {},
   "scripts": {
     "start": "node devServer.js"
   }

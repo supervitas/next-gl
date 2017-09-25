@@ -29,14 +29,16 @@ class FirstExample {
 		dt *= 0.001;
 		const deltaTime = dt - this._lastDT;
 		this._lastDT = dt;
-		for (let [index, cube] of this.cubes.entries()) {
 
-			cube.rotate({x: 0, y: 1, z: 0}, deltaTime);
-			cube.rotate({x: 1, y: 0, z: 1}, deltaTime * 0.2 * index);
+		for (let [index, cube] of this.cubes.entries()) {
+			// cube.rotate({x: 0, y: 1, z: 0}, deltaTime);
+			// cube.rotate({x: 1, y: 0, z: 1}, deltaTime * 0.2 * index);
 		}
 
 		// this.camera.rotate({x: 0, y: 1, z: 0}, deltaTime);
 		// this.camera.lookAt(this.cubes[0].position);
+
+		this.cameraOrbitController.update(deltaTime);
 
 		this.renderer.drawScene();
 		requestAnimationFrame(this.renderFunc);
@@ -47,7 +49,6 @@ class FirstExample {
 			gl: this.gl,
 			map: this.gl.loadTexture(this.gl.glContext, 'src/Example/test_texture.jpg')
 		});
-		material.depthTest = false;
 
 		const materialWithColor = new StandardMaterial({
 			color: new Color(50,60, 10),

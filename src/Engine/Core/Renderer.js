@@ -10,33 +10,36 @@ class Renderer {
 	drawScene() {
 		this._glContext.clear(this._glContext.COLOR_BUFFER_BIT | this._glContext.DEPTH_BUFFER_BIT);
 
-		const viewProjectionMatrix = this._camera.viewProjectionMatrix;
 
+		const viewProjectionMatrix = this._camera.viewProjectionMatrix;
 
 		for (const sceneObject of this._scene.sceneObjects.values()) { // for programs in sceneObjects..
 
 			this._glContext.useProgram(sceneObject.program);
 
 			for (const renderObject of sceneObject.renderables) { // render objects with same program at once
+				if (!renderObject.visible) continue;
 
 				const modelViewMatrix = renderObject.modelViewMatrix;
-
-
-				if (!renderObject.visible) continue;
 
 				this._useMaterialDepthTest(renderObject.material.depthTest);
 
 				const normalMatrix = glmatrix.mat4.create();
+
 				glmatrix.mat4.invert(normalMatrix, modelViewMatrix);
 				glmatrix.mat4.transpose(normalMatrix, normalMatrix);
 
-				this._glContext.bindVertexArray(renderObject.vao);
+				const mat = glmatrix.mat4.create();
 
+				glmatrix.mat4.translate(mat, viewProjectionMatrix, renderObject._position.asArray());
+
+
+				this._glContext.bindVertexArray(renderObject.vao);
 
 				this._glContext.uniformMatrix4fv(
 					renderObject.programInfo.uniformLocations.viewProjectionMatrix,
 					false,
-					viewProjectionMatrix);
+					mat);
 				this._glContext.uniformMatrix4fv(
 					renderObject.programInfo.uniformLocations.modelViewMatrix,
 					false,

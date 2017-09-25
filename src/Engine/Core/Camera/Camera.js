@@ -14,22 +14,17 @@ class Camera {
 
 		this._fov = GLMath.degToRad(fov);
 
-
 		this.projectionMatrix = glmatrix.mat4.create();
 
 		this._updateProjectionMatrix();
 
 		this.cameraMatrix = glmatrix.mat4.create();
 
-
 		this.viewMatrix = glmatrix.mat4.create();
-
-		glmatrix.mat4.invert(this.viewMatrix, this.cameraMatrix);
-
 
 		this.viewProjectionMatrix = glmatrix.mat4.create();
 
-		glmatrix.mat4.multiply(this.viewProjectionMatrix, this.projectionMatrix, this.viewMatrix);
+
 	}
 
 	set zNear(near) {
@@ -61,6 +56,24 @@ class Camera {
 		this._updateCameraMatrix();
 	}
 
+	translateFromArray(position) {
+		this._cameraPosition.x = position[0];
+		this._cameraPosition.y = position[1];
+		this._cameraPosition.z = position[2];
+
+		glmatrix.mat4.translate(this.cameraMatrix, this.cameraMatrix, position);
+		this._updateCameraMatrix();
+	}
+
+	lookAtFromArray(lookAt) {
+		this._lookAtVec.x = lookAt[0];
+		this._lookAtVec.y = lookAt[1];
+		this._lookAtVec.z = lookAt[2];
+		glmatrix.mat4.lookAt(this.cameraMatrix, this._cameraPosition.asArray(), lookAt, [0, 1, 0]);
+
+		this._updateCameraMatrix();
+	}
+
 	lookAt(vecWhere) {
 		Object.keys(vecWhere).forEach((key) => {
 			this._lookAtVec[key] = vecWhere[key];
@@ -70,6 +83,7 @@ class Camera {
 
 		this._updateCameraMatrix();
 	}
+
 	rotate(vecRotateAxis, angle) {
 		Object.keys(vecRotateAxis).forEach((key) => {
 			this._rotationAxis[key] = vecRotateAxis[key];
@@ -92,7 +106,5 @@ class Camera {
 		glmatrix.mat4.invert(this.viewMatrix, this.cameraMatrix);
 		glmatrix.mat4.multiply(this.viewProjectionMatrix, this.projectionMatrix, this.viewMatrix);
 	}
-
-
 }
 export {Camera};
