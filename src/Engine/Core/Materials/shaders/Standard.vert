@@ -2,7 +2,6 @@
 
 uniform mat4 uNormalMatrix;
 uniform mat4 uModelViewMatrix;
-uniform mat4 uProjectionMatrix;
 
 in vec4 aVertexPosition;
 in vec3 aVertexNormal;
@@ -12,7 +11,6 @@ out highp vec2 vTextureCoord;
 out highp vec3 vLighting;
 
 void main(void) {
-  gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
   vTextureCoord = aTextureCoord;
   // Apply lighting effect
   highp vec3 ambientLight = vec3(0.3, 0.3, 0.3);
@@ -21,4 +19,6 @@ void main(void) {
   highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
   highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
   vLighting = ambientLight + (directionalLightColor * directional);
+
+  gl_Position =  uModelViewMatrix * aVertexPosition;
 }

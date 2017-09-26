@@ -13,7 +13,6 @@ class Cube extends SceneObject {
 				textureCoord: this.glContext.getAttribLocation(this.program, 'aTextureCoord'),
 			},
 			uniformLocations: {
-				viewProjectionMatrix: this.glContext.getUniformLocation(this.program, 'uProjectionMatrix'),
 				modelViewMatrix: this.glContext.getUniformLocation(this.program, 'uModelViewMatrix'),
 				normalMatrix: this.glContext.getUniformLocation(this.program, 'uNormalMatrix'),
 				color: this.glContext.getUniformLocation(this.program, 'uColor'),

@@ -23,8 +23,6 @@ class Camera {
 		this.viewMatrix = glmatrix.mat4.create();
 
 		this.viewProjectionMatrix = glmatrix.mat4.create();
-
-
 	}
 
 	set zNear(near) {

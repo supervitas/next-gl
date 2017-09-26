@@ -1,4 +1,5 @@
 import OrbitControls from 'orbit-controls';
+import {GLMath} from '../../Math/GLMath';
 
 class CameraOrbitController {
 	constructor({camera, domElement}) {
@@ -6,6 +7,7 @@ class CameraOrbitController {
 		this._domElement = domElement;
 
 		this._orbitControls = new OrbitControls({element: this._domElement});
+
 
 	}
 	update(dt) {
@@ -15,6 +17,7 @@ class CameraOrbitController {
 		this._camera.lookAtFromArray(this._orbitControls.direction);
 
 	}
+
 
 }
 export {CameraOrbitController};

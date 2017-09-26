@@ -48,9 +48,5 @@ class SceneObject {
 
 	}
 
-	get rotation() {
-		return this._rotation;
-	}
-
 }
 export {SceneObject};
