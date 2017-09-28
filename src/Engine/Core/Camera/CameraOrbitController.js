@@ -11,8 +11,8 @@ class CameraOrbitController {
 	update() {
 		this._orbitControls.update();
 
-		this._camera.translateFromArray(this._orbitControls.position);
-		this._camera.lookAtFromArray(this._orbitControls.direction);
+		this._camera.position = this._orbitControls.position;
+		this._camera.lookAt(this._orbitControls.direction);
 	}
 
 

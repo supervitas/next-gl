@@ -45,50 +45,38 @@ class Camera {
 		this._updateProjectionAndCamera();
 	}
 
-	set position(positionVec) {
-		Object.keys(positionVec).forEach((key) => {
-			this._cameraPosition[key] = positionVec[key];
-		});
+	set position(position) {
+		if (position instanceof Object) {
+			Object.keys(position).forEach((key) => {
+				this._cameraPosition[key] = position[key];
+			});
+		}
+
+		if (position instanceof Array) {
+			this._cameraPosition.x = position[0];
+			this._cameraPosition.y = position[1];
+			this._cameraPosition.z = position[2];
+		}
 
 		glmatrix.mat4.translate(this.cameraMatrix, this.cameraMatrix, this._cameraPosition.asArray());
 		this._updateCameraMatrix();
 	}
 
-	translateFromArray(position) {
-		this._cameraPosition.x = position[0];
-		this._cameraPosition.y = position[1];
-		this._cameraPosition.z = position[2];
+	lookAt(lookAt) {
+		if (lookAt instanceof Array) {
+			this._lookAtVec.x = lookAt[0];
+			this._lookAtVec.y = lookAt[1];
+			this._lookAtVec.z = lookAt[2];
+		}
 
-		glmatrix.mat4.translate(this.cameraMatrix, this.cameraMatrix, position);
-		this._updateCameraMatrix();
-	}
+		if (lookAt instanceof Object) {
+			Object.keys(lookAt).forEach((key) => {
+				this._lookAtVec[key] = lookAt[key];
+			});
+		}
 
-	lookAtFromArray(lookAt) {
-		this._lookAtVec.x = lookAt[0];
-		this._lookAtVec.y = lookAt[1];
-		this._lookAtVec.z = lookAt[2];
+		glmatrix.mat4.targetTo(this.cameraMatrix, this._cameraPosition.asArray(), this._lookAtVec.asArray(), [0, 1, 0]);
 
-		glmatrix.mat4.targetTo(this.cameraMatrix, this._cameraPosition.asArray(), lookAt, [0, 1, 0]);
-
-		this._updateCameraMatrix();
-	}
-
-	lookAt(vecWhere) {
-		Object.keys(vecWhere).forEach((key) => {
-			this._lookAtVec[key] = vecWhere[key];
-		});
-
-		// glmatrix.mat4.lookAt(this.cameraMatrix, this._cameraPosition.asArray(), this._lookAtVec.asArray(), [0, 1, 0]);
-		this.cameraMatrix = m4.lookAt(this._cameraPosition.asArray(), this._lookAtVec.asArray(), [0,1,0]);
-		this._updateCameraMatrix();
-	}
-
-	rotate(vecRotateAxis, angle) {
-		Object.keys(vecRotateAxis).forEach((key) => {
-			this._rotationAxis[key] = vecRotateAxis[key];
-		});
-
-		glmatrix.mat4.rotate(this.cameraMatrix, this.cameraMatrix, angle, this._rotationAxis.asArray());
 		this._updateCameraMatrix();
 	}
 
