@@ -11,7 +11,12 @@ class FirstExample {
 
 		const aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
 		this.camera = new Camera({aspect});
-		this.cameraOrbitController = new CameraOrbitController({camera: this.camera, domElement: this._domElement});
+		this.cameraOrbitController = new CameraOrbitController({
+			camera: this.camera,
+			opts: {
+				element: this._domElement
+			}
+		});
 
 		this.renderer = new Renderer({glContext: this.gl.glContext, scene: this.scene, camera: this.camera});
 
@@ -31,12 +36,9 @@ class FirstExample {
 		this._lastDT = dt;
 
 		for (let [index, cube] of this.cubes.entries()) {
-			// cube.rotate({x: 0, y: 1, z: 0}, deltaTime);
-			// cube.rotate({x: 1, y: 0, z: 1}, deltaTime * 0.2 * index);
+			cube.rotate({x: 0, y: 1, z: 0}, deltaTime);
+			cube.rotate({x: 0, y: 0, z: 1}, deltaTime * 0.2 * index);
 		}
-
-		// this.camera.rotate({x: 0, y: 1, z: 0}, deltaTime);
-		// this.camera.lookAt(this.cubes[0].position);
 
 		this.cameraOrbitController.update(deltaTime);
 

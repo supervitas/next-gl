@@ -12,6 +12,8 @@ class Renderer {
 
 		const viewProjectionMatrix = this._camera.viewProjectionMatrix;
 
+		const modelViewMatrix = glmatrix.mat4.create();
+
 		for (const sceneObject of this._scene.sceneObjects.values()) { // for programs in sceneObjects..
 
 			this._glContext.useProgram(sceneObject.program);
@@ -21,28 +23,25 @@ class Renderer {
 
 				this._useMaterialDepthTest(renderObject.material.depthTest);
 
-
-				const modelViewMatrix = renderObject.modelViewMatrix;
+				const modelMatrix = renderObject.modelMatrix;
 
 				const normalMatrix = glmatrix.mat4.create();
-				glmatrix.mat4.invert(normalMatrix, modelViewMatrix);
+				glmatrix.mat4.invert(normalMatrix, modelMatrix);
 				glmatrix.mat4.transpose(normalMatrix, normalMatrix);
 
-				const mat = glmatrix.mat4.create();
-
-				glmatrix.mat4.translate(mat, viewProjectionMatrix, renderObject._position.asArray());
+				glmatrix.mat4.multiply(modelViewMatrix, viewProjectionMatrix, modelMatrix);
 
 				this._glContext.bindVertexArray(renderObject.vao);
 
 				this._glContext.uniformMatrix4fv(
 					renderObject.programInfo.uniformLocations.modelViewMatrix,
 					false,
-					mat);
+					modelViewMatrix);
+
 				this._glContext.uniformMatrix4fv(
 					renderObject.programInfo.uniformLocations.normalMatrix,
 					false,
 					normalMatrix);
-
 
 				if (renderObject.material.map) {
 					this._glContext.activeTexture(this._glContext.TEXTURE0);
@@ -60,7 +59,6 @@ class Renderer {
 					renderObject.material.color.g,
 					renderObject.material.color.b,
 					renderObject.material.color.a);
-
 
 				this._glContext.drawElements(this._glContext.TRIANGLES, renderObject.vertexCount, renderObject.type, renderObject.offset);
 			}

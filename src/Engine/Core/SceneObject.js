@@ -17,7 +17,7 @@ class SceneObject {
 		this._position = new Vec3();
 		this._rotationAxis = new Vec3();
 
-		this.modelViewMatrix = glmatrix.mat4.create();
+		this.modelMatrix = glmatrix.mat4.create();
 
 		this.vertexCount = 0;
 		this.type = this.glContext.UNSIGNED_SHORT;
@@ -30,8 +30,7 @@ class SceneObject {
 			this._position[key] = positionVec[key];
 		});
 
-		glmatrix.mat4.translate(this.modelViewMatrix,
-			this.modelViewMatrix, this._position.asArray());
+		glmatrix.mat4.translate(this.modelMatrix, this.modelMatrix, this._position.asArray());
 	}
 
 	get position() {
@@ -43,8 +42,7 @@ class SceneObject {
 			this._rotationAxis[key] = vecRotateAxis[key];
 		});
 
-		glmatrix.mat4.rotate(this.modelViewMatrix,
-			this.modelViewMatrix, angle, this._rotationAxis.asArray());
+		glmatrix.mat4.rotate(this.modelMatrix, this.modelMatrix, angle, this._rotationAxis.asArray());
 
 	}
 
