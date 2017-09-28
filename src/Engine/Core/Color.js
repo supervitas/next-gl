@@ -11,7 +11,8 @@ class Color {
 			r: this._r / 255,
 			g: this._g / 255,
 			b: this._b / 255,
-			a: this._a};
+			a: this._a
+		};
 	}
 }
 export {Color};
