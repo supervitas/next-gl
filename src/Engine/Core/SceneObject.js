@@ -16,6 +16,7 @@ class SceneObject {
 
 		this._position = new Vec3();
 		this._rotationAxis = new Vec3();
+		this._scale = new Vec3(1, 1, 1);
 
 		this.modelMatrix = glmatrix.mat4.create();
 
@@ -37,13 +38,24 @@ class SceneObject {
 		return this._position;
 	}
 
+	set scale(scale) {
+		Object.keys(scale).forEach((key) => {
+			this._scale[key] = scale[key];
+		});
+
+		glmatrix.mat4.scale(this.modelMatrix, this.modelMatrix, this._scale.asArray());
+	}
+
+	get scale() {
+		return this._scale;
+	}
+
 	rotate(vecRotateAxis, angle) {
 		Object.keys(vecRotateAxis).forEach((key) => {
 			this._rotationAxis[key] = vecRotateAxis[key];
 		});
 
 		glmatrix.mat4.rotate(this.modelMatrix, this.modelMatrix, angle, this._rotationAxis.asArray());
-
 	}
 
 }

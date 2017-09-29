@@ -5,7 +5,6 @@ class Cube extends SceneObject {
 	constructor({gl, material = new StandardMaterial({gl})}) {
 		super({gl, material});
 
-
 		this.programInfo = {
 			attribLocations: {
 				vertexPosition: this.glContext.getAttribLocation(this.program, 'aVertexPosition'),

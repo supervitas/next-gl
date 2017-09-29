@@ -1,5 +1,4 @@
 import OrbitControls from 'orbit-controls';
-import {GLMath} from '../../Math/GLMath';
 
 class CameraOrbitController {
 	constructor({camera, opts = {}}) {
@@ -14,7 +13,5 @@ class CameraOrbitController {
 		this._camera.position = this._orbitControls.position;
 		this._camera.lookAt(this._orbitControls.direction);
 	}
-
-
 }
 export {CameraOrbitController};
