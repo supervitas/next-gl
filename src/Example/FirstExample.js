@@ -1,4 +1,5 @@
-import {StandardMaterial, GL, Renderer, Cube, Color, Camera, CameraOrbitController, Scene} from '../Engine/next-gl';
+import {StandardMaterial, GL, Renderer, Cube, Plane,
+	 Color, Camera, CameraOrbitController, Scene} from '../Engine/next-gl';
 
 class FirstExample {
 	constructor(domElement) {
@@ -23,6 +24,15 @@ class FirstExample {
 		this.renderFunc = this.render.bind(this);
 
 		this.addCubes();
+
+		const material = new StandardMaterial({
+			map: this.gl.loadTexture(this.gl.glContext, 'src/Example/test_texture.jpg')
+		});
+
+		const plane = new Plane({ material });
+		plane.scale = {x: 30, y:1, z: 30};
+		
+		this.scene.addToScene(plane);
 
 		requestAnimationFrame(this.renderFunc);
 	}

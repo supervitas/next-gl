@@ -29,19 +29,7 @@ class Cube extends SceneObject {
 
 		this.bufferInfo = null;
 		this.vao = null;
-	}
-
-	createObject(gl) {
-		this.program = this.material.createMaterial(gl);
-
-		this.programInfo = {
-			uniformSetters : twgl.createUniformSetters(gl.glContext, this.program),
-			attribSetters : twgl.createAttributeSetters(gl.glContext, this.program)
-		};
-
-		this.bufferInfo = twgl.createBufferInfoFromArrays(gl.glContext, this.attributes);
-		this.vao = twgl.createVAOFromBufferInfo(gl.glContext, this.programInfo.attribSetters, this.bufferInfo);
-	}
+	}	
 
 	_getIndices() {
 		return [

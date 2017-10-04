@@ -1,5 +1,6 @@
 import * as glmatrix from 'gl-matrix';
 import {Vec3} from '../Math/Vec3';
+import twgl from 'twgl-base.js';
 
 class SceneObject {
 	constructor({material = null}) {
@@ -17,6 +18,18 @@ class SceneObject {
 
 		this.modelMatrix = glmatrix.mat4.create();
 		this.normalMatrix = glmatrix.mat4.create();
+	}
+
+	createObject(gl) {
+		this.program = this.material.createMaterial(gl);
+
+		this.programInfo = {
+			uniformSetters: twgl.createUniformSetters(gl.glContext, this.program),
+			attribSetters: twgl.createAttributeSetters(gl.glContext, this.program)
+		};
+
+		this.bufferInfo = twgl.createBufferInfoFromArrays(gl.glContext, this.attributes);
+		this.vao = twgl.createVAOFromBufferInfo(gl.glContext, this.programInfo.attribSetters, this.bufferInfo);
 	}
 
 	set position(positionVec) {
