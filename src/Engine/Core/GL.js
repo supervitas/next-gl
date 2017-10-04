@@ -29,11 +29,7 @@ class GL {
 			}
 
 			const firstLine = vertexShader.split('\n')[0];
-			let indexWhereDefinesWillInjected = 0;
-
-			if (firstLine === '#version 300 es') {
-				indexWhereDefinesWillInjected = firstLine.length + 1;
-			}
+			const indexWhereDefinesWillInjected = firstLine.length + 1;
 
 			vertexShader = insertAt(vertexShader, indexWhereDefinesWillInjected, programDefines);
 			fragmentShader = insertAt(fragmentShader, indexWhereDefinesWillInjected, programDefines);

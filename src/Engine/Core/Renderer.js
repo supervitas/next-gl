@@ -1,4 +1,5 @@
 import * as glmatrix from 'gl-matrix';
+import twgl from 'twgl-base.js';
 
 class Renderer {
 	constructor({glContext, scene, camera}) {
@@ -33,32 +34,19 @@ class Renderer {
 
 				this._glContext.bindVertexArray(renderObject.vao);
 
-				this._glContext.uniformMatrix4fv(
-					renderObject.programInfo.uniformLocations.modelViewMatrix,
-					false,
-					modelViewMatrix);
-
-				this._glContext.uniformMatrix4fv(
-					renderObject.programInfo.uniformLocations.normalMatrix,
-					false,
-					normalMatrix);
-
-				if (renderObject.material.map) {
-					this._glContext.activeTexture(this._glContext.TEXTURE0);
-
-					// Bind the texture to texture unit 0
-					this._glContext.bindTexture(this._glContext.TEXTURE_2D, renderObject.material.map);
-
-					// Tell the shader we bound the texture to texture unit 0
-					this._glContext.uniform1i(renderObject.programInfo.uniformLocations.map, 0);
-				}
-
-
-				this._glContext.uniform4f(renderObject.programInfo.uniformLocations.color,
+				renderObject.programInfo.uniformSetters.uModelViewMatrix(modelViewMatrix);
+				renderObject.programInfo.uniformSetters.uNormalMatrix(normalMatrix);
+				renderObject.programInfo.uniformSetters.uColor([
 					renderObject.material.color.r,
 					renderObject.material.color.g,
 					renderObject.material.color.b,
-					renderObject.material.color.a);
+					renderObject.material.color.a
+				]);
+
+				if (renderObject.material.map) {
+					renderObject.programInfo.uniformSetters.map(renderObject.material.map);
+				}
+
 
 				this._glContext.drawElements(this._glContext.TRIANGLES, renderObject.vertexCount, renderObject.type, renderObject.offset);
 			}
