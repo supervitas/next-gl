@@ -1,2 +1,2 @@
-# nextGL - WebGL2 Engine
+# next-gl - WebGL2 Engine
 

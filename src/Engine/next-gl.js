@@ -11,7 +11,7 @@ export {Scene} from './Core/Scene';
 
 export {SceneObject} from './Core/SceneObject';
 
-export {Cube} from './Primitives/Cube';
+export {Cube} from './Core/Primitives/Cube';
 
 
 export {Camera} from './Core/Camera/Camera';

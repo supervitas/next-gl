@@ -1,7 +1,7 @@
 import {Color} from './Color';
 
 class GL {
-	constructor({domElement, clearColor = new Color(), transparent = true }) {
+	constructor({domElement, clearColor = new Color(), transparent = true, pixelRatio = window.devicePixelRatio || 1 }) {
 		this._domElement = domElement;
 		this._clearColor = clearColor.toVec4();
 		this._transparent = transparent ? 0.0 : 1.0;
@@ -10,7 +10,7 @@ class GL {
 
 		if (!this.glContext) return;
 
-		this.realPixels = window.devicePixelRatio || 1;
+		this.realPixels = pixelRatio;
 
 		this._programs = new Map();
 	}

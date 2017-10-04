@@ -1,4 +1,4 @@
-import {StandardMaterial, GL, Renderer, Cube, Color, Camera, CameraOrbitController, Scene} from '../Engine/nextGL';
+import {StandardMaterial, GL, Renderer, Cube, Color, Camera, CameraOrbitController, Scene} from '../Engine/next-gl';
 
 class FirstExample {
 	constructor(domElement) {
@@ -7,7 +7,7 @@ class FirstExample {
 
 		this.gl = new GL({domElement: this._domElement});
 
-		this.scene = new Scene();
+		this.scene = new Scene(this.gl);
 
 		const aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
 		this.camera = new Camera({aspect});
@@ -48,24 +48,22 @@ class FirstExample {
 
 	addCubes() {
 		const material = new StandardMaterial({
-			gl: this.gl,
 			map: this.gl.loadTexture(this.gl.glContext, 'src/Example/test_texture.jpg')
 		});
 
 		const materialWithColor = new StandardMaterial({
-			color: new Color(50,60, 10),
-			gl: this.gl
+			color: new Color({r: 50, g: 60, b: 10})
 		});
 
-		const cube = new Cube({gl: this.gl, material });
+		const cube = new Cube({ material });
 		cube.position = {x: 0, y: 0, z: -18};
 		this.scene.addToScene(cube);
 
-		const cube2 = new Cube({gl: this.gl, material: materialWithColor});
+		const cube2 = new Cube({ material: materialWithColor});
 		cube2.position = {x: 5, y: 0, z: -18};
 		this.scene.addToScene(cube2);
 
-		const cube3 = new Cube({gl:this.gl, material});
+		const cube3 = new Cube({ material});
 		cube3.position = {x: -5, y: 0, z: -18};
 		this.scene.addToScene(cube3);
 

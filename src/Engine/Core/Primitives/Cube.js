@@ -1,26 +1,19 @@
-import {SceneObject} from '../Core/SceneObject';
-import {StandardMaterial} from '../Core/Materials/StandardMaterial';
+import {SceneObject} from '../SceneObject';
+import {StandardMaterial} from '../Materials/StandardMaterial';
 import twgl from 'twgl-base.js';
 
 class Cube extends SceneObject {
-	constructor({gl, material = new StandardMaterial({gl})}) {
-		super({gl, material});
+	constructor({material = new StandardMaterial()}) {
+		super({material});
 
-		this.programInfo = {
-			uniformSetters : twgl.createUniformSetters(gl.glContext, this.program),
-			attribSetters: twgl.createAttributeSetters(gl.glContext, this.program)
-		};
-
-		this.vertexCount = 36;
-		this.type = this.glContext.UNSIGNED_SHORT;
-		this.offset = 0;
+		this.programInfo = null;
 
 		const positions = this._getPosition();
 		const vertexNormals = this._getVertexNormals();
 		const uv = this._getUV();
 		const indices = this._getIndices();
 
-		const arrays = {
+		this.attributes = {
 			aVertexPosition: { numComponents: 3, data: positions },
 			aTextureCoord: { numComponents: 2, data: uv},
 			aVertexNormal:   { numComponents: 3, data: vertexNormals},
@@ -34,9 +27,22 @@ class Cube extends SceneObject {
 			map: null,
 		};
 
-		this.bufferInfo = twgl.createBufferInfoFromArrays(this.glContext, arrays);
-		this.vao = twgl.createVAOFromBufferInfo(this.glContext, this.programInfo.attribSetters, this.bufferInfo);
+		this.bufferInfo = null;
+		this.vao = null;
 	}
+
+	createObject(gl) {
+		this.program = this.material.createMaterial(gl);
+
+		this.programInfo = {
+			uniformSetters : twgl.createUniformSetters(gl.glContext, this.program),
+			attribSetters : twgl.createAttributeSetters(gl.glContext, this.program)
+		};
+
+		this.bufferInfo = twgl.createBufferInfoFromArrays(gl.glContext, this.attributes);
+		this.vao = twgl.createVAOFromBufferInfo(gl.glContext, this.programInfo.attribSetters, this.bufferInfo);
+	}
+
 	_getIndices() {
 		return [
 			0,  1,  2,      0,  2,  3,    // front

@@ -2,11 +2,8 @@ import * as glmatrix from 'gl-matrix';
 import {Vec3} from '../Math/Vec3';
 
 class SceneObject {
-	constructor({gl, material = null}) {
+	constructor({material = null}) {
 		this.vao = null;
-
-		this.gl = gl;
-		this.glContext = gl.glContext;
 
 		this.material = material;
 		this.program = material.program;
@@ -20,10 +17,6 @@ class SceneObject {
 
 		this.modelMatrix = glmatrix.mat4.create();
 		this.normalMatrix = glmatrix.mat4.create();
-
-		this.vertexCount = 0;
-		this.type = this.glContext.UNSIGNED_SHORT;
-		this.offset = 0;
 	}
 
 	set position(positionVec) {
