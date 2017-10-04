@@ -16,11 +16,8 @@ class Cube extends SceneObject {
 		this.offset = 0;
 
 		const positions = this._getPosition();
-
 		const vertexNormals = this._getVertexNormals();
-
 		const uv = this._getUV();
-
 		const indices = this._getIndices();
 
 		const arrays = {
@@ -30,8 +27,15 @@ class Cube extends SceneObject {
 			indices:  { numComponents: 3, data: indices},
 		};
 
-		const bufferInfo = twgl.createBufferInfoFromArrays(this.glContext, arrays);
-		this.vao = twgl.createVAOFromBufferInfo(this.glContext, this.programInfo.attribSetters, bufferInfo);
+		this.uniforms = {
+			uNormalMatrix : null,
+			uModelViewMatrix: null,
+			uColor: null,
+			map: null,
+		};
+
+		this.bufferInfo = twgl.createBufferInfoFromArrays(this.glContext, arrays);
+		this.vao = twgl.createVAOFromBufferInfo(this.glContext, this.programInfo.attribSetters, this.bufferInfo);
 	}
 	_getIndices() {
 		return [

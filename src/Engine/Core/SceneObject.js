@@ -19,11 +19,11 @@ class SceneObject {
 		this._scale = new Vec3(1, 1, 1);
 
 		this.modelMatrix = glmatrix.mat4.create();
+		this.normalMatrix = glmatrix.mat4.create();
 
 		this.vertexCount = 0;
 		this.type = this.glContext.UNSIGNED_SHORT;
 		this.offset = 0;
-
 	}
 
 	set position(positionVec) {
@@ -32,6 +32,8 @@ class SceneObject {
 		});
 
 		glmatrix.mat4.translate(this.modelMatrix, this.modelMatrix, this._position.asArray());
+
+		this.updateMatrices();
 	}
 
 	get position() {
@@ -44,6 +46,8 @@ class SceneObject {
 		});
 
 		glmatrix.mat4.scale(this.modelMatrix, this.modelMatrix, this._scale.asArray());
+
+		this.updateMatrices();
 	}
 
 	get scale() {
@@ -56,6 +60,17 @@ class SceneObject {
 		});
 
 		glmatrix.mat4.rotate(this.modelMatrix, this.modelMatrix, angle, this._rotationAxis.asArray());
+
+		this.updateMatrices();
+	}
+
+	updateMatrices() {
+		this._updateNormalMatrix();
+	}
+
+	_updateNormalMatrix() {
+		glmatrix.mat4.invert(this.normalMatrix, this.modelMatrix);
+		glmatrix.mat4.transpose(this.normalMatrix, this.normalMatrix);
 	}
 
 }
