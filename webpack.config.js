@@ -10,7 +10,7 @@ module.exports = {
 		filename: 'bundle.js'
 	},
 	performance: {
-		hints: 'warning', // enum
+		hints: false, 
 		maxAssetSize: 2000000, // int (in bytes),
 		maxEntrypointSize: 4000000, // int (in bytes)
 		assetFilter: function(assetFilename) { 

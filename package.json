@@ -1,5 +1,5 @@
 {
-  "name": "webgl_engine",
+  "name": "next-gl",
   "version": "0.1.0",
   "devDependencies": {
     "css-loader": "^0.26.1",
@@ -12,7 +12,8 @@
     "webpack": "^3.5.5",
     "orbit-controls": "^1.2.0",
     "webpack-dev-server": "^2.7.1",
-    "webpack-glsl-loader": "^1.0.1"
+    "webpack-glsl-loader": "^1.0.1",
+    "twgl-base.js": "^3.7.0"
   },
   "scripts": {
     "start": "node devServer.js"
