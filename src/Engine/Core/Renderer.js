@@ -56,6 +56,7 @@ class Renderer {
 
 		useDepthTest ? this._glContext.enable(this._glContext.DEPTH_TEST) : this._glContext.disable(this._glContext.DEPTH_TEST);
 	}
+	
 
 	shouldBeFrustrumCulled(viewProjection, objectPosition) {
 

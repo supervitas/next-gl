@@ -1,6 +1,5 @@
 import {SceneObject} from '../SceneObject';
 import {StandardMaterial} from '../Materials/StandardMaterial';
-import twgl from 'twgl-base.js';
 
 class Cube extends SceneObject {
 	constructor({material = new StandardMaterial()}) {

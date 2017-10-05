@@ -26,10 +26,11 @@ class FirstExample {
 		this.addCubes();
 
 		const material = new StandardMaterial({
-			map: this.gl.loadTexture(this.gl.glContext, 'src/Example/test_texture.jpg')
+			map: this.gl.loadTexture(this.gl.glContext, 'src/Example/test_texture.jpg'),
+			isDoubleSide: true
 		});
 
-		const plane = new Plane({ material });
+		const plane = new Plane({ material, });
 		plane.scale = {x: 30, y:1, z: 30};
 		
 		this.scene.addToScene(plane);
