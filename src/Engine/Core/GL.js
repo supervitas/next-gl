@@ -1,10 +1,11 @@
 import {Color} from './Color';
 
 class GL {
-	constructor({domElement, clearColor = new Color(), transparent = true, pixelRatio = window.devicePixelRatio || 1 }) {
+	constructor({domElement, clearColor = new Color(), transparent = true, pixelRatio = window.devicePixelRatio || 1, antialias = true }) {
 		this._domElement = domElement;
 		this._clearColor = clearColor.toVec4();
 		this._transparent = transparent ? 0.0 : 1.0;
+		this._antialias = antialias;
 
 		this.glContext = this._initWebGL();
 
@@ -100,7 +101,7 @@ class GL {
 	}
 
 	_initWebGL() {
-		const gl = this._domElement.getContext('webgl2', { antialias: true});
+		const gl = this._domElement.getContext('webgl2', { antialias: this._antialias});
 
 		if (!gl) {
 			alert('Unable to initialize WebGL. Your browser may not support it.');

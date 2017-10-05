@@ -4,7 +4,7 @@ import vertexShader from './shaders/Standard.vert';
 
 class StandardMaterial {
 	constructor({color = new Color(255, 255, 255, 1),
-		map = null, isDoubleSide = false, useDepthTest = true}) {
+		map = null, isDoubleSide = false, useDepthTest = true, depthFunc = }) {
 		this.defines = new Map();
 
 		if (map !== null) {
