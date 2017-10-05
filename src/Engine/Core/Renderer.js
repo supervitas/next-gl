@@ -23,6 +23,7 @@ class Renderer {
 				if (!renderObject.visible) continue;
 
 				this._depthTest(renderObject.material.depthTest);
+				this._useFaceCulluing(renderObject.material.isDoubleSided);
 
 				glmatrix.mat4.multiply(modelViewMatrix, viewProjectionMatrix, renderObject.modelMatrix);
 
@@ -55,6 +56,9 @@ class Renderer {
 		if (this._glContext.getParameter(this._glContext.DEPTH_TEST) === useDepthTest) return;
 
 		useDepthTest ? this._glContext.enable(this._glContext.DEPTH_TEST) : this._glContext.disable(this._glContext.DEPTH_TEST);
+	}
+	_useFaceCulluing(isDoubleSided) {		
+		isDoubleSided ? this._glContext.disable(this._glContext.CULL_FACE) : this._glContext.enable(this._glContext.CULL_FACE);
 	}
 	
 

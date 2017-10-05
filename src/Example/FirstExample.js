@@ -27,7 +27,7 @@ class FirstExample {
 
 		const material = new StandardMaterial({
 			map: this.gl.loadTexture(this.gl.glContext, 'src/Example/test_texture.jpg'),
-			isDoubleSide: true
+			isDoubleSided: true
 		});
 
 		const plane = new Plane({ material, });
