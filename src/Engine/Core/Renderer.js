@@ -6,6 +6,9 @@ class Renderer {
 		this._glContext = glContext;
 		this._scene = scene;
 		this._camera = camera;
+
+		this._glDepthTest = this._glContext.getParameter(this._glContext.DEPTH_TEST);
+		this._glCullFace = this._glContext.getParameter(this._glContext.CULL_FACE);		
 	}
 
 	drawScene() {
@@ -53,11 +56,15 @@ class Renderer {
 	}
 
 	_depthTest(useDepthTest) {
-		if (this._glContext.getParameter(this._glContext.DEPTH_TEST) === useDepthTest) return;
+		if (this._glDepthTest === useDepthTest) return;
 
+		this._glDepthTest = useDepthTest;
 		useDepthTest ? this._glContext.enable(this._glContext.DEPTH_TEST) : this._glContext.disable(this._glContext.DEPTH_TEST);
 	}
 	_useFaceCulluing(isDoubleSided) {		
+		if (this._glCullFace === isDoubleSided) return;
+
+		this._glCullFace = isDoubleSided;
 		isDoubleSided ? this._glContext.disable(this._glContext.CULL_FACE) : this._glContext.enable(this._glContext.CULL_FACE);
 	}
 	

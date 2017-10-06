@@ -7,8 +7,7 @@ class CameraOrbitController {
 	}
 
 	update() {
-		this._orbitControls.update();		
-		console.log(this._camera.target)	
+		this._orbitControls.update();
 		this._camera.position = this._orbitControls.position;
 		this._camera.target = this._orbitControls.target;
 	}
