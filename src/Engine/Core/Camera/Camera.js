@@ -8,7 +8,7 @@ class Camera {
 		this._zFar = far;
 		this._aspect = aspect;
 
-		this._lookAtVec = GLMath.createVec3();
+		this._cameraTarget = GLMath.createVec3();
 		this._cameraPosition = GLMath.createVec3();
 		this._rotationAxis = GLMath.createVec3();
 
@@ -45,37 +45,41 @@ class Camera {
 		this._updateProjectionAndCamera();
 	}
 
-	set position(position) {
-		if (position instanceof Object) {
+	get position() {
+		return this._cameraPosition;
+	}
+
+	set position(position) {		
+		if (Array.isArray(position)) {
+			this._cameraPosition.x = position[0];
+			this._cameraPosition.y = position[1];
+			this._cameraPosition.z = position[2];			
+		} else {
 			Object.keys(position).forEach((key) => {
 				this._cameraPosition[key] = position[key];
 			});
-		}
-
-		if (position instanceof Array) {
-			this._cameraPosition.x = position[0];
-			this._cameraPosition.y = position[1];
-			this._cameraPosition.z = position[2];
 		}
 
 		glmatrix.mat4.translate(this.cameraMatrix, this.cameraMatrix, this._cameraPosition.asArray());
 		this._updateCameraMatrix();
 	}
 
-	lookAt(lookAt) {
-		if (lookAt instanceof Array) {
-			this._lookAtVec.x = lookAt[0];
-			this._lookAtVec.y = lookAt[1];
-			this._lookAtVec.z = lookAt[2];
-		}
+	get target() {
+		return this._cameraTarget;
+	}
 
-		if (lookAt instanceof Object) {
-			Object.keys(lookAt).forEach((key) => {
-				this._lookAtVec[key] = lookAt[key];
+	set target (target) {
+		if (Array.isArray(target)) {
+			this._cameraTarget.x = target[0];
+			this._cameraTarget.y = target[1];
+			this._cameraTarget.z = target[2];
+		} else {
+			Object.keys(target).forEach((key) => {
+				this._cameraTarget[key] = target[key];
 			});
 		}
 
-		glmatrix.mat4.targetTo(this.cameraMatrix, this._cameraPosition.asArray(), this._lookAtVec.asArray(), [0, 1, 0]);
+		glmatrix.mat4.targetTo(this.cameraMatrix, this._cameraPosition.asArray(), this._cameraTarget.asArray(), [0, 1, 0]);
 
 		this._updateCameraMatrix();
 	}

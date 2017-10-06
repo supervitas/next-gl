@@ -1,5 +1,5 @@
 import {StandardMaterial, GL, Renderer, Cube, Plane,
-	 Color, Camera, CameraOrbitController, Scene} from '../Engine/next-gl';
+	Color, Camera, CameraOrbitController, Scene} from '../Engine/next-gl';
 
 class FirstExample {
 	constructor(domElement) {
@@ -11,11 +11,14 @@ class FirstExample {
 		this.scene = new Scene(this.gl);
 
 		const aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
-		this.camera = new Camera({aspect});
+		this.camera = new Camera({aspect});		
 		this.cameraOrbitController = new CameraOrbitController({
 			camera: this.camera,
 			opts: {
-				element: this._domElement
+				element: this._domElement,
+				position: [0, 0, 100000],
+				target: [0, 0, 0],
+				distance: 10				
 			}
 		});
 
@@ -67,15 +70,15 @@ class FirstExample {
 		});
 
 		const cube = new Cube({ material });
-		cube.position = {x: 0, y: 0, z: -18};
+		cube.position = {x: 0, y: 5, z: -18};
 		this.scene.addToScene(cube);
 
 		const cube2 = new Cube({ material: materialWithColor});
-		cube2.position = {x: 5, y: 0, z: -18};
+		cube2.position = {x: 5, y: 5, z: -18};
 		this.scene.addToScene(cube2);
 
 		const cube3 = new Cube({ material});
-		cube3.position = {x: -5, y: 0, z: -18};
+		cube3.position = {x: -5, y: 5, z: -18};
 		this.scene.addToScene(cube3);
 
 
