@@ -16,8 +16,37 @@ class SceneObject {
 		this._rotationAxis = new Vec3();
 		this._scale = new Vec3(1, 1, 1);
 
-		this.modelMatrix = glmatrix.mat4.create();
 		this.normalMatrix = glmatrix.mat4.create();
+
+		this.localMatrix = glmatrix.mat4.create();
+		this.worldMatrix = glmatrix.mat4.create();
+		this.children = [];
+		this.parent = null;
+
+	}
+	updateWorldMatrix(parentWorldMatrix) {
+		if (parentWorldMatrix) {
+			glmatrix.mat4.multiply(this.worldMatrix, parentWorldMatrix, this.localMatrix);
+		} else {
+			glmatrix.mat4.copy(this.worldMatrix, this.localMatrix);
+		}
+		this.children.forEach((child) => {
+			child.updateWorldMatrix(this.worldMatrix);
+		});
+	}
+
+	setParent(parent) {
+		if (this.parent) {
+			var ndx = this.parent.children.indexOf(this);
+			if (ndx >= 0) {
+				this.parent.children.splice(ndx, 1);
+			}
+		}
+
+		if (parent) {
+			parent.children.push(this);
+		}
+		this.parent = parent;
 	}
 
 	createObject(gl) {
@@ -37,7 +66,7 @@ class SceneObject {
 			this._position[key] = positionVec[key];
 		});
 
-		glmatrix.mat4.translate(this.modelMatrix, this.modelMatrix, this._position.asArray());
+		glmatrix.mat4.translate(this.localMatrix, this.localMatrix, this._position.asArray());
 
 		this.updateMatrices();
 	}
@@ -51,7 +80,7 @@ class SceneObject {
 			this._scale[key] = scale[key];
 		});
 
-		glmatrix.mat4.scale(this.modelMatrix, this.modelMatrix, this._scale.asArray());
+		glmatrix.mat4.scale(this.localMatrix, this.localMatrix, this._scale.asArray());
 
 		this.updateMatrices();
 	}
@@ -65,7 +94,7 @@ class SceneObject {
 			this._rotationAxis[key] = vecRotateAxis[key];
 		});
 
-		glmatrix.mat4.rotate(this.modelMatrix, this.modelMatrix, angle, this._rotationAxis.asArray());
+		glmatrix.mat4.rotate(this.localMatrix, this.localMatrix, angle, this._rotationAxis.asArray());
 
 		this.updateMatrices();
 	}
@@ -75,7 +104,7 @@ class SceneObject {
 	}
 
 	_updateNormalMatrix() {
-		glmatrix.mat4.invert(this.normalMatrix, this.modelMatrix);
+		glmatrix.mat4.invert(this.normalMatrix, this.localMatrix);
 		glmatrix.mat4.transpose(this.normalMatrix, this.normalMatrix);
 	}
 

@@ -15,8 +15,8 @@ class Cube extends SceneObject {
 		this.attributes = {
 			aVertexPosition: { numComponents: 3, data: positions },
 			aTextureCoord: { numComponents: 2, data: uv},
-			aVertexNormal:   { numComponents: 3, data: vertexNormals},
-			indices:  { numComponents: 3, data: indices},
+			aVertexNormal: { numComponents: 3, data: vertexNormals},
+			indices: {numComponents: 3, data: indices},
 		};
 
 		this.uniforms = {
@@ -28,7 +28,7 @@ class Cube extends SceneObject {
 
 		this.bufferInfo = null;
 		this.vao = null;
-	}	
+	}
 
 	_getIndices() {
 		return [

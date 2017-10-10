@@ -11,13 +11,13 @@ class FirstExample {
 		this.scene = new Scene(this.gl);
 
 		const aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
-		this.camera = new Camera({aspect});		
+		this.camera = new Camera({aspect});
 		this.cameraOrbitController = new CameraOrbitController({
 			camera: this.camera,
 			opts: {
-				element: this._domElement,				
+				element: this._domElement,
 				target: [0, 5, 0],
-				distance: 20				
+				distance: 20
 			}
 		});
 
@@ -34,7 +34,7 @@ class FirstExample {
 
 		const plane = new Plane({ material, });
 		plane.scale = {x: 30, y:1, z: 30};
-		
+
 		this.scene.addToScene(plane);
 
 		requestAnimationFrame(this.renderFunc);
@@ -80,6 +80,11 @@ class FirstExample {
 		cube3.position = {x: -5, y: 5, z: -18};
 		this.scene.addToScene(cube3);
 
+		const cube4 = new Cube({ material});
+		cube4.position = {x: -5, y: 15, z: -18};
+		this.scene.addToScene(cube4);
+		cube4.setParent(cube3);
+		window.x = cube3;
 
 		this.cubes = [cube, cube2, cube3];
 	}

@@ -8,7 +8,7 @@ class Renderer {
 		this._camera = camera;
 
 		this._glDepthTest = this._glContext.getParameter(this._glContext.DEPTH_TEST);
-		this._glCullFace = this._glContext.getParameter(this._glContext.CULL_FACE);		
+		this._glCullFace = this._glContext.getParameter(this._glContext.CULL_FACE);
 	}
 
 	drawScene() {
@@ -28,7 +28,9 @@ class Renderer {
 				this._depthTest(renderObject.material.depthTest);
 				this._useFaceCulluing(renderObject.material.isDoubleSided);
 
-				glmatrix.mat4.multiply(modelViewMatrix, viewProjectionMatrix, renderObject.modelMatrix);
+				renderObject.updateWorldMatrix();
+
+				glmatrix.mat4.multiply(modelViewMatrix, viewProjectionMatrix, renderObject.worldMatrix);
 
 				this._glContext.bindVertexArray(renderObject.vao);
 
@@ -61,13 +63,13 @@ class Renderer {
 		this._glDepthTest = useDepthTest;
 		useDepthTest ? this._glContext.enable(this._glContext.DEPTH_TEST) : this._glContext.disable(this._glContext.DEPTH_TEST);
 	}
-	_useFaceCulluing(isDoubleSided) {		
+	_useFaceCulluing(isDoubleSided) {
 		if (this._glCullFace === isDoubleSided) return;
 
 		this._glCullFace = isDoubleSided;
 		isDoubleSided ? this._glContext.disable(this._glContext.CULL_FACE) : this._glContext.enable(this._glContext.CULL_FACE);
 	}
-	
+
 
 	shouldBeFrustrumCulled(viewProjection, objectPosition) {
 
