@@ -15,10 +15,9 @@ class FirstExample {
 		this.cameraOrbitController = new CameraOrbitController({
 			camera: this.camera,
 			opts: {
-				element: this._domElement,
-				position: [0, 0, 100000],
-				target: [0, 0, 0],
-				distance: 10				
+				element: this._domElement,				
+				target: [0, 5, 0],
+				distance: 20				
 			}
 		});
 

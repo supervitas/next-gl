@@ -49,7 +49,7 @@ class Camera {
 		return this._cameraPosition;
 	}
 
-	set position(position) {		
+	set position(position) {				
 		if (Array.isArray(position)) {
 			this._cameraPosition.x = position[0];
 			this._cameraPosition.y = position[1];
@@ -68,7 +68,7 @@ class Camera {
 		return this._cameraTarget;
 	}
 
-	set target (target) {
+	set target (target) {	
 		if (Array.isArray(target)) {
 			this._cameraTarget.x = target[0];
 			this._cameraTarget.y = target[1];

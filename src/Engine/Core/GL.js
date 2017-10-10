@@ -156,6 +156,5 @@ class GL {
 		}
 		return hash;
 	}
-
 }
 export {GL};
