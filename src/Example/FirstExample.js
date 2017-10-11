@@ -84,7 +84,12 @@ class FirstExample {
 		cube4.position = {x: -5, y: 15, z: -18};
 		this.scene.addToScene(cube4);
 		cube4.setParent(cube3);
-		window.x = cube3;
+
+
+		const cube5 = new Cube({ material});
+		cube5.position = {x: 3, y: 2, z: -2};
+		this.scene.addToScene(cube5);
+		cube5.setParent(cube4);
 
 		this.cubes = [cube, cube2, cube3];
 	}

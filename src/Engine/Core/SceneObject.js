@@ -27,9 +27,11 @@ class SceneObject {
 	updateWorldMatrix(parentWorldMatrix) {
 		if (parentWorldMatrix) {
 			glmatrix.mat4.multiply(this.worldMatrix, parentWorldMatrix, this.localMatrix);
-		} else {
+		}
+		else if (!this.parent) {
 			glmatrix.mat4.copy(this.worldMatrix, this.localMatrix);
 		}
+
 		this.children.forEach((child) => {
 			child.updateWorldMatrix(this.worldMatrix);
 		});
