@@ -2,32 +2,40 @@ import * as glmatrix from 'gl-matrix';
 import {Vec3} from '../Math/Vec3';
 import twgl from 'twgl-base.js';
 
+let ID = 0;
+
 class SceneObject {
-	constructor({material = null}) {
+	constructor({material = null, name = ''} = {}) {
+		this.id = ID++;
+		this.name = name;
 		this.vao = null;
 
-		this.material = material;
-		this.program = material.program;
-
-		this.visible = true;
-		this.frustrumCulled = true;
+		if (material != null) {
+			this.material = material;
+			this.program = material.program;
+		}
 
 		this._position = new Vec3();
 		this._rotationAxis = new Vec3();
 		this._scale = new Vec3(1, 1, 1);
 
+		this.children = [];
+		this.parent = null;
+
+		this.visible = true;
+		this.frustrumCulled = true;
+
 		this.normalMatrix = glmatrix.mat4.create();
 
 		this.localMatrix = glmatrix.mat4.create();
 		this.worldMatrix = glmatrix.mat4.create();
-		this.children = [];
-		this.parent = null;
-
 	}
+
 	updateWorldMatrix(parentWorldMatrix) {
 		if (parentWorldMatrix) {
 			glmatrix.mat4.multiply(this.worldMatrix, parentWorldMatrix, this.localMatrix);
 		}
+
 		else if (!this.parent) {
 			glmatrix.mat4.copy(this.worldMatrix, this.localMatrix);
 		}
@@ -39,19 +47,26 @@ class SceneObject {
 
 	setParent(parent) {
 		if (this.parent) {
-			var ndx = this.parent.children.indexOf(this);
-			if (ndx >= 0) {
-				this.parent.children.splice(ndx, 1);
+			const index = this.parent.children.indexOf(this);
+			if (index !== -1) {
+				this.parent.children.splice(index, 1);
 			}
 		}
-
 		if (parent) {
 			parent.children.push(this);
 		}
 		this.parent = parent;
 	}
 
-	createObject(gl) {
+	removeChild(child) {
+		const index = this.children.indexOf(child);
+		if (index !== -1) {
+			this.children.splice(index, 1);
+			child.parent = null;
+		}
+	}
+
+	initObject(gl) {
 		this.program = this.material.createMaterial(gl);
 
 		this.programInfo = {
@@ -109,6 +124,5 @@ class SceneObject {
 		glmatrix.mat4.invert(this.normalMatrix, this.localMatrix);
 		glmatrix.mat4.transpose(this.normalMatrix, this.normalMatrix);
 	}
-
 }
 export {SceneObject};

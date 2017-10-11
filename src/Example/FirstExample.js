@@ -1,4 +1,4 @@
-import {StandardMaterial, GL, Renderer, Cube, Plane,
+import {StandardMaterial, GL, Renderer, Cube, Plane, SceneObject,
 	Color, Camera, CameraOrbitController, Scene} from '../Engine/next-gl';
 
 class FirstExample {
@@ -48,7 +48,7 @@ class FirstExample {
 		const deltaTime = dt - this._lastDT;
 		this._lastDT = dt;
 
-		for (let [index, cube] of this.cubes.entries()) {
+		for (const [index, cube] of this.cubes.entries()) {
 			cube.rotate({x: 0, y: 1, z: 0}, deltaTime);
 			cube.rotate({x: 0, y: 0, z: 1}, deltaTime * 0.2 * index);
 		}
@@ -83,13 +83,13 @@ class FirstExample {
 		const cube4 = new Cube({ material});
 		cube4.position = {x: -5, y: 15, z: -18};
 		this.scene.addToScene(cube4);
-		cube4.setParent(cube3);
 
+		const emptyObject = new SceneObject();
+		this.scene.addToScene(emptyObject);
 
-		const cube5 = new Cube({ material});
-		cube5.position = {x: 3, y: 2, z: -2};
-		this.scene.addToScene(cube5);
-		cube5.setParent(cube4);
+		cube4.setParent(emptyObject);
+		emptyObject.setParent(cube3);
+		window.x = () => emptyObject.removeChild(cube4);
 
 		this.cubes = [cube, cube2, cube3];
 	}

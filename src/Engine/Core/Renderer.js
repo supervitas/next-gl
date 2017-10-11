@@ -14,30 +14,36 @@ class Renderer {
 	drawScene() {
 		this._glContext.clear(this._glContext.COLOR_BUFFER_BIT | this._glContext.DEPTH_BUFFER_BIT);
 
+		this._updateWorldMatixForSceneObjects();
+
 		const viewProjectionMatrix = this._camera.viewProjectionMatrix;
 
 		const modelViewMatrix = glmatrix.mat4.create();
 
-		for (const sceneObject of this._scene.sceneObjects.values()) { // for programs in sceneObjects..
+		for (const [program, renderable] of this._scene.renderablesByProgram.entries()) {
 
-			this._glContext.useProgram(sceneObject.program);
+			this._glContext.useProgram(program);
 
-			for (const renderObject of sceneObject.renderables) { // render objects with same program at once
-				if (!renderObject.visible) continue;
+			for (const sceneObject of renderable.sceneObjects) {
+				if (!sceneObject.visible) continue;
 
-				this._depthTest(renderObject.material.depthTest);
-				this._useFaceCulluing(renderObject.material.isDoubleSided);
+				this._depthTest(sceneObject.material.depthTest);
+				this._useFaceCulluing(sceneObject.material.isDoubleSided);
 
-				renderObject.updateWorldMatrix();
+				glmatrix.mat4.multiply(modelViewMatrix, viewProjectionMatrix, sceneObject.worldMatrix);
 
-				glmatrix.mat4.multiply(modelViewMatrix, viewProjectionMatrix, renderObject.worldMatrix);
+				this._glContext.bindVertexArray(sceneObject.vao);
 
-				this._glContext.bindVertexArray(renderObject.vao);
+				this._updateRenderableUniforms(sceneObject, {normalMatrix: sceneObject.normalMatrix, modelViewMatrix});
 
-				this._updateRenderableUniforms(renderObject, {normalMatrix: renderObject.normalMatrix, modelViewMatrix});
-
-				twgl.drawBufferInfo(this._glContext, renderObject.bufferInfo);
+				twgl.drawBufferInfo(this._glContext, sceneObject.bufferInfo);
 			}
+		}
+	}
+
+	_updateWorldMatixForSceneObjects() {
+		for (const sceneObject of this._scene.sceneObjects.values()) {
+			sceneObject.updateWorldMatrix();
 		}
 	}
 

@@ -25,7 +25,7 @@ class GL {
 			defines = new Map([...defines.entries()].sort()); // sorting
 			let programDefines = '';
 
-			for (let [key, value] of defines) {
+			for (const [key, value] of defines) {
 				programDefines += `#define ${key} = ${value};\n`;
 			}
 
