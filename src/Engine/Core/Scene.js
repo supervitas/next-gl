@@ -3,7 +3,6 @@ class Scene {
 		this._gl = gl;
 		this.renderablesByProgram = new Map(); // grouped sceneObjects by program
 		this.sceneObjects = new Map();
-
 	}
 
 	addToScene(sceneObject) {
@@ -36,7 +35,7 @@ class Scene {
 	}
 
 	getObjectById(id) {
-
+		return this.sceneObjects.get(id);
 	}
 }
 export {Scene};

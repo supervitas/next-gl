@@ -44,8 +44,7 @@ class GL {
 
 		const program = this._createProgram(
 			this._loadShader(this.glContext.VERTEX_SHADER, vertexShader),
-			this._loadShader(this.glContext.FRAGMENT_SHADER, fragmentShader),
-			programHash
+			this._loadShader(this.glContext.FRAGMENT_SHADER, fragmentShader)
 		);
 
 		this._programs.set(programHash, program);
@@ -130,9 +129,8 @@ class GL {
 		return shader;
 	}
 
-	_createProgram(vertexShader, fragmentShader, name) {
+	_createProgram(vertexShader, fragmentShader) {
 		const shaderProgram = this.glContext.createProgram();
-		shaderProgram.name = name;
 
 		this.glContext.attachShader(shaderProgram, vertexShader);
 		this.glContext.attachShader(shaderProgram, fragmentShader);
