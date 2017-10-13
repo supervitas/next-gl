@@ -7,9 +7,9 @@ class Scene {
 
 	addToScene(sceneObject) {
 		this.sceneObjects.set(sceneObject.id, sceneObject);
-		
+
 		if (!sceneObject.material) return; // empty object
-		
+
 		sceneObject.initObject(this._gl);
 
 		if (this.renderablesByProgram.has(sceneObject.material.program)) {
@@ -20,35 +20,27 @@ class Scene {
 		}
 	}
 
-	removeFromScene(sceneObject) {		
-		if (!sceneObject.material)	{
-			const object = this.getObjectById(sceneObject.id);
-			if (object.children) {
-				for (const child of sceneObject.children) {
-					this.removeFromScene(child);
-				}
-			}
-			
-			this.sceneObjects.delete(sceneObject.id);	
-			return
+	removeFromScene(sceneObject) {
+		const object = this.getObjectById(sceneObject.id);
 
+		if (!object) {
+			console.warn('Can`t find object in this scene');
+			return;
 		}
-		if (!this.renderablesByProgram.has(sceneObject.material.program)) return;
 
-		const renderable = this.renderablesByProgram.get(sceneObject.material.program);
+		if (object.material) {
+			const renderable = this.renderablesByProgram.get(sceneObject.material.program);
+			const index = renderable.sceneObjects.indexOf(sceneObject);
+			renderable.sceneObjects.splice(index, 1);
+		}
 
-		const index = renderable.sceneObjects.indexOf(sceneObject);
-
-		if (index === -1) return;		
-
-		if (sceneObject.children) {
-			for (const child of sceneObject.children) {
+		if (object.children) {
+			for (const child of object.children) {
 				this.removeFromScene(child);
 			}
 		}
-				
-		renderable.sceneObjects.splice(index, 1);
-		this.sceneObjects.delete(sceneObject.id);	
+
+		this.sceneObjects.delete(sceneObject.id);
 	}
 
 	getObjectById(id) {

@@ -89,7 +89,6 @@ class FirstExample {
 
 		cube4.setParent(emptyObject);
 		emptyObject.setParent(cube3);
-		window.x = () => this.scene.removeFromScene(cube3);		
 
 		this.cubes = [cube, cube2, cube3];
 	}

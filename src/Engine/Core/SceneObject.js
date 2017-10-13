@@ -22,7 +22,7 @@ class SceneObject {
 		this.children = [];
 		this.parent = null;
 
-		this.visible = true;
+		this._visible = true;
 		this.frustrumCulled = true;
 
 		this.normalMatrix = glmatrix.mat4.create();
@@ -90,6 +90,17 @@ class SceneObject {
 
 	get position() {
 		return this._position;
+	}
+
+	set visible(isVisible) {
+		this._visible = false;
+		for (const child of this.children) {
+			child.visible = isVisible;
+		}
+	}
+
+	get visible() {
+		return this._visible;
 	}
 
 	set scale(scale) {
