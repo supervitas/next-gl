@@ -20,12 +20,12 @@ class Renderer {
 
 		const modelViewMatrix = glmatrix.mat4.create();
 
-		for (const [program, renderable] of this._scene.renderablesByProgram.entries()) {
-
+		for (const [program, renderable] of this._scene.renderablesByProgram.entries()) {			
+			
 			this._glContext.useProgram(program);
 
 			for (const sceneObject of renderable.sceneObjects) {
-				if (!sceneObject.visible) continue;
+				if (!sceneObject.visible) continue;								
 
 				this._depthTest(sceneObject.material.depthTest);
 				this._useFaceCulluing(sceneObject.material.isDoubleSided);
@@ -69,6 +69,7 @@ class Renderer {
 		this._glDepthTest = useDepthTest;
 		useDepthTest ? this._glContext.enable(this._glContext.DEPTH_TEST) : this._glContext.disable(this._glContext.DEPTH_TEST);
 	}
+
 	_useFaceCulluing(isDoubleSided) {
 		if (this._glCullFace === isDoubleSided) return;
 

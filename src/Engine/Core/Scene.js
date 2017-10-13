@@ -6,32 +6,49 @@ class Scene {
 	}
 
 	addToScene(sceneObject) {
-		if (!sceneObject.material) { // empty object
-			this.sceneObjects.set(sceneObject.id, sceneObject);
-			return;
-		}
-
+		this.sceneObjects.set(sceneObject.id, sceneObject);
+		
+		if (!sceneObject.material) return; // empty object
+		
 		sceneObject.initObject(this._gl);
 
-		if (this.renderablesByProgram.has(sceneObject.material.program)) { // allready have object for this program
+		if (this.renderablesByProgram.has(sceneObject.material.program)) {
 			const renderable = this.renderablesByProgram.get(sceneObject.program);
 			renderable.sceneObjects.push(sceneObject);
-		} else { // create
+		} else {
 			this.renderablesByProgram.set(sceneObject.material.program, {sceneObjects: [sceneObject]});
 		}
-
-		this.sceneObjects.set(sceneObject.id, sceneObject);
 	}
 
-	removeFromScene(renderable) { // todo
-		if (!this.sceneObjects.has(renderable.material.program.name)) return;
+	removeFromScene(sceneObject) {		
+		if (!sceneObject.material)	{
+			const object = this.getObjectById(sceneObject.id);
+			if (object.children) {
+				for (const child of sceneObject.children) {
+					this.removeFromScene(child);
+				}
+			}
+			
+			this.sceneObjects.delete(sceneObject.id);	
+			return
 
-		const sceneObject = this.sceneObjects.get(renderable.material.program.name);
-
-		const index = sceneObject.renderables.indexOf(renderable);
-		if (index !== -1) {
-			sceneObject.renderables.splice(index, 1);
 		}
+		if (!this.renderablesByProgram.has(sceneObject.material.program)) return;
+
+		const renderable = this.renderablesByProgram.get(sceneObject.material.program);
+
+		const index = renderable.sceneObjects.indexOf(sceneObject);
+
+		if (index === -1) return;		
+
+		if (sceneObject.children) {
+			for (const child of sceneObject.children) {
+				this.removeFromScene(child);
+			}
+		}
+				
+		renderable.sceneObjects.splice(index, 1);
+		this.sceneObjects.delete(sceneObject.id);	
 	}
 
 	getObjectById(id) {
