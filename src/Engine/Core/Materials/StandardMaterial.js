@@ -13,9 +13,10 @@ class StandardMaterial {
 		}
 		this.depthTest = useDepthTest;
 		this.isDoubleSided = isDoubleSided;
-		this.color = color.toVec4();
+		this.color = color.toRGBA();
 		this.program = null;
 	}
+	
 	createMaterial(gl) {
 		this.program = gl.initProgram(vertexShader, fragmentShader, this.defines);
 		return this.program;

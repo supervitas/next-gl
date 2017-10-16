@@ -1,12 +1,19 @@
+import {DirectLight} from './Lights/DirectLight';
+
 class Scene {
 	constructor(gl) {
 		this._gl = gl;
 		this.renderablesByProgram = new Map(); // grouped sceneObjects by program
 		this.sceneObjects = new Map();
+		this.lights = [];
 	}
 
 	addToScene(sceneObject) {
 		this.sceneObjects.set(sceneObject.id, sceneObject);
+
+		if (sceneObject instanceof DirectLight) {
+			this.lights.push(sceneObject);
+		}
 
 		if (!sceneObject.material) return; // empty object
 

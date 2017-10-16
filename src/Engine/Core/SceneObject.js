@@ -5,12 +5,12 @@ import twgl from 'twgl-base.js';
 let ID = 0;
 
 class SceneObject {
-	constructor({material = null, name = ''} = {}) {
+	constructor({material = null, name = null} = {material: null, name: null}) {
 		this.id = ID++;
-		this.name = name;
+		this.name = name || `SceneObject#${this.id}`;
 		this.vao = null;
 
-		if (material != null) {
+		if (material !== null) {
 			this.material = material;
 			this.program = material.program;
 		}
