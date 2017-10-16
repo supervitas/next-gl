@@ -10,8 +10,6 @@ in vec2 aTextureCoord;
 out highp vec2 vTextureCoord;
 out highp vec3 vLighting;
 
-out vec3 v_normal;
-
 void main(void) {
   vTextureCoord = aTextureCoord;
   
@@ -26,8 +24,6 @@ void main(void) {
   highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
   
   vLighting = ambientLight + (directionalLightColor * directional);
-
-  v_normal = mat3(uNormalMatrix) * aVertexNormal;
 
   gl_Position =  uModelViewMatrix * aVertexPosition;
 }
