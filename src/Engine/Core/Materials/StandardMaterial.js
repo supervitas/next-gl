@@ -3,8 +3,7 @@ import fragmentShader from './shaders/Standard.frag';
 import vertexShader from './shaders/Standard.vert';
 
 class StandardMaterial {
-	constructor({color = new Color(255, 255, 255, 1),
-		map = null, isDoubleSided = false, useDepthTest = true}) {
+	constructor({color = new Color(), map = null, isDoubleSided = false, useDepthTest = true}) {
 		this.defines = new Map();
 
 		if (map !== null) {
@@ -13,10 +12,10 @@ class StandardMaterial {
 		}
 		this.depthTest = useDepthTest;
 		this.isDoubleSided = isDoubleSided;
-		this.color = color.toRGBA();
+		this.color = color.toRGB();
 		this.program = null;
 	}
-	
+
 	createMaterial(gl) {
 		this.program = gl.initProgram(vertexShader, fragmentShader, this.defines);
 		return this.program;

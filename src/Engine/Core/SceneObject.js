@@ -76,6 +76,20 @@ class SceneObject {
 
 		this.bufferInfo = twgl.createBufferInfoFromArrays(gl.glContext, this.attributes);
 		this.vao = twgl.createVAOFromBufferInfo(gl.glContext, this.programInfo.attribSetters, this.bufferInfo);
+
+		const uniformLightLocation = gl.glContext.getUniformBlockIndex(this.program, 'Lights');
+		gl.glContext.uniformBlockBinding(this.program, uniformLightLocation, 0);
+
+
+		const lightPos = new Float32Array([
+			0.0, 0.0, 0.0, 0.0,
+		]);
+		const uniformPerPassBuffer = gl.glContext.createBuffer();
+		gl.glContext.bindBuffer(gl.glContext.UNIFORM_BUFFER, uniformPerPassBuffer);
+		gl.glContext.bufferData(gl.glContext.UNIFORM_BUFFER, lightPos, gl.DYNAMIC_DRAW);
+		gl.glContext.bufferSubData(gl.glContext.UNIFORM_BUFFER, 0, lightPos);
+		gl.glContext.bindBuffer(gl.glContext.UNIFORM_BUFFER, null);
+
 	}
 
 	set position(positionVec) {

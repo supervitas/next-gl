@@ -19,3 +19,4 @@ export {Camera} from './Core/Camera/Camera';
 export {CameraOrbitController} from './Core/Camera/CameraOrbitController';
 
 export {DirectLight} from './Core/Lights/DirectLight';
+export {AmbientLight} from './Core/Lights/AmbientLight';

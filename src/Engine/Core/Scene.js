@@ -1,4 +1,4 @@
-import {DirectLight} from './Lights/DirectLight';
+import {Light} from './Lights/Light';
 
 class Scene {
 	constructor(gl) {
@@ -11,7 +11,7 @@ class Scene {
 	addToScene(sceneObject) {
 		this.sceneObjects.set(sceneObject.id, sceneObject);
 
-		if (sceneObject instanceof DirectLight) {
+		if (sceneObject instanceof Light) {
 			this.lights.push(sceneObject);
 		}
 

@@ -2,7 +2,22 @@
 
 precision mediump float;
 
-uniform vec4 uColor;
+struct DirectLight {
+	float u_intencity;
+	vec3 u_color;
+	vec3 u_direction;
+};
+
+// uniform uAmbientLight {
+// 	float intencity;
+// 	vec3 color;
+// } ambient[2];
+
+uniform Lights {
+	DirectLight directLight;
+} u_lights;
+
+uniform vec3 uColor;
 
 #ifdef USE_MAP
 	uniform sampler2D map;
@@ -10,20 +25,26 @@ uniform vec4 uColor;
 
 in highp vec2 vTextureCoord;
 in highp vec3 vLighting;
-in vec3 v_normal;
+in vec3 vNormal;
 
 out vec4 resultColor;
 
 void main() {
-  	highp vec4 texelColor = uColor;
+  	highp vec4 texelColor = vec4(uColor, 1.0);
 
-  	vec3 normal = normalize(v_normal);
 	vec3 ambientLight = vec3(1.0, 1.0, 1.0) * 0.3;
-	float light = max(dot(normal, vec3(0.15, 0.8, 0.75)), 0.0);
+	// float light = max(dot(normal, vec3(0.15, 0.8, 0.75)), 0.0) * directIntencity;
 
-	vec3 directionalLightColor = vec3(1, 1, 1);
+	// vec3 directionalLightColor = vec3(1.0, 1.0, 1.0);
 
-	vec3 vLighting = ambientLight + (directionalLightColor * light);
+
+  	vec3 normal = normalize(vNormal);
+	// vec3 ambientLight = ambient[0].color * ambient[0].intencity;
+
+	float light = max(dot(normal, u_lights.directLight.u_direction), 0.0) * u_lights.directLight.u_intencity;
+
+
+	vec3 vLighting = (u_lights.directLight.u_color * light);
 
 	#ifdef USE_MAP
 		texelColor = texture(map, vTextureCoord) * texelColor;

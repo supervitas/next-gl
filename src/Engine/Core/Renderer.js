@@ -1,6 +1,9 @@
 import * as glmatrix from 'gl-matrix';
 import twgl from 'twgl-base.js';
 
+import {AmbientLight} from './Lights/AmbientLight';
+import {DirectLight} from './Lights/DirectLight';
+
 class Renderer {
 	constructor({glContext, scene, camera}) {
 		this._glContext = glContext;
@@ -9,6 +12,7 @@ class Renderer {
 
 		this._glDepthTest = this._glContext.getParameter(this._glContext.DEPTH_TEST);
 		this._glCullFace = this._glContext.getParameter(this._glContext.CULL_FACE);
+		this._wasPassed = false;
 	}
 
 	drawScene() {
@@ -20,12 +24,12 @@ class Renderer {
 
 		const modelViewMatrix = glmatrix.mat4.create();
 
-		for (const [program, renderable] of this._scene.renderablesByProgram.entries()) {			
-			
+		for (const [program, renderable] of this._scene.renderablesByProgram.entries()) {
+
 			this._glContext.useProgram(program);
 
 			for (const sceneObject of renderable.sceneObjects) {
-				if (!sceneObject.visible) continue;								
+				if (!sceneObject.visible) continue;
 
 				this._depthTest(sceneObject.material.depthTest);
 				this._useFaceCulluing(sceneObject.material.isDoubleSided);
@@ -48,6 +52,22 @@ class Renderer {
 	}
 
 	_updateRenderableUniforms(renderObject, {normalMatrix, modelViewMatrix}) {
+		for (const light of this._scene.lights) {
+			// if (light instanceof AmbientLight) {
+			// 	console.log(renderObject.uniforms)
+			// 	renderObject.uniforms.uAmbientLight.intencity = light.intencity;
+			// 	renderObject.uniforms.uAmbientLight.color = light.color;
+			// 	// console.log('ambient')
+			// }
+
+			// if (light instanceof DirectLight) {
+			// 	console.log(renderObject.uniforms)
+			// 	renderObject.uniforms.uAmbientLight.intencity = light.intencity;
+			// 	renderObject.uniforms.uAmbientLight.color = light.color;
+			// 	// console.log("direct");
+			// }
+		}
+
 		renderObject.uniforms.uNormalMatrix = normalMatrix;
 		renderObject.uniforms.uModelViewMatrix = modelViewMatrix;
 		renderObject.uniforms.uColor = [

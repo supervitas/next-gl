@@ -8,13 +8,12 @@ in vec3 aVertexNormal;
 in vec2 aTextureCoord;
 
 out highp vec2 vTextureCoord;
-out highp vec3 vLighting;
-out vec3 v_normal;
+out vec3 vNormal;
 
 void main() {
   vTextureCoord = aTextureCoord;
 
-  v_normal = mat3(uNormalMatrix) * aVertexNormal;
+  vNormal = mat3(uNormalMatrix) * aVertexNormal;
 
   gl_Position =  uModelViewMatrix * aVertexPosition;
 }

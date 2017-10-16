@@ -3,7 +3,7 @@ import {Color} from './Color';
 class GL {
 	constructor({domElement, clearColor = new Color(), transparent = true, pixelRatio = window.devicePixelRatio || 1, antialias = true }) {
 		this._domElement = domElement;
-		this._clearColor = clearColor.toRGBA();
+		this._clearColor = clearColor.toRGB();
 		this._transparent = transparent ? 0.0 : 1.0;
 		this._antialias = antialias;
 

@@ -1,11 +1,10 @@
 import {Color} from '../Color';
-import {SceneObject} from '../SceneObject';
+import {Light} from './Light';
 
-class DirectLight extends SceneObject {
-	constructor({color = new Color(), intencity = 1.0} = {color: new Color(), intencity: 1.0}) {        
-		super();        
-		this.color = color;
-		this.intencity = intencity;
+class DirectLight extends Light {
+	constructor({color = new Color(), intencity = 1.0, direction = {x:0, y: 0, z: 0}} = {}) {
+		super({color, intencity, direction});
+
 	}
 }
 export {DirectLight};

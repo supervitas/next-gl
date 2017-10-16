@@ -1,5 +1,5 @@
 import {StandardMaterial, GL, Renderer, Cube, Plane, SceneObject,
-	Color, Camera, CameraOrbitController, Scene, DirectLight} from '../Engine/next-gl';
+	Color, Camera, CameraOrbitController, Scene, DirectLight, AmbientLight} from '../Engine/next-gl';
 
 class FirstExample {
 	constructor(domElement) {
@@ -9,8 +9,11 @@ class FirstExample {
 		this.gl = new GL({domElement: this._domElement});
 
 		this.scene = new Scene(this.gl);
-		this.dirLight = new DirectLight();
+		this.dirLight = new DirectLight({intencity: 0.5});
+		this.ambientLight = new AmbientLight({intencity: 0.3});
+
 		this.scene.addToScene(this.dirLight);
+		this.scene.addToScene(this.ambientLight);
 
 		const aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
 		this.camera = new Camera({aspect});
