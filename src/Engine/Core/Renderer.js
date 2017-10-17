@@ -73,8 +73,7 @@ class Renderer {
 		renderObject.uniforms.uColor = [
 			renderObject.material.color.r,
 			renderObject.material.color.g,
-			renderObject.material.color.b,
-			renderObject.material.color.a
+			renderObject.material.color.b			
 		];
 
 		if (renderObject.material.map) {

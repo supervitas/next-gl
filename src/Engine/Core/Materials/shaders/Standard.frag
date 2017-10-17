@@ -30,7 +30,7 @@ in vec3 vNormal;
 out vec4 resultColor;
 
 void main() {
-  	highp vec4 texelColor = vec4(uColor, 1.0);
+  highp vec3 texelColor = uColor;
 
 	vec3 ambientLight = vec3(1.0, 1.0, 1.0) * 0.3;
 	// float light = max(dot(normal, vec3(0.15, 0.8, 0.75)), 0.0) * directIntencity;
@@ -44,11 +44,11 @@ void main() {
 	float light = max(dot(normal, u_lights.directLight.u_direction), 0.0) * u_lights.directLight.u_intencity;
 
 
-	vec3 vLighting = (u_lights.directLight.u_color * light);
+	vec3 vLighting = ambientLight + (u_lights.directLight.u_color * light);
 
 	#ifdef USE_MAP
-		texelColor = texture(map, vTextureCoord) * texelColor;
+		texelColor = texture(map, vTextureCoord).rgb * texelColor;
 	#endif
 
-	resultColor = vec4(texelColor.rgb * vLighting, texelColor.a);
+	resultColor = vec4(texelColor.rgb * vLighting, 1.0);
 }

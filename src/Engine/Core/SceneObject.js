@@ -69,27 +69,20 @@ class SceneObject {
 	initObject(gl) {
 		this.program = this.material.createMaterial(gl);
 
-		this.programInfo = {
-			uniformSetters: twgl.createUniformSetters(gl.glContext, this.program),
-			attribSetters: twgl.createAttributeSetters(gl.glContext, this.program)
-		};
-
+		this.programInfo = twgl.createProgramInfoFromProgram(gl.glContext, this.program);
+	
 		this.bufferInfo = twgl.createBufferInfoFromArrays(gl.glContext, this.attributes);
 		this.vao = twgl.createVAOFromBufferInfo(gl.glContext, this.programInfo.attribSetters, this.bufferInfo);
 
-		const uniformLightLocation = gl.glContext.getUniformBlockIndex(this.program, 'Lights');
-		gl.glContext.uniformBlockBinding(this.program, uniformLightLocation, 0);
-
-
-		const lightPos = new Float32Array([
-			0.0, 0.0, 0.0, 0.0,
-		]);
-		const uniformPerPassBuffer = gl.glContext.createBuffer();
-		gl.glContext.bindBuffer(gl.glContext.UNIFORM_BUFFER, uniformPerPassBuffer);
-		gl.glContext.bufferData(gl.glContext.UNIFORM_BUFFER, lightPos, gl.DYNAMIC_DRAW);
-		gl.glContext.bufferSubData(gl.glContext.UNIFORM_BUFFER, 0, lightPos);
-		gl.glContext.bindBuffer(gl.glContext.UNIFORM_BUFFER, null);
-
+		const lightUboInfo = twgl.createUniformBlockInfo(gl.glContext, this.programInfo, 'Lights');	
+		
+		twgl.setBlockUniforms(lightUboInfo, {
+			u_direction: [0.15, 0.8, 0.75],
+			u_color: [1.0, 1.0, 1.0],
+			u_intencity: 0.7
+		});		
+		twgl.setUniformBlock(gl.glContext, this.programInfo, lightUboInfo);
+		twgl.bindUniformBlock(gl.glContext, this.programInfo, lightUboInfo);		
 	}
 
 	set position(positionVec) {
