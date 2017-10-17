@@ -70,19 +70,20 @@ class SceneObject {
 		this.program = this.material.createMaterial(gl);
 
 		this.programInfo = twgl.createProgramInfoFromProgram(gl.glContext, this.program);
-	
+
 		this.bufferInfo = twgl.createBufferInfoFromArrays(gl.glContext, this.attributes);
 		this.vao = twgl.createVAOFromBufferInfo(gl.glContext, this.programInfo.attribSetters, this.bufferInfo);
 
-		const lightUboInfo = twgl.createUniformBlockInfo(gl.glContext, this.programInfo, 'Lights');	
-		
+		const lightUboInfo = twgl.createUniformBlockInfo(gl.glContext, this.programInfo, 'Lights');
+
 		twgl.setBlockUniforms(lightUboInfo, {
-			u_direction: [0.15, 0.8, 0.75],
-			u_color: [1.0, 1.0, 1.0],
-			u_intencity: 0.7
-		});		
+			'directLight.u_direction': [0.15, 0.8, 0.75],
+			'directLight.u_color': [1.0, 1.0, 1.0],
+			'directLight.u_intencity': 0.7
+		});
+
 		twgl.setUniformBlock(gl.glContext, this.programInfo, lightUboInfo);
-		twgl.bindUniformBlock(gl.glContext, this.programInfo, lightUboInfo);		
+		twgl.bindUniformBlock(gl.glContext, this.programInfo, lightUboInfo);
 	}
 
 	set position(positionVec) {
