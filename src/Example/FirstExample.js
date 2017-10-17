@@ -9,14 +9,14 @@ class FirstExample {
 		this.gl = new GL({domElement: this._domElement});
 
 		this.scene = new Scene(this.gl);
-		this.dirLight = new DirectLight({intencity: 0.5});
-		this.ambientLight = new AmbientLight({intencity: 0.3});
+		this.dirLight = new DirectLight({intencity: 0.5, position: [0.15, 0.8, 0.75]});
+		this.ambientLight = new AmbientLight({intencity: 0.3, color: new Color({r: 100, g: 200, b: 150})});
 
 		this.scene.addToScene(this.dirLight);
 		this.scene.addToScene(this.ambientLight);
 
 		const aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
-		this.camera = new Camera({aspect});
+		this.camera = new Camera({near: 1, far: 1000, aspect});
 		this.cameraOrbitController = new CameraOrbitController({
 			camera: this.camera,
 			opts: {
