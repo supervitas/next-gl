@@ -8,13 +8,14 @@ struct DirectLight {
 	vec3 u_direction;
 };
 
-// uniform uAmbientLight {
-// 	float intencity;
-// 	vec3 color;
-// } ambient[2];
+struct AmbientLight {
+	float u_intencity;
+	vec3 u_color;
+};
 
 uniform Lights {
 	DirectLight directLight;
+	AmbientLight ambientLight;
 } u_lights;
 
 uniform vec3 uColor;
@@ -29,22 +30,24 @@ in vec3 vNormal;
 
 out vec4 resultColor;
 
+vec3 calc_ambient(AmbientLight ambient) {
+	return ambient.u_color * ambient.u_intencity;
+}
+
+vec3 calc_direct(DirectLight direct, vec3 normal) {
+	return direct.u_color * max(dot(normal, direct.u_direction), 0.0) * direct.u_intencity;
+}
+
 void main() {
-  highp vec3 texelColor = uColor;
-
-	vec3 ambientLight = vec3(1.0, 1.0, 1.0) * 0.3;
-	// float light = max(dot(normal, vec3(0.15, 0.8, 0.75)), 0.0) * directIntencity;
-
-	// vec3 directionalLightColor = vec3(1.0, 1.0, 1.0);
-
+  	highp vec3 texelColor = uColor;
 
   	vec3 normal = normalize(vNormal);
-	// vec3 ambientLight = ambient[0].color * ambient[0].intencity;
-
-	float light = max(dot(normal, u_lights.directLight.u_direction), 0.0) * u_lights.directLight.u_intencity;
 
 
-	vec3 vLighting = ambientLight + (u_lights.directLight.u_color * light);
+	vec3 ambientLight = calc_ambient(u_lights.ambientLight);
+	vec3 directLight = calc_direct(u_lights.directLight, normal);
+
+	vec3 vLighting = ambientLight + directLight;
 
 	#ifdef USE_MAP
 		texelColor = texture(map, vTextureCoord).rgb * texelColor;

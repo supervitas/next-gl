@@ -30,11 +30,11 @@ class Scene {
 
 			for (const light of this.lights) {
 				if (light instanceof AmbientLight) {
-					// console.log('ambient')
+					this._updateAmbientLightUBO(light);
 				}
 
-				if (light instanceof DirectLight) {
-					this._updateDirectLight(light);
+				else if (light instanceof DirectLight) {
+					this._updateDirectLightUBO(light);
 				}
 			}
 		}
@@ -81,16 +81,28 @@ class Scene {
 		};
 	}
 
-	_updateDirectLight(light) {
-
+	_updateDirectLightUBO(light) {
 		twgl.setBlockUniforms(this.lightUBOInfo.ubo, {
 			'directLight.u_direction': light.direction,
 			'directLight.u_color': [light.color.r, light.color.g, light.color.b],
 			'directLight.u_intencity': light.intencity
 		});
 
-		twgl.setUniformBlock(this._gl.glContext, this.lightUBOInfo.programInfo, this.lightUBOInfo.ubo);
-		twgl.bindUniformBlock(this._gl.glContext, this.lightUBOInfo.programInfo, this.lightUBOInfo.ubo);
+		this._updateUBO(this.lightUBOInfo);
+	}
+
+	_updateAmbientLightUBO(light) {
+		twgl.setBlockUniforms(this.lightUBOInfo.ubo, {
+			'ambientLight.u_color': [light.color.r, light.color.g, light.color.b],
+			'ambientLight.u_intencity': light.intencity
+		});
+
+		this._updateUBO(this.lightUBOInfo);
+	}
+
+	_updateUBO(uboObject) {
+		twgl.setUniformBlock(this._gl.glContext, uboObject.programInfo, uboObject.ubo);
+		twgl.bindUniformBlock(this._gl.glContext, uboObject.programInfo, uboObject.ubo);
 	}
 }
 export {Scene};
