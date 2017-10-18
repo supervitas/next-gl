@@ -1,11 +1,17 @@
 import {Light} from './Lights/Light';
+import {AmbientLight} from './Lights/AmbientLight';
+import {DirectLight} from './Lights/DirectLight';
+
+import twgl from 'twgl-base.js';
 
 class Scene {
 	constructor(gl) {
 		this._gl = gl;
-		this.renderablesByProgram = new Map(); // grouped sceneObjects by program
+		this.renderablesByProgram = new Map();
 		this.sceneObjects = new Map();
 		this.lights = [];
+
+		this.lightUBOInfo = null;
 	}
 
 	addToScene(sceneObject) {
@@ -18,6 +24,20 @@ class Scene {
 		if (!sceneObject.material) return; // empty object
 
 		sceneObject.initObject(this._gl);
+
+		if (!this.lightUBO) {
+			this._createLightUBO(sceneObject.programInfo);
+
+			for (const light of this.lights) {
+				if (light instanceof AmbientLight) {
+					// console.log('ambient')
+				}
+
+				if (light instanceof DirectLight) {
+					this._updateDirectLight(light);
+				}
+			}
+		}
 
 		if (this.renderablesByProgram.has(sceneObject.material.program)) {
 			const renderable = this.renderablesByProgram.get(sceneObject.program);
@@ -52,6 +72,25 @@ class Scene {
 
 	getObjectById(id) {
 		return this.sceneObjects.get(id);
+	}
+
+	_createLightUBO(programInfo) {
+		this.lightUBOInfo = {
+			ubo: twgl.createUniformBlockInfo(this._gl.glContext, programInfo, 'Lights'),
+			programInfo
+		};
+	}
+
+	_updateDirectLight(light) {
+
+		twgl.setBlockUniforms(this.lightUBOInfo.ubo, {
+			'directLight.u_direction': light.direction,
+			'directLight.u_color': [light.color.r, light.color.g, light.color.b],
+			'directLight.u_intencity': light.intencity
+		});
+
+		twgl.setUniformBlock(this._gl.glContext, this.lightUBOInfo.programInfo, this.lightUBOInfo.ubo);
+		twgl.bindUniformBlock(this._gl.glContext, this.lightUBOInfo.programInfo, this.lightUBOInfo.ubo);
 	}
 }
 export {Scene};

@@ -1,9 +1,6 @@
 import * as glmatrix from 'gl-matrix';
 import twgl from 'twgl-base.js';
 
-import {AmbientLight} from './Lights/AmbientLight';
-import {DirectLight} from './Lights/DirectLight';
-
 class Renderer {
 	constructor({glContext, scene, camera}) {
 		this._glContext = glContext;
@@ -52,28 +49,12 @@ class Renderer {
 	}
 
 	_updateRenderableUniforms(renderObject, {normalMatrix, modelViewMatrix}) {
-		for (const light of this._scene.lights) {
-			// if (light instanceof AmbientLight) {
-			// 	console.log(renderObject.uniforms)
-			// 	renderObject.uniforms.uAmbientLight.intencity = light.intencity;
-			// 	renderObject.uniforms.uAmbientLight.color = light.color;
-			// 	// console.log('ambient')
-			// }
-
-			// if (light instanceof DirectLight) {
-			// 	console.log(renderObject.uniforms)
-			// 	renderObject.uniforms.uAmbientLight.intencity = light.intencity;
-			// 	renderObject.uniforms.uAmbientLight.color = light.color;
-			// 	// console.log("direct");
-			// }
-		}
-
 		renderObject.uniforms.uNormalMatrix = normalMatrix;
 		renderObject.uniforms.uModelViewMatrix = modelViewMatrix;
 		renderObject.uniforms.uColor = [
 			renderObject.material.color.r,
 			renderObject.material.color.g,
-			renderObject.material.color.b			
+			renderObject.material.color.b
 		];
 
 		if (renderObject.material.map) {
