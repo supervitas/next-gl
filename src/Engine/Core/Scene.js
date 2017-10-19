@@ -12,6 +12,7 @@ class Scene {
 		this.lights = [];
 
 		this.lightUBOInfo = null;
+		this.UBOData = null;
 	}
 
 	addToScene(sceneObject) {
@@ -25,8 +26,8 @@ class Scene {
 
 		sceneObject.initObject(this._gl);
 
-		if (!this.lightUBO) {
-			this._createLightUBO(sceneObject.programInfo);
+		if (!this.UBOData) {
+			this._createUBO(sceneObject.programInfo);
 
 			for (const light of this.lights) {
 				if (light instanceof AmbientLight) {
@@ -74,33 +75,35 @@ class Scene {
 		return this.sceneObjects.get(id);
 	}
 
-	_createLightUBO(programInfo) {
-		this.lightUBOInfo = {
-			ubo: twgl.createUniformBlockInfo(this._gl.glContext, programInfo, 'Lights'),
+	_createUBO(programInfo) {
+		this.UBOData = {
+			lightUBO: twgl.createUniformBlockInfo(this._gl.glContext, programInfo, 'Lights'),
+			projectionUbo: twgl.createUniformBlockInfo(this._gl.glContext, programInfo, 'Projection'),
 			programInfo
 		};
 	}
 
+
 	_updateDirectLightUBO(light) {
-		twgl.setBlockUniforms(this.lightUBOInfo.ubo, {
+		twgl.setBlockUniforms(this.UBOData.lightUBO, {
 			'directLight.u_direction': light.direction,
 			'directLight.u_color': [light.color.r, light.color.g, light.color.b],
 			'directLight.u_intencity': light.intencity
 		});
 
-		this._updateUBO(this.lightUBOInfo);
+		this.updateUBO(this.lightUBOInfo);
 	}
 
 	_updateAmbientLightUBO(light) {
-		twgl.setBlockUniforms(this.lightUBOInfo.ubo, {
+		twgl.setBlockUniforms(this.UBOData.lightUBO, {
 			'ambientLight.u_color': [light.color.r, light.color.g, light.color.b],
 			'ambientLight.u_intencity': light.intencity
 		});
 
-		this._updateUBO(this.lightUBOInfo);
+		this.updateUBO(this.lightUBOInfo);
 	}
 
-	_updateUBO(uboObject) {
+	updateUBO(uboObject) {
 		twgl.setUniformBlock(this._gl.glContext, uboObject.programInfo, uboObject.ubo);
 		twgl.bindUniformBlock(this._gl.glContext, uboObject.programInfo, uboObject.ubo);
 	}

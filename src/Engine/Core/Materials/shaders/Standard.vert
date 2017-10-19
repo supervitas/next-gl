@@ -1,7 +1,11 @@
 #version 300 es
 
 uniform mat4 uNormalMatrix;
-uniform mat4 uModelViewMatrix;
+uniform mat4 uModelWorldMatrix;
+
+uniform Projection {
+  mat4 uProjectionMatrix;
+};
 
 in vec4 aVertexPosition;
 in vec3 aVertexNormal;
@@ -15,5 +19,5 @@ void main() {
 
   vNormal = mat3(uNormalMatrix) * aVertexNormal;
 
-  gl_Position =  uModelViewMatrix * aVertexPosition;
+  gl_Position = uProjectionMatrix * uModelWorldMatrix * aVertexPosition;
 }

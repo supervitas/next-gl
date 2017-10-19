@@ -19,8 +19,6 @@ class Renderer {
 
 		const viewProjectionMatrix = this._camera.viewProjectionMatrix;
 
-		const modelViewMatrix = glmatrix.mat4.create();
-
 		for (const [program, renderable] of this._scene.renderablesByProgram.entries()) {
 
 			this._glContext.useProgram(program);
@@ -31,11 +29,11 @@ class Renderer {
 				this._depthTest(sceneObject.material.depthTest);
 				this._useFaceCulluing(sceneObject.material.isDoubleSided);
 
-				glmatrix.mat4.multiply(modelViewMatrix, viewProjectionMatrix, sceneObject.worldMatrix);
+				// glmatrix.mat4.multiply(modelViewMatrix, viewProjectionMatrix, sceneObject.worldMatrix);
 
 				this._glContext.bindVertexArray(sceneObject.vao);
 
-				this._updateRenderableUniforms(sceneObject, {normalMatrix: sceneObject.normalMatrix, modelViewMatrix});
+				this._updateRenderableUniforms(sceneObject, {normalMatrix: sceneObject.normalMatrix, modelWorldMatrix: sceneObject.worldMatrix, viewProjectionMatrix});
 
 				twgl.drawBufferInfo(this._glContext, sceneObject.bufferInfo);
 			}
@@ -48,9 +46,14 @@ class Renderer {
 		}
 	}
 
-	_updateRenderableUniforms(renderObject, {normalMatrix, modelViewMatrix}) {
+	_updateProjectionMatrixUBO() {
+
+	}
+
+	_updateRenderableUniforms(renderObject, {normalMatrix, modelWorldMatrix, viewProjectionMatrix}) {
 		renderObject.uniforms.uNormalMatrix = normalMatrix;
-		renderObject.uniforms.uModelViewMatrix = modelViewMatrix;
+		renderObject.uniforms.uModelWorldMatrix = modelWorldMatrix;
+		renderObject.uniforms.uProjectionMatrix = viewProjectionMatrix;
 		renderObject.uniforms.uColor = [
 			renderObject.material.color.r,
 			renderObject.material.color.g,
