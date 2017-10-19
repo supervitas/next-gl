@@ -31,7 +31,7 @@ class FirstExample {
 		this.renderFunc = this.render.bind(this);
 
 		this.mapMaterial = new StandardMaterial({
-			map: 'src/Example/test_texture.jpg',
+			map: this.gl.loadTexture('src/Example/test_texture.jpg'),
 			isDoubleSided: true
 		});
 
@@ -65,13 +65,11 @@ class FirstExample {
 	}
 
 	addCubes() {
-
 		const materialWithColor = new StandardMaterial({
 			color: new Color({r: 50, g: 60, b: 10})
 		});
 
-
-		const cube = new Cube({ material: materialWithColor});
+		const cube = new Cube({ material: this.mapMaterial});
 		cube.position = {x: 0, y: 5, z: -18};
 		this.scene.addToScene(cube);
 
@@ -83,12 +81,11 @@ class FirstExample {
 		cube3.position = {x: -5, y: 5, z: -18};
 		this.scene.addToScene(cube3);
 
-		const cube4 = new Cube({ material: this.mapMaterial});
+		const cube4 = new Cube({ material: materialWithColor});
 		cube4.position = {x: -5, y: 15, z: -18};
 		this.scene.addToScene(cube4);
 
 		cube4.setParent(cube3);
-
 
 		this.cubes = [cube, cube2, cube3];
 	}

@@ -46,7 +46,6 @@ class Renderer {
 		renderObject.material.uniforms.uNormalMatrix = normalMatrix;
 		renderObject.material.uniforms.uModelWorldMatrix = modelWorldMatrix;
 
-
 		twgl.setUniforms(renderObject.material.programInfo.uniformSetters, renderObject.material.uniforms);
 	}
 

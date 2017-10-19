@@ -11,7 +11,7 @@ class Scene {
 		this.sceneObjects = new Map();
 		this.lights = [];
 
-		this.UBOData = null;
+		this.UBOData = new Map();
 	}
 
 	addToScene(sceneObject) {
@@ -25,8 +25,8 @@ class Scene {
 
 		sceneObject.initObject(this._gl);
 
-		if (!this.UBOData) {
-			this._createUBO(sceneObject.material.programInfo);
+		if (!this.UBOData.has(sceneObject.material)) {
+			this._createUBO(sceneObject.material);
 
 			for (const light of this.lights) {
 				if (light instanceof AmbientLight) {
@@ -74,44 +74,49 @@ class Scene {
 		return this.sceneObjects.get(id);
 	}
 
-	_createUBO(programInfo) {
-		this.UBOData = {
-			lightUBO: twgl.createUniformBlockInfo(this._gl.glContext, programInfo, 'Lights'),
-			projectionMatrixUBO: twgl.createUniformBlockInfo(this._gl.glContext, programInfo, 'Projection'),
-			programInfo
-		};
+	_createUBO(material) {
+		this.UBOData.set(material, {
+			lightUBO: twgl.createUniformBlockInfo(this._gl.glContext, material.programInfo, 'Lights'),
+			projectionMatrixUBO: twgl.createUniformBlockInfo(this._gl.glContext, material.programInfo, 'Projection')
+		});
 	}
 
 	updateProjectionMatrixUBO(projectionMatrix) {
-		twgl.setBlockUniforms(this.UBOData.projectionMatrixUBO, {
-			uProjectionMatrix: projectionMatrix
-		});
+		for (const [material, ubos] of this.UBOData.entries()) {
+			twgl.setBlockUniforms(ubos.projectionMatrixUBO, {
+				uProjectionMatrix: projectionMatrix
+			});
 
-		this.updateUBO(this.UBOData.projectionMatrixUBO);
+			this.updateUBO(material.programInfo, ubos.projectionMatrixUBO);
+		}
 	}
 
 	_updateDirectLightUBO(light) {
-		twgl.setBlockUniforms(this.UBOData.lightUBO, {
-			'directLight.u_direction': light.direction,
-			'directLight.u_color': [light.color.r, light.color.g, light.color.b],
-			'directLight.u_intencity': light.intencity
-		});
+		for (const [material, ubos] of this.UBOData.entries()) {
+			twgl.setBlockUniforms(ubos.lightUBO, {
+				'directLight.u_direction': light.direction,
+				'directLight.u_color': [light.color.r, light.color.g, light.color.b],
+				'directLight.u_intencity': light.intencity
+			});
 
-		this.updateUBO(this.UBOData.lightUBO);
+			this.updateUBO(material.programInfo, ubos.lightUBO);
+		}
 	}
 
 	_updateAmbientLightUBO(light) {
-		twgl.setBlockUniforms(this.UBOData.lightUBO, {
-			'ambientLight.u_color': [light.color.r, light.color.g, light.color.b],
-			'ambientLight.u_intencity': light.intencity
-		});
+		for (const [material, ubos] of this.UBOData.entries()) {
+			twgl.setBlockUniforms(ubos.lightUBO, {
+				'ambientLight.u_color': [light.color.r, light.color.g, light.color.b],
+				'ambientLight.u_intencity': light.intencity
+			});
 
-		this.updateUBO(this.UBOData.lightUBO);
+			this.updateUBO(material.programInfo, ubos.lightUBO);
+		}
 	}
 
-	updateUBO(ubo) {
-		twgl.setUniformBlock(this._gl.glContext, this.UBOData.programInfo, ubo);
-		twgl.bindUniformBlock(this._gl.glContext, this.UBOData.programInfo, ubo);
+	updateUBO(programInfo, ubo) {
+		twgl.setUniformBlock(this._gl.glContext, programInfo, ubo);
+		twgl.bindUniformBlock(this._gl.glContext, programInfo, ubo);
 	}
 }
 export {Scene};
