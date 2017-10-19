@@ -11,7 +11,6 @@ class Scene {
 		this.sceneObjects = new Map();
 		this.lights = [];
 
-		this.lightUBOInfo = null;
 		this.UBOData = null;
 	}
 
@@ -27,7 +26,7 @@ class Scene {
 		sceneObject.initObject(this._gl);
 
 		if (!this.UBOData) {
-			this._createUBO(sceneObject.programInfo);
+			this._createUBO(sceneObject.material.programInfo);
 
 			for (const light of this.lights) {
 				if (light instanceof AmbientLight) {
@@ -40,11 +39,11 @@ class Scene {
 			}
 		}
 
-		if (this.renderablesByProgram.has(sceneObject.material.program)) {
+		if (this.renderablesByProgram.has(sceneObject.program)) {
 			const renderable = this.renderablesByProgram.get(sceneObject.program);
 			renderable.sceneObjects.push(sceneObject);
 		} else {
-			this.renderablesByProgram.set(sceneObject.material.program, {sceneObjects: [sceneObject]});
+			this.renderablesByProgram.set(sceneObject.program, {sceneObjects: [sceneObject]});
 		}
 	}
 
@@ -78,11 +77,18 @@ class Scene {
 	_createUBO(programInfo) {
 		this.UBOData = {
 			lightUBO: twgl.createUniformBlockInfo(this._gl.glContext, programInfo, 'Lights'),
-			projectionUbo: twgl.createUniformBlockInfo(this._gl.glContext, programInfo, 'Projection'),
+			projectionMatrixUBO: twgl.createUniformBlockInfo(this._gl.glContext, programInfo, 'Projection'),
 			programInfo
 		};
 	}
 
+	updateProjectionMatrixUBO(projectionMatrix) {
+		twgl.setBlockUniforms(this.UBOData.projectionMatrixUBO, {
+			uProjectionMatrix: projectionMatrix
+		});
+
+		this.updateUBO(this.UBOData.projectionMatrixUBO);
+	}
 
 	_updateDirectLightUBO(light) {
 		twgl.setBlockUniforms(this.UBOData.lightUBO, {
@@ -91,7 +97,7 @@ class Scene {
 			'directLight.u_intencity': light.intencity
 		});
 
-		this.updateUBO(this.lightUBOInfo);
+		this.updateUBO(this.UBOData.lightUBO);
 	}
 
 	_updateAmbientLightUBO(light) {
@@ -100,12 +106,12 @@ class Scene {
 			'ambientLight.u_intencity': light.intencity
 		});
 
-		this.updateUBO(this.lightUBOInfo);
+		this.updateUBO(this.UBOData.lightUBO);
 	}
 
-	updateUBO(uboObject) {
-		twgl.setUniformBlock(this._gl.glContext, uboObject.programInfo, uboObject.ubo);
-		twgl.bindUniformBlock(this._gl.glContext, uboObject.programInfo, uboObject.ubo);
+	updateUBO(ubo) {
+		twgl.setUniformBlock(this._gl.glContext, this.UBOData.programInfo, ubo);
+		twgl.bindUniformBlock(this._gl.glContext, this.UBOData.programInfo, ubo);
 	}
 }
 export {Scene};

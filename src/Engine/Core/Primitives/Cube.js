@@ -19,13 +19,6 @@ class Cube extends SceneObject {
 			indices: {numComponents: 3, data: indices},
 		};
 
-		this.uniforms = {
-			uNormalMatrix : null,
-			uModelViewMatrix: null,
-			uColor: null,
-			map: null,
-		};
-
 		this.bufferInfo = null;
 		this.vao = null;
 	}

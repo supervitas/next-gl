@@ -1,4 +1,3 @@
-import * as glmatrix from 'gl-matrix';
 import twgl from 'twgl-base.js';
 
 class Renderer {
@@ -9,7 +8,6 @@ class Renderer {
 
 		this._glDepthTest = this._glContext.getParameter(this._glContext.DEPTH_TEST);
 		this._glCullFace = this._glContext.getParameter(this._glContext.CULL_FACE);
-		this._wasPassed = false;
 	}
 
 	drawScene() {
@@ -17,7 +15,7 @@ class Renderer {
 
 		this._updateWorldMatixForSceneObjects();
 
-		const viewProjectionMatrix = this._camera.viewProjectionMatrix;
+		this._scene.updateProjectionMatrixUBO(this._camera.viewProjectionMatrix);
 
 		for (const [program, renderable] of this._scene.renderablesByProgram.entries()) {
 
@@ -29,11 +27,9 @@ class Renderer {
 				this._depthTest(sceneObject.material.depthTest);
 				this._useFaceCulluing(sceneObject.material.isDoubleSided);
 
-				// glmatrix.mat4.multiply(modelViewMatrix, viewProjectionMatrix, sceneObject.worldMatrix);
-
 				this._glContext.bindVertexArray(sceneObject.vao);
 
-				this._updateRenderableUniforms(sceneObject, {normalMatrix: sceneObject.normalMatrix, modelWorldMatrix: sceneObject.worldMatrix, viewProjectionMatrix});
+				this._updateRenderableUniforms(sceneObject, {normalMatrix: sceneObject.normalMatrix, modelWorldMatrix: sceneObject.worldMatrix});
 
 				twgl.drawBufferInfo(this._glContext, sceneObject.bufferInfo);
 			}
@@ -46,24 +42,12 @@ class Renderer {
 		}
 	}
 
-	_updateProjectionMatrixUBO() {
+	_updateRenderableUniforms(renderObject, {normalMatrix, modelWorldMatrix}) {
+		renderObject.material.uniforms.uNormalMatrix = normalMatrix;
+		renderObject.material.uniforms.uModelWorldMatrix = modelWorldMatrix;
 
-	}
 
-	_updateRenderableUniforms(renderObject, {normalMatrix, modelWorldMatrix, viewProjectionMatrix}) {
-		renderObject.uniforms.uNormalMatrix = normalMatrix;
-		renderObject.uniforms.uModelWorldMatrix = modelWorldMatrix;
-		renderObject.uniforms.uProjectionMatrix = viewProjectionMatrix;
-		renderObject.uniforms.uColor = [
-			renderObject.material.color.r,
-			renderObject.material.color.g,
-			renderObject.material.color.b
-		];
-
-		if (renderObject.material.map) {
-			renderObject.uniforms.map = renderObject.material.map;
-		}
-		twgl.setUniforms(renderObject.programInfo.uniformSetters, renderObject.uniforms);
+		twgl.setUniforms(renderObject.material.programInfo.uniformSetters, renderObject.material.uniforms);
 	}
 
 	_depthTest(useDepthTest) {

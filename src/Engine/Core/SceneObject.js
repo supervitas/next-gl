@@ -67,12 +67,14 @@ class SceneObject {
 	}
 
 	initObject(gl) {
-		this.program = this.material.createMaterial(gl);
+		if (!this.material.programInfo) {
+			this.material.createMaterial(gl);
+		}
 
-		this.programInfo = twgl.createProgramInfoFromProgram(gl.glContext, this.program);
+		this.program = this.material.programInfo.program;
 
 		this.bufferInfo = twgl.createBufferInfoFromArrays(gl.glContext, this.attributes);
-		this.vao = twgl.createVAOFromBufferInfo(gl.glContext, this.programInfo.attribSetters, this.bufferInfo);
+		this.vao = twgl.createVAOFromBufferInfo(gl.glContext, this.material.programInfo.attribSetters, this.bufferInfo);
 	}
 
 	set position(positionVec) {

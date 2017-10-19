@@ -30,14 +30,14 @@ class FirstExample {
 
 		this.renderFunc = this.render.bind(this);
 
-		this.addCubes();
-
-		const material = new StandardMaterial({
-			map: this.gl.loadTexture(this.gl.glContext, 'src/Example/test_texture.jpg'),
+		this.mapMaterial = new StandardMaterial({
+			map: 'src/Example/test_texture.jpg',
 			isDoubleSided: true
 		});
 
-		const plane = new Plane({ material, });
+		this.addCubes();
+
+		const plane = new Plane({ material: this.mapMaterial });
 		plane.scale = {x: 30, y:1, z: 30};
 
 		this.scene.addToScene(plane);
@@ -65,35 +65,30 @@ class FirstExample {
 	}
 
 	addCubes() {
-		const material = new StandardMaterial({
-			map: this.gl.loadTexture(this.gl.glContext, 'src/Example/test_texture.jpg')
-		});
 
 		const materialWithColor = new StandardMaterial({
 			color: new Color({r: 50, g: 60, b: 10})
 		});
 
-		const cube = new Cube({ material });
+
+		const cube = new Cube({ material: materialWithColor});
 		cube.position = {x: 0, y: 5, z: -18};
 		this.scene.addToScene(cube);
 
-		const cube2 = new Cube({ material: materialWithColor});
+		const cube2 = new Cube({ material: this.mapMaterial});
 		cube2.position = {x: 5, y: 5, z: -18};
 		this.scene.addToScene(cube2);
 
-		const cube3 = new Cube({ material});
+		const cube3 = new Cube({ material: materialWithColor});
 		cube3.position = {x: -5, y: 5, z: -18};
 		this.scene.addToScene(cube3);
 
-		const cube4 = new Cube({ material});
+		const cube4 = new Cube({ material: this.mapMaterial});
 		cube4.position = {x: -5, y: 15, z: -18};
 		this.scene.addToScene(cube4);
 
-		const emptyObject = new SceneObject();
-		this.scene.addToScene(emptyObject);
+		cube4.setParent(cube3);
 
-		cube4.setParent(emptyObject);
-		emptyObject.setParent(cube3);
 
 		this.cubes = [cube, cube2, cube3];
 	}

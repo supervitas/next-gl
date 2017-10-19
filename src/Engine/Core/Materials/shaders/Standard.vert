@@ -15,9 +15,9 @@ out highp vec2 vTextureCoord;
 out vec3 vNormal;
 
 void main() {
-  vTextureCoord = aTextureCoord;
+	vTextureCoord = aTextureCoord;
 
-  vNormal = mat3(uNormalMatrix) * aVertexNormal;
+	vNormal = mat3(uNormalMatrix) * aVertexNormal;
 
-  gl_Position = uProjectionMatrix * uModelWorldMatrix * aVertexPosition;
+	gl_Position = uProjectionMatrix * uModelWorldMatrix * aVertexPosition;
 }

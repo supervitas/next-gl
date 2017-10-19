@@ -43,7 +43,6 @@ void main() {
 
   	vec3 normal = normalize(vNormal);
 
-
 	vec3 ambientLight = calc_ambient(u_lights.ambientLight);
 	vec3 directLight = calc_direct(u_lights.directLight, normal);
 

@@ -1,4 +1,5 @@
 import {Color} from './Color';
+import twgl from 'twgl-base.js';
 
 class GL {
 	constructor({domElement, clearColor = new Color(), transparent = true, pixelRatio = window.devicePixelRatio || 1, antialias = true }) {
@@ -59,7 +60,7 @@ class GL {
 		const displayHeight = Math.floor(canvas.clientHeight * this.realPixels);
 
 		if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
-			canvas.width  = displayWidth;
+			canvas.width = displayWidth;
 			canvas.height = displayHeight;
 
 			this.glContext.viewport(0, 0, this.glContext.drawingBufferWidth, this.glContext.drawingBufferHeight);
@@ -69,32 +70,10 @@ class GL {
 		return false;
 	}
 
-	loadTexture(gl, url) {
-		const texture = gl.createTexture();
-		gl.bindTexture(gl.TEXTURE_2D, texture);
-
-		const level = 0;
-		const internalFormat = gl.RGBA;
-		const width = 1;
-		const height = 1;
-		const border = 0;
-		const srcFormat = gl.RGBA;
-		const srcType = gl.UNSIGNED_BYTE;
-		const pixel = new Uint8Array([0, 0, 255, 255]);  // opaque blue
-		gl.texImage2D(gl.TEXTURE_2D, level, internalFormat,
-			width, height, border, srcFormat, srcType,
-			pixel);
-
-		const image = new Image();
-		image.onload = () => {
-			gl.bindTexture(gl.TEXTURE_2D, texture);
-			gl.texImage2D(gl.TEXTURE_2D, level, internalFormat,
-				srcFormat, srcType, image);
-			gl.generateMipmap(gl.TEXTURE_2D);
-
-		};
-
-		image.src = url;
+	loadTexture(src) {
+		const texture = twgl.createTexture(this.glContext, {
+			src,
+		});
 
 		return texture;
 	}
