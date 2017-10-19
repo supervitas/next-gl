@@ -71,8 +71,6 @@ class SceneObject {
 			this.material.createMaterial(gl);
 		}
 
-		this.program = this.material.programInfo.program;
-
 		this.bufferInfo = twgl.createBufferInfoFromArrays(gl.glContext, this.attributes);
 		this.vao = twgl.createVAOFromBufferInfo(gl.glContext, this.material.programInfo.attribSetters, this.bufferInfo);
 	}

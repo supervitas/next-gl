@@ -39,11 +39,11 @@ class Scene {
 			}
 		}
 
-		if (this.renderablesByProgram.has(sceneObject.program)) {
-			const renderable = this.renderablesByProgram.get(sceneObject.program);
+		if (this.renderablesByProgram.has(sceneObject.material.programInfo.program)) {
+			const renderable = this.renderablesByProgram.get(sceneObject.material.programInfo.program);
 			renderable.sceneObjects.push(sceneObject);
 		} else {
-			this.renderablesByProgram.set(sceneObject.program, {sceneObjects: [sceneObject]});
+			this.renderablesByProgram.set(sceneObject.material.programInfo.program, {sceneObjects: [sceneObject]});
 		}
 	}
 
