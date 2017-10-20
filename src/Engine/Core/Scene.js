@@ -19,6 +19,7 @@ class Scene {
 
 		if (sceneObject instanceof Light) {
 			this.lights.push(sceneObject);
+			this._updateLightsUBO();
 		}
 
 		if (!sceneObject.material) return; // empty object
@@ -27,16 +28,7 @@ class Scene {
 
 		if (!this.UBOData.has(sceneObject.material)) {
 			this._createUBO(sceneObject.material);
-
-			for (const light of this.lights) {
-				if (light instanceof AmbientLight) {
-					this._updateAmbientLightUBO(light);
-				}
-
-				else if (light instanceof DirectLight) {
-					this._updateDirectLightUBO(light);
-				}
-			}
+			this._updateLightsUBO();
 		}
 
 		if (this.renderablesByProgram.has(sceneObject.material.programInfo.program)) {
@@ -72,6 +64,16 @@ class Scene {
 
 	getObjectById(id) {
 		return this.sceneObjects.get(id);
+	}
+
+	_updateLightsUBO() {
+		for (const light of this.lights) {
+			if (light instanceof AmbientLight) {
+				this._updateAmbientLightUBO(light);
+			} else if (light instanceof DirectLight) {
+				this._updateDirectLightUBO(light);
+			}
+		}
 	}
 
 	_createUBO(material) {
