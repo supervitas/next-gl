@@ -7,10 +7,10 @@ class Cube extends SceneObject {
 
 		this.programInfo = null;
 
-		const positions = this._getPosition();
-		const vertexNormals = this._getVertexNormals();
-		const uv = this._getUV();
-		const indices = this._getIndices();
+		const positions = Cube._getPosition();
+		const vertexNormals = Cube._getVertexNormals();
+		const uv = Cube._getUV();
+		const indices = Cube._getIndices();
 
 		this.attributes = {
 			aVertexPosition: { numComponents: 3, data: positions },
@@ -23,7 +23,7 @@ class Cube extends SceneObject {
 		this.vao = null;
 	}
 
-	_getIndices() {
+	static _getIndices() {
 		return [
 			0,  1,  2,      0,  2,  3,    // front
 			4,  5,  6,      4,  6,  7,    // back
@@ -33,7 +33,7 @@ class Cube extends SceneObject {
 			20, 21, 22,     20, 22, 23,   // left
 		];
 	}
-	_getUV() {
+	static _getUV() {
 		return [
 			// Front
 			0.0,  0.0,
@@ -67,7 +67,7 @@ class Cube extends SceneObject {
 			0.0,  1.0,
 		];
 	}
-	_getVertexNormals() {
+	static _getVertexNormals() {
 		return [
 			// Front
 			0.0,  0.0,  1.0,
@@ -107,7 +107,7 @@ class Cube extends SceneObject {
 		];
 	}
 
-	_getPosition() {
+	static _getPosition() {
 		return [
 			// Front face
 			-1.0, -1.0,  1.0,

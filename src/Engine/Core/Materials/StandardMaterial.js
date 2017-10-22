@@ -4,7 +4,7 @@ import vertexShader from './shaders/Standard.vert';
 import twgl from 'twgl-base.js';
 
 class StandardMaterial {
-	constructor({color = new Color(), map = null, isDoubleSided = false, useDepthTest = true}) {
+	constructor({color = new Color(), map = null, isDoubleSided = false, useDepthTest = true} = {}) {
 		this.defines = new Map();
 		this.uniforms = {};
 

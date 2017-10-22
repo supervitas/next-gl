@@ -1,4 +1,4 @@
-import {StandardMaterial, GL, Renderer, Cube, Plane, SceneObject,
+import {StandardMaterial, GL, Renderer, Cube, Plane,
 	Color, Camera, CameraOrbitController, Scene, DirectLight, AmbientLight} from '../Engine/next-gl';
 
 class FirstExample {
@@ -9,11 +9,6 @@ class FirstExample {
 		this.gl = new GL({domElement: this._domElement});
 
 		this.scene = new Scene(this.gl);
-		this.dirLight = new DirectLight({intencity: 0.7, direction: [0.15, 0.8, 0.75]});
-		this.ambientLight = new AmbientLight({intencity: 0.3, color: new Color()});
-
-		this.scene.addToScene(this.dirLight);
-		this.scene.addToScene(this.ambientLight);
 
 		const aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
 		this.camera = new Camera({near: 1, far: 1000, aspect});
@@ -42,6 +37,8 @@ class FirstExample {
 
 		this.scene.addToScene(plane);
 
+		this.createLight();
+
 		requestAnimationFrame(this.renderFunc);
 	}
 
@@ -62,6 +59,14 @@ class FirstExample {
 
 		this.renderer.drawScene();
 		requestAnimationFrame(this.renderFunc);
+	}
+
+	createLight() {
+		const dirLight = new DirectLight({intensity: 0.7, direction: [0.15, 0.8, 0.75]});
+		const ambientLight = new AmbientLight({intensity: 0.3});
+
+		this.scene.addToScene(dirLight);
+		this.scene.addToScene(ambientLight);
 	}
 
 	addCubes() {
@@ -89,6 +94,5 @@ class FirstExample {
 
 		this.cubes = [cube, cube2, cube3];
 	}
-
 }
 export {FirstExample};

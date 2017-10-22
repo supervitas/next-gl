@@ -64,7 +64,7 @@ class Renderer {
 	}
 
 
-	shouldBeFrustrumCulled(viewProjection, objectPosition) {
+	_shouldBeFrustrumCulled(viewProjection, objectPosition) {
 
 	}
 }

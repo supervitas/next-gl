@@ -75,6 +75,11 @@ class SceneObject {
 		this.vao = twgl.createVAOFromBufferInfo(gl.glContext, this.material.programInfo.attribSetters, this.bufferInfo);
 	}
 
+	calculateBBox() {
+
+
+	}
+
 	set position(positionVec) {
 		Object.keys(positionVec).forEach((key) => {
 			this._position[key] = positionVec[key];
