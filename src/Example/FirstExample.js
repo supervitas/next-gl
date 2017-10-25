@@ -1,5 +1,5 @@
 import {StandardMaterial, GL, Renderer, Cube, Plane,
-	Color, Camera, CameraOrbitController, Scene, DirectLight, AmbientLight} from '../Engine/next-gl';
+	Color, Camera, CameraOrbitController, Scene, DirectLight, AmbientLight, PointLight} from '../Engine/next-gl';
 
 class FirstExample {
 	constructor(domElement) {
@@ -64,9 +64,11 @@ class FirstExample {
 	createLight() {
 		const dirLight = new DirectLight({intensity: 0.7, direction: [0.15, 0.8, 0.75]});
 		const ambientLight = new AmbientLight({intensity: 0.3});
+		const pointLight = new PointLight({intensity: 0.6, lightPosition: [0, 5, 0], power: 150, specularColor: new Color({r:155, g: 100, b: 200})});
 
-		this.scene.addToScene(dirLight);
-		this.scene.addToScene(ambientLight);
+		// this.scene.addToScene(dirLight);
+		// this.scene.addToScene(ambientLight);
+		this.scene.addToScene(pointLight);
 	}
 
 	addCubes() {

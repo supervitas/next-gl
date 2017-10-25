@@ -16,6 +16,7 @@ class Renderer {
 		this._updateWorldMatixForSceneObjects();
 
 		this._scene.updateProjectionMatrixUBO(this._camera.viewProjectionMatrix);
+		this._scene.updateCameraPositionUBO(this._camera.position.asArray());
 
 		for (const [program, renderable] of this._scene.renderablesByProgram.entries()) {
 
