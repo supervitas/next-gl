@@ -103,6 +103,17 @@ class Scene {
 		}
 	}
 
+	updateCameraPositionUBO(position) {
+		for (const [material, ubos] of this.UBOData.entries()) {
+
+			twgl.setBlockUniforms(ubos.viewPosition, {
+				uViewWorldPosition: position
+			});
+
+			this.updateUBO(material.programInfo, ubos.viewPosition);
+		}
+	}
+
 	_updateDirectLightUBO(light) {
 		for (const [material, ubos] of this.UBOData.entries()) {
 			twgl.setBlockUniforms(ubos.lightUBO, {
@@ -136,25 +147,11 @@ class Scene {
 			});
 
 			twgl.setBlockUniforms(ubos.vertexPointLightUBO, {
-				uPointLightPosition: light.lightPosition
+				uPointLightPosition: light.position
 			});
-
-
 
 			this.updateUBO(material.programInfo, ubos.vertexPointLightUBO);
 			this.updateUBO(material.programInfo, ubos.lightUBO);
-
-		}
-	}
-
-	updateCameraPositionUBO(position) {
-		for (const [material, ubos] of this.UBOData.entries()) {
-
-			twgl.setBlockUniforms(ubos.viewPosition, {
-				uViewWorldPosition: position
-			});
-
-			this.updateUBO(material.programInfo, ubos.viewPosition);
 		}
 	}
 
@@ -165,4 +162,3 @@ class Scene {
 
 }
 export {Scene};
-

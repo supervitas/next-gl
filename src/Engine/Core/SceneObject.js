@@ -80,10 +80,16 @@ class SceneObject {
 
 	}
 
-	set position(positionVec) {
-		Object.keys(positionVec).forEach((key) => {
-			this._position[key] = positionVec[key];
-		});
+	set position(position) {
+		if (Array.isArray(position)) {
+			this._position.x = position[0];
+			this._position.y = position[1];
+			this._position.z = position[2];
+		} else {
+			Object.keys(position).forEach((key) => {
+				this._position[key] = position[key];
+			});
+		}
 
 		glmatrix.mat4.translate(this.localMatrix, this.localMatrix, this._position.asArray());
 

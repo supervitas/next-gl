@@ -53,6 +53,10 @@ vec3 calc_point_light(PointLight point, vec3 normal, vec3 surfaceToLightDirectio
 	return point.u_color * max(dot(normal, surfaceToLightDirection), 0.0) * point.u_intencity;
 }
 
+vec3 calc_specular_highlight(PointLight point, vec3 normal, vec3 halfVector) {
+	return max(pow(dot(normal, halfVector), point.u_power), 0.0) * point.u_specular_color;
+}
+
 void main() {
   	highp vec3 texelColor = uColor;
 
@@ -67,7 +71,7 @@ void main() {
   	vec3 pointLight = calc_point_light(u_lights.pointLight, normal, surfaceToLightDirection);
 	vec3 directLight = calc_direct_light(u_lights.directLight, normal);
 
-	vec3 specular = max(pow(dot(normal, halfVector), u_lights.pointLight.u_power), 0.0) * u_lights.pointLight.u_specular_color;
+	vec3 specular = calc_specular_highlight(u_lights.pointLight, normal, halfVector);
 
 	vec3 vLighting = ambientLight + directLight + pointLight;
 
@@ -75,6 +79,5 @@ void main() {
 		texelColor = texture(map, vTextureCoord).rgb * texelColor;
 	#endif
 
-	resultColor = vec4(texelColor.rgb * vLighting, 1.0);
-	resultColor.rgb += specular;
+	resultColor = vec4(texelColor.rgb * vLighting + specular, 1.0);
 }
