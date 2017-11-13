@@ -4,6 +4,7 @@ import {DirectLight} from './Lights/DirectLight';
 import {PointLight} from './Lights/PointLight';
 
 import twgl from 'twgl-base.js';
+import {SpotLight} from './Lights/SpotLight';
 
 class Scene {
 	constructor(gl) {
@@ -81,6 +82,10 @@ class Scene {
 			if (light instanceof PointLight) {
 				this._updatePointLightUBO(light);
 			}
+
+			if (light instanceof SpotLight) {
+				this._updateSpotLightUBO(light);
+			}
 		}
 	}
 
@@ -88,6 +93,8 @@ class Scene {
 		this.UBOData.set(material, {
 			lightUBO: twgl.createUniformBlockInfo(this._gl.glContext, material.programInfo, 'Lights'),
 			vertexPointLightUBO: twgl.createUniformBlockInfo(this._gl.glContext, material.programInfo, 'PointLight'),
+			vertexDirectLightUBO: twgl.createUniformBlockInfo(this._gl.glContext, material.programInfo, 'DirectLight'),
+			vertexSpotLightUBO: twgl.createUniformBlockInfo(this._gl.glContext, material.programInfo, 'SpotLight'),
 			projectionMatrixUBO: twgl.createUniformBlockInfo(this._gl.glContext, material.programInfo, 'Projection'),
 			viewPosition: twgl.createUniformBlockInfo(this._gl.glContext, material.programInfo, 'View'),
 		});
@@ -122,6 +129,11 @@ class Scene {
 				'directLight.u_intencity': light.intencity
 			});
 
+			twgl.setBlockUniforms(ubos.vertexDirectLightUBO, {
+				uDirectLightPosition: light.position
+			});
+
+			this.updateUBO(material.programInfo, ubos.vertexDirectLightUBO);
 			this.updateUBO(material.programInfo, ubos.lightUBO);
 		}
 	}
@@ -141,8 +153,6 @@ class Scene {
 		for (const [material, ubos] of this.UBOData.entries()) {
 			twgl.setBlockUniforms(ubos.lightUBO, {
 				'pointLight.u_color': [light.color.r, light.color.g, light.color.b],
-				'pointLight.u_power': light.power,
-				'pointLight.u_specular_color': [light.specularColor.r, light.color.g, light.color.b],
 				'pointLight.u_intencity': light.intencity
 			});
 
@@ -151,6 +161,25 @@ class Scene {
 			});
 
 			this.updateUBO(material.programInfo, ubos.vertexPointLightUBO);
+			this.updateUBO(material.programInfo, ubos.lightUBO);
+		}
+	}
+
+	_updateSpotLightUBO(light) {
+		for (const [material, ubos] of this.UBOData.entries()) {
+			twgl.setBlockUniforms(ubos.lightUBO, {
+				'spotLight.u_color': [light.color.r, light.color.g, light.color.b],
+				'spotLight.u_intencity': light.intencity,
+				'spotLight.u_light_direction': light.direction,
+				'spotLight.u_innerLimit': light.innerLimit,
+				'spotLight.u_outerLimit': light.outerLimit
+			});
+
+			twgl.setBlockUniforms(ubos.vertexSpotLightUBO, {
+				uSpotLightPosition: light.position
+			});
+
+			this.updateUBO(material.programInfo, ubos.vertexSpotLightUBO);
 			this.updateUBO(material.programInfo, ubos.lightUBO);
 		}
 	}

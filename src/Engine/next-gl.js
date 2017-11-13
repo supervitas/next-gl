@@ -21,3 +21,4 @@ export {CameraOrbitController} from './Core/Camera/CameraOrbitController';
 export {DirectLight} from './Core/Lights/DirectLight';
 export {AmbientLight} from './Core/Lights/AmbientLight';
 export {PointLight} from './Core/Lights/PointLight';
+export {SpotLight} from './Core/Lights/SpotLight';

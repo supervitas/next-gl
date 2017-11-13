@@ -7,22 +7,35 @@ uniform Projection {
   	mat4 uProjectionMatrix;
 };
 
+uniform View {
+	vec3 uViewWorldPosition;
+};
+
 uniform PointLight {
 	vec3 uPointLightPosition;
 };
 
-uniform View {
-	vec3 uViewWorldPosition;
+uniform DirectLight {
+	vec3 uDirectLightPosition;
 };
+
+uniform SpotLight {
+	vec3 uSpotLightPosition;
+};
+
 
 in vec4 aVertexPosition;
 in vec3 aVertexNormal;
 in vec2 aTextureCoord;
 
 out highp vec2 vTextureCoord;
+
 out vec3 vNormal;
-out vec3 vSurfaceToLight; // point light
 out vec3 vSurfaceToView;
+
+out vec3 vSurfaceToPointLight;
+out vec3 vSurfaceToDirectLight;
+out vec3 vSurfaceToSpotLight;
 
 void main() {
 	vTextureCoord = aTextureCoord;
@@ -31,7 +44,10 @@ void main() {
 
 	vec3 surfaceWorldPosition = (uModelWorldMatrix * aVertexPosition).xyz;
 
-	vSurfaceToLight = uPointLightPosition - surfaceWorldPosition;
+	vSurfaceToPointLight = uPointLightPosition - surfaceWorldPosition;
+	vSurfaceToDirectLight = uDirectLightPosition - surfaceWorldPosition;
+	vSurfaceToSpotLight = uSpotLightPosition - surfaceWorldPosition;
+
 	vSurfaceToView = uViewWorldPosition - surfaceWorldPosition;
 
 	gl_Position = uProjectionMatrix * uModelWorldMatrix * aVertexPosition;
