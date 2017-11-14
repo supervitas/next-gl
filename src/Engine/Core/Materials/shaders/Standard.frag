@@ -70,8 +70,8 @@ vec3 calcSpotLight(SpotLight spot, vec3 normal, vec3 surfaceToLightDirection) {
 	return spot.u_color * light * spot.u_intencity;
 }
 
-vec3 calcSpecular(vec3 normal, vec3 halfVector, float power, vec3 specularColor) {
-	return max(pow(dot(normal, halfVector), power), 0.0) * specularColor;
+vec3 calcSpecular(vec3 normal, vec3 halfVector, float intencity, vec3 specularColor) {
+	return max(pow(dot(normal, halfVector), 150.0 / intencity), 0.0) * specularColor;
 }
 
 void main() {
@@ -96,16 +96,16 @@ void main() {
 	vec3 directLight = calcDirectLight(u_lights.directLight, normal);
 	vec3 spotLight = calcSpotLight(u_lights.spotLight, normal, surfaceToSpotLightDirection);
 
-	vec3 vLighting = ambientLight + directLight + pointLight + spotLight;
-
-	vec3 specularForPointLight = calcSpecular(normal, halfVectorFromPointLight, 150.0, u_lights.pointLight.u_color);
-	vec3 specularForDirectLight = calcSpecular(normal, halfVectorFromDirectLight, 150.0, u_lights.directLight.u_color);
-	vec3 specularForSpotLight = calcSpecular(normal, halfVectorFromSpotLight, 150.0, u_lights.spotLight.u_color);
+	vec3 specularForPointLight = calcSpecular(normal, halfVectorFromPointLight, u_lights.pointLight.u_intencity, u_lights.pointLight.u_color);
+	vec3 specularForDirectLight = calcSpecular(normal, halfVectorFromDirectLight, u_lights.directLight.u_intencity, u_lights.directLight.u_color);
+	vec3 specularForSpotLight = calcSpecular(normal, halfVectorFromSpotLight, u_lights.spotLight.u_intencity, u_lights.spotLight.u_color);
 
 
 	#ifdef USE_MAP
 		texelColor = texture(map, vTextureCoord).rgb * texelColor;
 	#endif
+
+	vec3 vLighting = ambientLight + directLight + pointLight + spotLight;
 
 	texelColor.rgb *= vLighting + specularForDirectLight + specularForPointLight + specularForSpotLight;
 

@@ -64,9 +64,9 @@ class FirstExample {
 	createLight() {
 		const ambientLight = new AmbientLight({intensity: 0.2});
 
-		const dirLight = new DirectLight({intensity: 0.3, direction: [0.15, 0.8, 0.75], position: [0, 10, 0]});
-		const pointLight = new PointLight({intensity: 0.1, position: [0, 5, 0]});
-		const spotLight = new SpotLight({intensity: 0.1, position: [12, 15, 0]});
+		const dirLight = new DirectLight({intensity: 0.001, direction: [0.15, 0.8, 0.75], position: [0, 10, 0]});
+		const pointLight = new PointLight({intensity: 0.009, position: [-15, 5, 0]});
+		const spotLight = new SpotLight({intensity: 0.5, position: [12, 3, 0], innerLimit: 3, outerLimit: 31});
 
 		this.scene.addToScene(dirLight);
 		this.scene.addToScene(pointLight);
