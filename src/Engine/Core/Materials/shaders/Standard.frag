@@ -2,6 +2,11 @@
 
 precision highp float;
 
+const int MAX_POINT_LIGHTS_IN_ARRAY = 2;
+const int MAX_DIRECT_LIGHTS_IN_ARRAY = 2;
+const int MAX_SPOT_LIGHTS_IN_ARRAY = 2;
+const int MAX_AMBIENT_LIGHTS_IN_ARRAY = 2;
+
 struct DirectLight {
 	float u_intencity;
 	vec3 u_color;
@@ -27,10 +32,10 @@ struct SpotLight {
 };
 
 uniform Lights {
-	DirectLight directLight;
-	AmbientLight ambientLight;
-	PointLight pointLight;
-	SpotLight spotLight;
+	DirectLight directLight[MAX_DIRECT_LIGHTS_IN_ARRAY];
+	PointLight pointLight[MAX_POINT_LIGHTS_IN_ARRAY];
+	SpotLight spotLight[MAX_SPOT_LIGHTS_IN_ARRAY];
+	AmbientLight ambientLight[MAX_AMBIENT_LIGHTS_IN_ARRAY];
 } u_lights;
 
 uniform vec3 uColor;
@@ -41,9 +46,9 @@ uniform vec3 uColor;
 
 in vec3 vSurfaceToView;
 
-in vec3 vSurfaceToPointLight;
-in vec3 vSurfaceToDirectLight;
-in vec3 vSurfaceToSpotLight;
+in vec3 vSurfacesToPointLight[MAX_POINT_LIGHTS_IN_ARRAY];
+in vec3 vSurfacesToDirectLight[MAX_DIRECT_LIGHTS_IN_ARRAY];
+in vec3 vSurfacesToSpotLight[MAX_SPOT_LIGHTS_IN_ARRAY];
 
 in highp vec2 vTextureCoord;
 in vec3 vNormal;
@@ -81,33 +86,55 @@ void main() {
 
   	vec3 surfaceToViewDirection = normalize(vSurfaceToView);
 
-  	vec3 surfaceToPointLightDirection = normalize(vSurfaceToPointLight);
-  	vec3 halfVectorFromPointLight = normalize(surfaceToPointLightDirection + surfaceToViewDirection);
+  	vec3 vLighting = vec3(0.0);
+  	vec3 specular = vec3(0.0);
 
-  	vec3 surfaceToDirectLightDirection = normalize(vSurfaceToDirectLight);
-  	vec3 halfVectorFromDirectLight = normalize(surfaceToDirectLightDirection + surfaceToViewDirection);
+  	for (int i = 0; i < MAX_DIRECT_LIGHTS_IN_ARRAY; i++) {
+		vec3 surfaceToDirectLightDirection = normalize(vSurfacesToDirectLight[i]);
+		vec3 halfVectorFromDirectLight = normalize(surfaceToDirectLightDirection + surfaceToViewDirection);
 
-  	vec3 surfaceToSpotLightDirection = normalize(vSurfaceToSpotLight);
-  	vec3 halfVectorFromSpotLight = normalize(surfaceToSpotLightDirection + surfaceToViewDirection);
+  		vec3 directLight = calcDirectLight(u_lights.directLight[i], normal);
+  		vec3 specularForDirectLight = calcSpecular(normal, halfVectorFromDirectLight, u_lights.directLight[i].u_intencity, u_lights.directLight[i].u_color);
+
+  		vLighting += directLight;
+  		specular += specularForDirectLight;
+  	}
+
+  	for (int i = 0; i < MAX_POINT_LIGHTS_IN_ARRAY; i++) {
+  		vec3 surfaceToPointLightDirection = normalize(vSurfacesToPointLight[i]);
+		vec3 halfVectorFromPointLight = normalize(surfaceToPointLightDirection + surfaceToViewDirection);
 
 
-	vec3 ambientLight = calcAmbientLight(u_lights.ambientLight);
-  	vec3 pointLight = calcPointLight(u_lights.pointLight, normal, surfaceToPointLightDirection);
-	vec3 directLight = calcDirectLight(u_lights.directLight, normal);
-	vec3 spotLight = calcSpotLight(u_lights.spotLight, normal, surfaceToSpotLightDirection);
+		vec3 pointLight = calcPointLight(u_lights.pointLight[i], normal, surfaceToPointLightDirection);
+		vec3 specularForPointLight = calcSpecular(normal, halfVectorFromPointLight, u_lights.pointLight[i].u_intencity, u_lights.pointLight[i].u_color);
 
-	vec3 specularForPointLight = calcSpecular(normal, halfVectorFromPointLight, u_lights.pointLight.u_intencity, u_lights.pointLight.u_color);
-	vec3 specularForDirectLight = calcSpecular(normal, halfVectorFromDirectLight, u_lights.directLight.u_intencity, u_lights.directLight.u_color);
-	vec3 specularForSpotLight = calcSpecular(normal, halfVectorFromSpotLight, u_lights.spotLight.u_intencity, u_lights.spotLight.u_color);
+		vLighting += pointLight;
+		specular += specularForPointLight;
 
+  	}
+
+  	for (int i = 0; i < MAX_SPOT_LIGHTS_IN_ARRAY; i++) {
+		vec3 surfaceToSpotLightDirection = normalize(vSurfacesToSpotLight[i]);
+		vec3 halfVectorFromSpotLight = normalize(surfaceToSpotLightDirection + surfaceToViewDirection);
+
+		vec3 spotLight = calcSpotLight(u_lights.spotLight[i], normal, surfaceToSpotLightDirection);
+		vec3 specularForSpotLight = calcSpecular(normal, halfVectorFromSpotLight, u_lights.spotLight[i].u_intencity, u_lights.spotLight[i].u_color);
+
+		vLighting += spotLight;
+		specular += specularForSpotLight;
+  	}
+
+  	for (int i = 0; i < MAX_AMBIENT_LIGHTS_IN_ARRAY; i++) {
+  		vec3 ambientLight = calcAmbientLight(u_lights.ambientLight[i]);
+  		vLighting += ambientLight;
+  	}
 
 	#ifdef USE_MAP
 		texelColor = texture(map, vTextureCoord).rgb * texelColor;
 	#endif
 
-	vec3 vLighting = ambientLight + directLight + pointLight + spotLight;
 
-	texelColor.rgb *= vLighting + specularForDirectLight + specularForPointLight + specularForSpotLight;
+	texelColor.rgb *= vLighting + specular;
 
 	resultColor = vec4(texelColor.rgb, 1.0);
 }

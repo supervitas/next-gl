@@ -11,16 +11,20 @@ class Scene {
 		this._gl = gl;
 		this.renderablesByProgram = new Map();
 		this.sceneObjects = new Map();
-		this.lights = [];
-
 		this.UBOData = new Map();
+
+		this.lights = new Map();
+		this.lights.set('DirectLight', []);
+		this.lights.set('SpotLight', []);
+		this.lights.set('PointLight', []);
+		this.lights.set('AmbientLight', []);
 	}
 
 	addToScene(sceneObject) {
 		this.sceneObjects.set(sceneObject.id, sceneObject);
 
 		if (sceneObject instanceof Light) {
-			this.lights.push(sceneObject);
+			this._addLight(sceneObject);
 			this._updateLightsUBO();
 		}
 
@@ -68,23 +72,44 @@ class Scene {
 		return this.sceneObjects.get(id);
 	}
 
+	_addLight(light) {
+		let lightArray;
+
+		if (light instanceof AmbientLight) {
+			lightArray = this.lights.get('AmbientLight');
+		}
+
+		if (light instanceof DirectLight) {
+			lightArray = this.lights.get('DirectLight');
+		}
+
+		if (light instanceof PointLight) {
+			lightArray = this.lights.get('PointLight');
+		}
+
+		if (light instanceof SpotLight) {
+			lightArray = this.lights.get('SpotLight');
+		}
+
+		lightArray.push(light);
+	}
+
 	_updateLightsUBO() {
-		for (const light of this.lights) {
-
-			if (light instanceof AmbientLight) {
-				this._updateAmbientLightUBO(light);
+		for (const [lightType, lightsArray] of this.lights.entries()) {
+			if (lightType === 'AmbientLight') {
+				this._updateAmbientLightUBO(lightsArray);
 			}
 
-			if (light instanceof DirectLight) {
-				this._updateDirectLightUBO(light);
+			if (lightType === 'DirectLight') {
+				this._updateDirectLightUBO(lightsArray);
 			}
 
-			if (light instanceof PointLight) {
-				this._updatePointLightUBO(light);
+			if (lightType === 'SpotLight') {
+				this._updateSpotLightUBO(lightsArray);
 			}
 
-			if (light instanceof SpotLight) {
-				this._updateSpotLightUBO(light);
+			if (lightType === 'PointLight') {
+				this._updatePointLightUBO(lightsArray);
 			}
 		}
 	}
@@ -123,64 +148,73 @@ class Scene {
 
 	_updateDirectLightUBO(light) {
 		for (const [material, ubos] of this.UBOData.entries()) {
-			twgl.setBlockUniforms(ubos.lightUBO, {
-				'directLight.u_direction': light.direction,
-				'directLight.u_color': [light.color.r, light.color.g, light.color.b],
-				'directLight.u_intencity': light.intencity
-			});
+			for (const [index, dirLight] of light.entries()) {
 
-			twgl.setBlockUniforms(ubos.vertexDirectLightUBO, {
-				uDirectLightPosition: light.position
-			});
+				twgl.setBlockUniforms(ubos.lightUBO, {
+					[`directLight[${index}].u_direction`]: dirLight.direction,
+					[`directLight[${index}].u_color`]: [dirLight.color.r, dirLight.color.g, dirLight.color.b],
+					[`directLight[${index}].u_intencity`]: dirLight.intencity
+				});
 
-			this.updateUBO(material.programInfo, ubos.vertexDirectLightUBO);
-			this.updateUBO(material.programInfo, ubos.lightUBO);
+				twgl.setBlockUniforms(ubos.vertexDirectLightUBO, {
+					[`uDirectLightPosition[${index}]`]: dirLight.position
+				});
+
+				this.updateUBO(material.programInfo, ubos.vertexDirectLightUBO);
+				this.updateUBO(material.programInfo, ubos.lightUBO);
+			}
 		}
 	}
 
 	_updateAmbientLightUBO(light) {
 		for (const [material, ubos] of this.UBOData.entries()) {
-			twgl.setBlockUniforms(ubos.lightUBO, {
-				'ambientLight.u_color': [light.color.r, light.color.g, light.color.b],
-				'ambientLight.u_intencity': light.intencity
-			});
+			for (const [index, ambientLight] of light.entries()) {
+				twgl.setBlockUniforms(ubos.lightUBO, {
+					[`ambientLight[${index}].u_color`]: [ambientLight.color.r, ambientLight.color.g, ambientLight.color.b],
+					[`ambientLight[${index}].u_intencity`]: ambientLight.intencity
+				});
 
-			this.updateUBO(material.programInfo, ubos.lightUBO);
+				this.updateUBO(material.programInfo, ubos.lightUBO);
+			}
 		}
 	}
 
 	_updatePointLightUBO(light) {
 		for (const [material, ubos] of this.UBOData.entries()) {
-			twgl.setBlockUniforms(ubos.lightUBO, {
-				'pointLight.u_color': [light.color.r, light.color.g, light.color.b],
-				'pointLight.u_intencity': light.intencity
-			});
+			for (const [index, pointLight] of light.entries()) {
+				twgl.setBlockUniforms(ubos.lightUBO, {
+					[`pointLight[${index}].u_color`]: [pointLight.color.r, pointLight.color.g, pointLight.color.b],
+					[`pointLight[${index}].u_intencity`]: pointLight.intencity
+				});
 
-			twgl.setBlockUniforms(ubos.vertexPointLightUBO, {
-				uPointLightPosition: light.position
-			});
+				twgl.setBlockUniforms(ubos.vertexPointLightUBO, {
+					[`uPointLightPosition[${index}]`]: pointLight.position
+				});
 
-			this.updateUBO(material.programInfo, ubos.vertexPointLightUBO);
-			this.updateUBO(material.programInfo, ubos.lightUBO);
+				this.updateUBO(material.programInfo, ubos.vertexPointLightUBO);
+				this.updateUBO(material.programInfo, ubos.lightUBO);
+			}
 		}
 	}
 
 	_updateSpotLightUBO(light) {
 		for (const [material, ubos] of this.UBOData.entries()) {
-			twgl.setBlockUniforms(ubos.lightUBO, {
-				'spotLight.u_color': [light.color.r, light.color.g, light.color.b],
-				'spotLight.u_intencity': light.intencity,
-				'spotLight.u_light_direction': light.direction,
-				'spotLight.u_innerLimit': light.innerLimit,
-				'spotLight.u_outerLimit': light.outerLimit
-			});
+			for (const [index, spotLight] of light.entries()) {
+				twgl.setBlockUniforms(ubos.lightUBO, {
+					[`spotLight[${index}].u_color`]: [spotLight.color.r, spotLight.color.g, spotLight.color.b],
+					[`spotLight[${index}].u_intencity`]: spotLight.intencity,
+					[`spotLight[${index}].u_light_direction`]: spotLight.direction,
+					[`spotLight[${index}].u_innerLimit`]: spotLight.innerLimit,
+					[`spotLight[${index}].u_outerLimit`]: spotLight.outerLimit
+				});
 
-			twgl.setBlockUniforms(ubos.vertexSpotLightUBO, {
-				uSpotLightPosition: light.position
-			});
+				twgl.setBlockUniforms(ubos.vertexSpotLightUBO, {
+					[`uSpotLightPosition[${index}]`]: spotLight.position
+				});
 
-			this.updateUBO(material.programInfo, ubos.vertexSpotLightUBO);
-			this.updateUBO(material.programInfo, ubos.lightUBO);
+				this.updateUBO(material.programInfo, ubos.vertexSpotLightUBO);
+				this.updateUBO(material.programInfo, ubos.lightUBO);
+			}
 		}
 	}
 
