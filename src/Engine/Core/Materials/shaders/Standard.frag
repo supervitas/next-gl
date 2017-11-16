@@ -11,6 +11,7 @@ struct DirectLight {
 	float u_intencity;
 	vec3 u_color;
 	vec3 u_direction;
+	vec3 u_position;
 };
 
 struct AmbientLight {
@@ -21,11 +22,13 @@ struct AmbientLight {
 struct PointLight {
 	float u_intencity;
 	vec3 u_color;
+	vec3 u_position;
 };
 
 struct SpotLight {
 	float u_intencity;
 	vec3 u_color;
+	vec3 u_position;
 	vec3 u_light_direction;
 	float u_innerLimit;
     float u_outerLimit;
@@ -45,10 +48,7 @@ uniform vec3 uColor;
 #endif
 
 in vec3 vSurfaceToView;
-
-in vec3 vSurfacesToPointLight[MAX_POINT_LIGHTS_IN_ARRAY];
-in vec3 vSurfacesToDirectLight[MAX_DIRECT_LIGHTS_IN_ARRAY];
-in vec3 vSurfacesToSpotLight[MAX_SPOT_LIGHTS_IN_ARRAY];
+in vec3 vSurfaceWorldPosition;
 
 in highp vec2 vTextureCoord;
 in vec3 vNormal;
@@ -90,7 +90,10 @@ void main() {
   	vec3 specular = vec3(0.0);
 
   	for (int i = 0; i < MAX_DIRECT_LIGHTS_IN_ARRAY; i++) {
-		vec3 surfaceToDirectLightDirection = normalize(vSurfacesToDirectLight[i]);
+
+  		vec3 vSurfacesToDirectLight = u_lights.directLight[i].u_position - vSurfaceWorldPosition;
+
+		vec3 surfaceToDirectLightDirection = normalize(vSurfacesToDirectLight);
 		vec3 halfVectorFromDirectLight = normalize(surfaceToDirectLightDirection + surfaceToViewDirection);
 
   		vec3 directLight = calcDirectLight(u_lights.directLight[i], normal);
@@ -101,7 +104,11 @@ void main() {
   	}
 
   	for (int i = 0; i < MAX_POINT_LIGHTS_IN_ARRAY; i++) {
-  		vec3 surfaceToPointLightDirection = normalize(vSurfacesToPointLight[i]);
+
+		vec3 vSurfacesToPointLight = u_lights.pointLight[i].u_position - vSurfaceWorldPosition;
+
+
+  		vec3 surfaceToPointLightDirection = normalize(vSurfacesToPointLight);
 		vec3 halfVectorFromPointLight = normalize(surfaceToPointLightDirection + surfaceToViewDirection);
 
 
@@ -114,7 +121,10 @@ void main() {
   	}
 
   	for (int i = 0; i < MAX_SPOT_LIGHTS_IN_ARRAY; i++) {
-		vec3 surfaceToSpotLightDirection = normalize(vSurfacesToSpotLight[i]);
+
+  		vec3 vSurfacesToSpotLight = u_lights.spotLight[i].u_position - vSurfaceWorldPosition;
+
+		vec3 surfaceToSpotLightDirection = normalize(vSurfacesToSpotLight);
 		vec3 halfVectorFromSpotLight = normalize(surfaceToSpotLightDirection + surfaceToViewDirection);
 
 		vec3 spotLight = calcSpotLight(u_lights.spotLight[i], normal, surfaceToSpotLightDirection);

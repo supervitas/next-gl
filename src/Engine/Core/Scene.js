@@ -117,9 +117,6 @@ class Scene {
 	_createUBO(material) {
 		this.UBOData.set(material, {
 			lightUBO: twgl.createUniformBlockInfo(this._gl.glContext, material.programInfo, 'Lights'),
-			vertexPointLightUBO: twgl.createUniformBlockInfo(this._gl.glContext, material.programInfo, 'PointLight'),
-			vertexDirectLightUBO: twgl.createUniformBlockInfo(this._gl.glContext, material.programInfo, 'DirectLight'),
-			vertexSpotLightUBO: twgl.createUniformBlockInfo(this._gl.glContext, material.programInfo, 'SpotLight'),
 			projectionMatrixUBO: twgl.createUniformBlockInfo(this._gl.glContext, material.programInfo, 'Projection'),
 			viewPosition: twgl.createUniformBlockInfo(this._gl.glContext, material.programInfo, 'View'),
 		});
@@ -153,14 +150,10 @@ class Scene {
 				twgl.setBlockUniforms(ubos.lightUBO, {
 					[`directLight[${index}].u_direction`]: dirLight.direction,
 					[`directLight[${index}].u_color`]: [dirLight.color.r, dirLight.color.g, dirLight.color.b],
-					[`directLight[${index}].u_intencity`]: dirLight.intencity
+					[`directLight[${index}].u_intencity`]: dirLight.intencity,
+					[`directLight[${index}].u_position`]: dirLight.position
 				});
 
-				twgl.setBlockUniforms(ubos.vertexDirectLightUBO, {
-					[`uDirectLightPosition[${index}]`]: dirLight.position
-				});
-
-				this.updateUBO(material.programInfo, ubos.vertexDirectLightUBO);
 				this.updateUBO(material.programInfo, ubos.lightUBO);
 			}
 		}
@@ -184,14 +177,10 @@ class Scene {
 			for (const [index, pointLight] of light.entries()) {
 				twgl.setBlockUniforms(ubos.lightUBO, {
 					[`pointLight[${index}].u_color`]: [pointLight.color.r, pointLight.color.g, pointLight.color.b],
-					[`pointLight[${index}].u_intencity`]: pointLight.intencity
+					[`pointLight[${index}].u_intencity`]: pointLight.intencity,
+					[`pointLight[${index}].u_position`]: pointLight.position
 				});
 
-				twgl.setBlockUniforms(ubos.vertexPointLightUBO, {
-					[`uPointLightPosition[${index}]`]: pointLight.position
-				});
-
-				this.updateUBO(material.programInfo, ubos.vertexPointLightUBO);
 				this.updateUBO(material.programInfo, ubos.lightUBO);
 			}
 		}
@@ -203,16 +192,12 @@ class Scene {
 				twgl.setBlockUniforms(ubos.lightUBO, {
 					[`spotLight[${index}].u_color`]: [spotLight.color.r, spotLight.color.g, spotLight.color.b],
 					[`spotLight[${index}].u_intencity`]: spotLight.intencity,
+					[`spotLight[${index}].u_position`]: spotLight.position,
 					[`spotLight[${index}].u_light_direction`]: spotLight.direction,
 					[`spotLight[${index}].u_innerLimit`]: spotLight.innerLimit,
 					[`spotLight[${index}].u_outerLimit`]: spotLight.outerLimit
 				});
 
-				twgl.setBlockUniforms(ubos.vertexSpotLightUBO, {
-					[`uSpotLightPosition[${index}]`]: spotLight.position
-				});
-
-				this.updateUBO(material.programInfo, ubos.vertexSpotLightUBO);
 				this.updateUBO(material.programInfo, ubos.lightUBO);
 			}
 		}
