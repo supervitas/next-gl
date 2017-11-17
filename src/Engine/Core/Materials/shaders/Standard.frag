@@ -79,72 +79,67 @@ vec3 calcSpecular(vec3 normal, vec3 halfVector, float intencity, vec3 specularCo
 	return max(pow(dot(normal, halfVector), 150.0 / intencity), 0.0) * specularColor;
 }
 
-void main() {
-  	highp vec3 texelColor = uColor;
+void calcSceneLights(vec3 normal, inout vec3 lighting, inout vec3 specular) {
+ 	vec3 surfaceToViewDirection = normalize(vSurfaceToView);
 
-  	vec3 normal = normalize(vNormal);
+	for (int i = 0; i < MAX_DIRECT_LIGHTS_IN_ARRAY; i++) {
 
-  	vec3 surfaceToViewDirection = normalize(vSurfaceToView);
-
-  	vec3 vLighting = vec3(0.0);
-  	vec3 specular = vec3(0.0);
-
-  	for (int i = 0; i < MAX_DIRECT_LIGHTS_IN_ARRAY; i++) {
-
-  		vec3 vSurfacesToDirectLight = u_lights.directLight[i].u_position - vSurfaceWorldPosition;
-
-		vec3 surfaceToDirectLightDirection = normalize(vSurfacesToDirectLight);
+		vec3 surfaceToDirectLightDirection = normalize(u_lights.directLight[i].u_position - vSurfaceWorldPosition);
 		vec3 halfVectorFromDirectLight = normalize(surfaceToDirectLightDirection + surfaceToViewDirection);
 
-  		vec3 directLight = calcDirectLight(u_lights.directLight[i], normal);
-  		vec3 specularForDirectLight = calcSpecular(normal, halfVectorFromDirectLight, u_lights.directLight[i].u_intencity, u_lights.directLight[i].u_color);
+		vec3 directLight = calcDirectLight(u_lights.directLight[i], normal);
+		vec3 specularForDirectLight = calcSpecular(normal, halfVectorFromDirectLight, u_lights.directLight[i].u_intencity, u_lights.directLight[i].u_color);
 
-  		vLighting += directLight;
-  		specular += specularForDirectLight;
-  	}
+		lighting += directLight;
+		specular += specularForDirectLight;
+	}
 
-  	for (int i = 0; i < MAX_POINT_LIGHTS_IN_ARRAY; i++) {
-
-		vec3 vSurfacesToPointLight = u_lights.pointLight[i].u_position - vSurfaceWorldPosition;
-
-
-  		vec3 surfaceToPointLightDirection = normalize(vSurfacesToPointLight);
+	for (int i = 0; i < MAX_POINT_LIGHTS_IN_ARRAY; i++) {
+		vec3 surfaceToPointLightDirection = normalize(u_lights.pointLight[i].u_position - vSurfaceWorldPosition);
 		vec3 halfVectorFromPointLight = normalize(surfaceToPointLightDirection + surfaceToViewDirection);
 
 
 		vec3 pointLight = calcPointLight(u_lights.pointLight[i], normal, surfaceToPointLightDirection);
 		vec3 specularForPointLight = calcSpecular(normal, halfVectorFromPointLight, u_lights.pointLight[i].u_intencity, u_lights.pointLight[i].u_color);
 
-		vLighting += pointLight;
+		lighting += pointLight;
 		specular += specularForPointLight;
 
-  	}
+	}
 
-  	for (int i = 0; i < MAX_SPOT_LIGHTS_IN_ARRAY; i++) {
-
-  		vec3 vSurfacesToSpotLight = u_lights.spotLight[i].u_position - vSurfaceWorldPosition;
-
-		vec3 surfaceToSpotLightDirection = normalize(vSurfacesToSpotLight);
+	for (int i = 0; i < MAX_SPOT_LIGHTS_IN_ARRAY; i++) {
+		vec3 surfaceToSpotLightDirection = normalize(u_lights.spotLight[i].u_position - vSurfaceWorldPosition);
 		vec3 halfVectorFromSpotLight = normalize(surfaceToSpotLightDirection + surfaceToViewDirection);
 
 		vec3 spotLight = calcSpotLight(u_lights.spotLight[i], normal, surfaceToSpotLightDirection);
 		vec3 specularForSpotLight = calcSpecular(normal, halfVectorFromSpotLight, u_lights.spotLight[i].u_intencity, u_lights.spotLight[i].u_color);
 
-		vLighting += spotLight;
+		lighting += spotLight;
 		specular += specularForSpotLight;
-  	}
+	}
 
-  	for (int i = 0; i < MAX_AMBIENT_LIGHTS_IN_ARRAY; i++) {
-  		vec3 ambientLight = calcAmbientLight(u_lights.ambientLight[i]);
-  		vLighting += ambientLight;
-  	}
+	for (int i = 0; i < MAX_AMBIENT_LIGHTS_IN_ARRAY; i++) {
+		vec3 ambientLight = calcAmbientLight(u_lights.ambientLight[i]);
+		lighting += ambientLight;
+	}
+}
+
+void main() {
+  	highp vec3 texelColor = uColor;
+
+  	vec3 normal = normalize(vNormal);
+
+  	vec3 lighting = vec3(0.0);
+  	vec3 specular = vec3(0.0);
+
+  	calcSceneLights(normal, lighting, specular);
 
 	#ifdef USE_MAP
 		texelColor = texture(map, vTextureCoord).rgb * texelColor;
 	#endif
 
 
-	texelColor.rgb *= vLighting + specular;
+	texelColor.rgb *= lighting + specular;
 
 	resultColor = vec4(texelColor.rgb, 1.0);
 }

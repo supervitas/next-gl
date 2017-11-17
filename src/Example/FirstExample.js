@@ -71,9 +71,9 @@ class FirstExample {
 
 		this.scene.addToScene(dirLight);
 		this.scene.addToScene(pointLight);
-		this.scene.addToScene(pointLight2);
+		// this.scene.addToScene(pointLight2);
 		this.scene.addToScene(ambientLight);
-		this.scene.addToScene(spotLight);
+		// this.scene.addToScene(spotLight);
 	}
 
 	addCubes() {
