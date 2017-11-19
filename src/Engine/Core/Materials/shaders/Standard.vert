@@ -11,12 +11,11 @@ uniform View {
 	vec3 uViewWorldPosition;
 };
 
-in vec4 aVertexPosition;
-in vec3 aVertexNormal;
-in vec2 aTextureCoord;
+layout (location = 0) in vec4 aVertexPosition;
+layout (location = 1) in vec3 aVertexNormal;
+layout (location = 2) in vec2 aTextureCoord;
 
 out highp vec2 vTextureCoord;
-
 out vec3 vNormal;
 out vec3 vSurfaceToView;
 out vec3 vSurfaceWorldPosition;

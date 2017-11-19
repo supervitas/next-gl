@@ -12,7 +12,6 @@ class SceneObject {
 
 		if (material !== null) {
 			this.material = material;
-			this.program = material.program;
 		}
 
 		this._position = new Vec3();

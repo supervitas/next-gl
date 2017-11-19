@@ -5,8 +5,6 @@ class Cube extends SceneObject {
 	constructor({material = new StandardMaterial()}) {
 		super({material});
 
-		this.programInfo = null;
-
 		const positions = Cube._getPosition();
 		const vertexNormals = Cube._getVertexNormals();
 		const uv = Cube._getUV();

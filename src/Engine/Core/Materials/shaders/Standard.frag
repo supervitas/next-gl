@@ -1,5 +1,4 @@
 #version 300 es
-
 precision highp float;
 
 const int MAX_POINT_LIGHTS_IN_ARRAY = 2;
@@ -138,8 +137,6 @@ void main() {
 		texelColor = texture(map, vTextureCoord).rgb * texelColor;
 	#endif
 
-
 	texelColor.rgb *= lighting + specular;
-
 	resultColor = vec4(texelColor.rgb, 1.0);
 }

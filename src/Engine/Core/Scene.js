@@ -115,11 +115,20 @@ class Scene {
 	}
 
 	_createUBO(material) {
-		this.UBOData.set(material, {
+		const ubo = {
 			lightUBO: twgl.createUniformBlockInfo(this._gl.glContext, material.programInfo, 'Lights'),
 			projectionMatrixUBO: twgl.createUniformBlockInfo(this._gl.glContext, material.programInfo, 'Projection'),
 			viewPosition: twgl.createUniformBlockInfo(this._gl.glContext, material.programInfo, 'View'),
-		});
+		};
+		this.UBOData.set(material, ubo);
+
+		twgl.setBlockUniforms(ubo.lightUBO, {});
+		this._updateUBO(material.programInfo, ubo.lightUBO);
+	}
+
+	_updateUBO(programInfo, ubo) {
+		twgl.setUniformBlock(this._gl.glContext, programInfo, ubo);
+		twgl.bindUniformBlock(this._gl.glContext, programInfo, ubo);
 	}
 
 	updateProjectionMatrixUBO(projectionMatrix) {
@@ -128,7 +137,7 @@ class Scene {
 				uProjectionMatrix: projectionMatrix
 			});
 
-			this.updateUBO(material.programInfo, ubos.projectionMatrixUBO);
+			this._updateUBO(material.programInfo, ubos.projectionMatrixUBO);
 		}
 	}
 
@@ -139,7 +148,7 @@ class Scene {
 				uViewWorldPosition: position
 			});
 
-			this.updateUBO(material.programInfo, ubos.viewPosition);
+			this._updateUBO(material.programInfo, ubos.viewPosition);
 		}
 	}
 
@@ -154,41 +163,41 @@ class Scene {
 					[`directLight[${index}].u_position`]: dirLight.position
 				});
 
-				this.updateUBO(material.programInfo, ubos.lightUBO);
+				this._updateUBO(material.programInfo, ubos.lightUBO);
 			}
 		}
 	}
 
-	_updateAmbientLightUBO(light) {
+	_updateAmbientLightUBO(ambientLights) {
 		for (const [material, ubos] of this.UBOData.entries()) {
-			for (const [index, ambientLight] of light.entries()) {
+			for (const [index, ambientLight] of ambientLights.entries()) {
 				twgl.setBlockUniforms(ubos.lightUBO, {
 					[`ambientLight[${index}].u_color`]: [ambientLight.color.r, ambientLight.color.g, ambientLight.color.b],
 					[`ambientLight[${index}].u_intencity`]: ambientLight.intencity
 				});
 
-				this.updateUBO(material.programInfo, ubos.lightUBO);
+				this._updateUBO(material.programInfo, ubos.lightUBO);
 			}
 		}
 	}
 
-	_updatePointLightUBO(light) {
+	_updatePointLightUBO(pointLights) {
 		for (const [material, ubos] of this.UBOData.entries()) {
-			for (const [index, pointLight] of light.entries()) {
+			for (const [index, pointLight] of pointLights.entries()) {
 				twgl.setBlockUniforms(ubos.lightUBO, {
 					[`pointLight[${index}].u_color`]: [pointLight.color.r, pointLight.color.g, pointLight.color.b],
 					[`pointLight[${index}].u_intencity`]: pointLight.intencity,
 					[`pointLight[${index}].u_position`]: pointLight.position
 				});
 
-				this.updateUBO(material.programInfo, ubos.lightUBO);
+				this._updateUBO(material.programInfo, ubos.lightUBO);
 			}
 		}
 	}
 
-	_updateSpotLightUBO(light) {
+	_updateSpotLightUBO(spotLights) {
 		for (const [material, ubos] of this.UBOData.entries()) {
-			for (const [index, spotLight] of light.entries()) {
+			for (const [index, spotLight] of spotLights.entries()) {
 				twgl.setBlockUniforms(ubos.lightUBO, {
 					[`spotLight[${index}].u_color`]: [spotLight.color.r, spotLight.color.g, spotLight.color.b],
 					[`spotLight[${index}].u_intencity`]: spotLight.intencity,
@@ -198,15 +207,9 @@ class Scene {
 					[`spotLight[${index}].u_outerLimit`]: spotLight.outerLimit
 				});
 
-				this.updateUBO(material.programInfo, ubos.lightUBO);
+				this._updateUBO(material.programInfo, ubos.lightUBO);
 			}
 		}
 	}
-
-	updateUBO(programInfo, ubo) {
-		twgl.setUniformBlock(this._gl.glContext, programInfo, ubo);
-		twgl.bindUniformBlock(this._gl.glContext, programInfo, ubo);
-	}
-
 }
 export {Scene};

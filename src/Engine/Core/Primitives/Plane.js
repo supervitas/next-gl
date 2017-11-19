@@ -5,8 +5,6 @@ class Plane extends SceneObject {
 	constructor({material = new StandardMaterial()}) {
 		super({material});
 
-		this.programInfo = null;
-
 		const positions = this._getPosition();
 		const vertexNormals = this._getVertexNormals();
 		const uv = this._getUV();
