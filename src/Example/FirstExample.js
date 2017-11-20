@@ -21,7 +21,7 @@ class FirstExample {
 			}
 		});
 
-		this.renderer = new Renderer({glContext: this.gl.glContext, scene: this.scene, camera: this.camera});
+		this.renderer = new Renderer({glContext: this.gl.glContext});
 
 		this.renderFunc = this.render.bind(this);
 
@@ -58,20 +58,18 @@ class FirstExample {
 
 		this.cameraOrbitController.update(deltaTime);
 
-		this.renderer.drawScene();
+		this.renderer.drawScene(this.scene, this.camera);
 		requestAnimationFrame(this.renderFunc);
 	}
 
 	createLight() {
 		const ambientLight = new AmbientLight({intensity: 0.2});
 		const dirLight = new DirectLight({intensity: 0.2, direction: [0.15, 0.8, 0.75], position: [0, 10, 0]});
-		const pointLight = new PointLight({intensity: 0.3, position: [-25, 5, 0], color: new Color({r:100})});
-		const pointLight2 = new PointLight({intensity: 0.3, position: [6, 5, 6]});
+		const pointLight = new PointLight({intensity: 0.3, position: [-25, 5, 0]});
 		const spotLight = new SpotLight({intensity: 0.1, position: [0, 5, -18], innerLimit: 3, outerLimit: 31});
 
 		this.scene.addToScene(dirLight);
 		this.scene.addToScene(pointLight);
-		this.scene.addToScene(pointLight2);
 		this.scene.addToScene(ambientLight);
 		this.scene.addToScene(spotLight);
 	}

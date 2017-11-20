@@ -1,24 +1,22 @@
 import twgl from 'twgl-base.js';
 
 class Renderer {
-	constructor({glContext, scene, camera}) {
+	constructor({glContext}) {
 		this._glContext = glContext;
-		this._scene = scene;
-		this._camera = camera;
 
 		this._glDepthTest = this._glContext.getParameter(this._glContext.DEPTH_TEST);
 		this._glCullFace = this._glContext.getParameter(this._glContext.CULL_FACE);
 	}
 
-	drawScene() {
+	drawScene(scene, camera, target = null) {
 		this._glContext.clear(this._glContext.COLOR_BUFFER_BIT | this._glContext.DEPTH_BUFFER_BIT);
 
-		this._updateWorldMatixForSceneObjects();
+		this._updateWorldMatixForSceneObjects(scene);
 
-		this._scene.updateProjectionMatrixUBO(this._camera.viewProjectionMatrix);
-		this._scene.updateCameraPositionUBO(this._camera.position.asArray());
+		scene.updateProjectionMatrixUBO(camera.viewProjectionMatrix);
+		scene.updateCameraPositionUBO(camera.position.asArray());
 
-		for (const [program, renderable] of this._scene.renderablesByProgram.entries()) {
+		for (const [program, renderable] of scene.renderablesByProgram.entries()) {
 
 			this._glContext.useProgram(program);
 
@@ -37,8 +35,8 @@ class Renderer {
 		}
 	}
 
-	_updateWorldMatixForSceneObjects() {
-		for (const sceneObject of this._scene.sceneObjects.values()) {
+	_updateWorldMatixForSceneObjects(scene) {
+		for (const sceneObject of scene.sceneObjects.values()) {
 			sceneObject.updateWorldMatrix();
 		}
 	}

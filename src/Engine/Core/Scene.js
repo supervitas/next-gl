@@ -115,15 +115,18 @@ class Scene {
 	}
 
 	_createUBO(material) {
-		const ubo = {
+		const ubos = {
 			lightUBO: twgl.createUniformBlockInfo(this._gl.glContext, material.programInfo, 'Lights'),
 			projectionMatrixUBO: twgl.createUniformBlockInfo(this._gl.glContext, material.programInfo, 'Projection'),
 			viewPosition: twgl.createUniformBlockInfo(this._gl.glContext, material.programInfo, 'View'),
 		};
-		this.UBOData.set(material, ubo);
 
-		twgl.setBlockUniforms(ubo.lightUBO, {});
-		this._updateUBO(material.programInfo, ubo.lightUBO);
+		this.UBOData.set(material, ubos);
+
+		for (const ubo of Object.values(ubos)) {
+			twgl.setBlockUniforms(ubo, {});
+			this._updateUBO(material.programInfo, ubo);
+		}
 	}
 
 	_updateUBO(programInfo, ubo) {
