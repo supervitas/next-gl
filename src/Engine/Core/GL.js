@@ -59,15 +59,16 @@ class GL {
 		const displayWidth = Math.floor(canvas.clientWidth * this.realPixels);
 		const displayHeight = Math.floor(canvas.clientHeight * this.realPixels);
 
-		if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
-			canvas.width = displayWidth;
-			canvas.height = displayHeight;
-
-			this.glContext.viewport(0, 0, this.glContext.drawingBufferWidth, this.glContext.drawingBufferHeight);
-
-			return true;
-		}
-		return false;
+		// if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+		// 	canvas.width = displayWidth;
+		// 	canvas.height = displayHeight;
+        //
+		// 	this.glContext.viewport(0, 0, this.glContext.drawingBufferWidth, this.glContext.drawingBufferHeight);
+        //
+		// 	return true;
+		// }
+		this.glContext.bindFramebuffer(this.glContext.FRAMEBUFFER, null);
+		this.glContext.viewport(0, 0, this.glContext.drawingBufferWidth, this.glContext.drawingBufferHeight);
 	}
 
 	loadTexture(src) {

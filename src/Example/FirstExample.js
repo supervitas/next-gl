@@ -1,5 +1,6 @@
-import {StandardMaterial, GL, Renderer, Cube, Plane,
-	Color, Camera, CameraOrbitController, Scene, DirectLight, AmbientLight, PointLight, SpotLight} from '../Engine/next-gl';
+import {StandardMaterial, GL, Renderer, RenderTarget, Cube, Plane,
+	Color, Camera, CameraOrbitController, Scene, DirectLight,
+	AmbientLight, PointLight, SpotLight} from '../Engine/next-gl';
 
 class FirstExample {
 	constructor(domElement) {
@@ -30,6 +31,8 @@ class FirstExample {
 			isDoubleSided: true
 		});
 
+		this.renderTexture = new RenderTarget(this.gl.glContext, []);
+
 		this.addCubes();
 
 		const plane = new Plane({ material: this.mapMaterial });
@@ -43,9 +46,9 @@ class FirstExample {
 	}
 
 	render(dt) {
-		if (this.gl.checkAndResize()) {
-			this.camera.aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
-		}
+		this.renderTexture.update();
+		this.gl.checkAndResize();
+		this.camera.aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
 
 		dt *= 0.001;
 		const deltaTime = dt - this._lastDT;

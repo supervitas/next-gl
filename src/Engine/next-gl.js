@@ -6,6 +6,7 @@ export {Color} from './Core/Color';
 
 export {GL} from './Core/GL';
 export {Renderer} from './Core/Renderer';
+export {RenderTarget} from './Core/RenderTarget';
 export {Scene} from './Core/Scene';
 
 
