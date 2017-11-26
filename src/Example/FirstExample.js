@@ -46,13 +46,15 @@ class FirstExample {
 	}
 
 	render(dt) {
-		this.renderTexture.update();
-		this.gl.checkAndResize();
-		this.camera.aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
-
 		dt *= 0.001;
 		const deltaTime = dt - this._lastDT;
 		this._lastDT = dt;
+
+		this.renderTexture.update();
+
+		if(this.gl.checkAndResize()) {
+			this.camera.aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
+		}
 
 		for (const [index, cube] of this.cubes.entries()) {
 			cube.rotate({x: 0, y: 1, z: 0}, deltaTime);
