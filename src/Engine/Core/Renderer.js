@@ -1,14 +1,20 @@
 import twgl from 'twgl-base.js';
 
 class Renderer {
-	constructor({glContext}) {
-		this._glContext = glContext;
+	constructor({gl}) {
+		this._gl = gl;
+		this._glContext = gl.glContext;
 
 		this._glDepthTest = this._glContext.getParameter(this._glContext.DEPTH_TEST);
 		this._glCullFace = this._glContext.getParameter(this._glContext.CULL_FACE);
 	}
 
 	drawScene(scene, camera, target = null) {
+		if (target) { // render to texture
+			this._glContext.viewport(0, 0, target.width, target.height);
+			target.bindFrameBuffer();
+		}
+
 		this._glContext.clear(this._glContext.COLOR_BUFFER_BIT | this._glContext.DEPTH_BUFFER_BIT);
 
 		this._updateWorldMatixForSceneObjects(scene);

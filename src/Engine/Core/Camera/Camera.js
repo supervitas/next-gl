@@ -2,7 +2,7 @@ import * as glmatrix from 'gl-matrix';
 import {GLMath} from '../../Math/GLMath';
 
 class Camera {
-	constructor({near = 1, far = 1000, aspect = 0, fov = 45}) {
+	constructor({near = 1, far = 1000, aspect = 0, fov = 45} = {}) {
 
 		this._zNear = near;
 		this._zFar = far;
@@ -49,11 +49,11 @@ class Camera {
 		return this._cameraPosition;
 	}
 
-	set position(position) {				
+	set position(position) {
 		if (Array.isArray(position)) {
 			this._cameraPosition.x = position[0];
 			this._cameraPosition.y = position[1];
-			this._cameraPosition.z = position[2];			
+			this._cameraPosition.z = position[2];
 		} else {
 			Object.keys(position).forEach((key) => {
 				this._cameraPosition[key] = position[key];
@@ -68,7 +68,7 @@ class Camera {
 		return this._cameraTarget;
 	}
 
-	set target (target) {	
+	set target (target) {
 		if (Array.isArray(target)) {
 			this._cameraTarget.x = target[0];
 			this._cameraTarget.y = target[1];

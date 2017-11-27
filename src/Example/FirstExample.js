@@ -22,20 +22,22 @@ class FirstExample {
 			}
 		});
 
-		this.renderer = new Renderer({glContext: this.gl.glContext});
+		this.renderer = new Renderer({gl: this.gl});
 
 		this.renderFunc = this.render.bind(this);
 
-		this.mapMaterial = new StandardMaterial({
-			map: this.gl.loadTexture('src/Example/test_texture.jpg'),
-			isDoubleSided: true
-		});
+		this.renderTextureScene = new Scene(this.gl);
+		this.renderCamera = new Camera({aspect});
+		this.renderCamera.position = [0, 5, 0];
+		this.renderTexture = new RenderTarget({gl: this.gl.glContext, width: 512, height: 512});
 
-		this.renderTexture = new RenderTarget(this.gl.glContext, []);
+		this.cubesOnRenderTextures = this.addCubes(this.renderTextureScene);
+		this.renderTextureScene.addToScene(new AmbientLight({intensity: 0.8}));
 
-		this.addCubes();
+		this.cubes = this.addCubes(this.scene);
 
-		const plane = new Plane({ material: this.mapMaterial });
+		const plane = new Plane({ material: new StandardMaterial({map: this.renderTexture.target.attachments[0],
+			isDoubleSided: true}) });
 		plane.scale = {x: 30, y:1, z: 30};
 
 		this.scene.addToScene(plane);
@@ -50,9 +52,7 @@ class FirstExample {
 		const deltaTime = dt - this._lastDT;
 		this._lastDT = dt;
 
-		this.renderTexture.update();
-
-		if(this.gl.checkAndResize()) {
+		if (this.gl.checkAndResize()) {
 			this.camera.aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
 		}
 
@@ -61,9 +61,16 @@ class FirstExample {
 			cube.rotate({x: 0, y: 0, z: 1}, deltaTime * 0.2 * index);
 		}
 
+		for (const [index, cube] of this.cubesOnRenderTextures.entries()) {
+			cube.rotate({x: 0, y: 1, z: 0}, deltaTime);
+			cube.rotate({x: 0, y: 0, z: 1}, deltaTime * 0.2 * index);
+		}
+
 		this.cameraOrbitController.update(deltaTime);
 
 		this.renderer.drawScene(this.scene, this.camera);
+		this.renderer.drawScene(this.renderTextureScene, this.renderCamera, this.renderTexture);
+
 		requestAnimationFrame(this.renderFunc);
 	}
 
@@ -79,30 +86,35 @@ class FirstExample {
 		this.scene.addToScene(spotLight);
 	}
 
-	addCubes() {
+	addCubes(scene) {
+		const mapMaterial = new StandardMaterial({
+			map: this.gl.loadTexture('src/Example/test_texture.jpg'),
+			isDoubleSided: true
+		});
+
 		const materialWithColor = new StandardMaterial({
 			color: new Color({r: 50, g: 60, b: 10})
 		});
 
-		const cube = new Cube({ material: this.mapMaterial});
+		const cube = new Cube({ material: mapMaterial});
 		cube.position = {x: 0, y: 5, z: -18};
-		this.scene.addToScene(cube);
+		scene.addToScene(cube);
 
-		const cube2 = new Cube({ material: this.mapMaterial});
+		const cube2 = new Cube({ material: materialWithColor});
 		cube2.position = {x: 5, y: 5, z: -18};
-		this.scene.addToScene(cube2);
+		scene.addToScene(cube2);
 
 		const cube3 = new Cube({ material: materialWithColor});
 		cube3.position = {x: -5, y: 5, z: -18};
-		this.scene.addToScene(cube3);
+		scene.addToScene(cube3);
 
 		const cube4 = new Cube({ material: materialWithColor});
 		cube4.position = {x: -5, y: 15, z: -18};
-		this.scene.addToScene(cube4);
+		scene.addToScene(cube4);
 
 		cube4.setParent(cube3);
 
-		this.cubes = [cube, cube2, cube3];
+		return [cube, cube2, cube3];
 	}
 }
 export {FirstExample};
