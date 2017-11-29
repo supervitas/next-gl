@@ -1,8 +1,8 @@
-import {StandardMaterial, GL, Renderer, Cube, Plane,
+import {StandardMaterial, GL, Renderer, RenderTarget, Cube, Plane,
 	Color, Camera, CameraOrbitController, Scene, DirectLight,
 	AmbientLight, PointLight, SpotLight} from '../Engine/next-gl';
 
-class FirstExample {
+class RenderToTexture {
 	constructor(domElement) {
 		this._domElement = domElement;
 		this._lastDT = 0;
@@ -26,12 +26,20 @@ class FirstExample {
 
 		this.renderFunc = this.render.bind(this);
 
+		this.renderTextureScene = new Scene(this.gl);
+		this.renderCamera = new Camera({aspect});
+		this.renderCamera.position = [0, 5, 0];
+
+		this.renderTexture = new RenderTarget({gl: this.gl.glContext, width: 512, height: 512});
+		this.renderMaterial = new StandardMaterial({map: this.renderTexture.target.attachments[0], isDoubleSided: true});
+
+		this.cubesOnRenderTextures = this.addCubes(this.renderTextureScene);
+		this.renderTextureScene.addToScene(new AmbientLight({intensity: 0.8}));
+
 		this.cubes = this.addCubes(this.scene);
 
 
-		const plane = new Plane({material: new StandardMaterial({
-			map: this.gl.loadTexture('src/Example/base_texture.png')
-		})});
+		const plane = new Plane({material: this.renderMaterial});
 		plane.scale = {x: 30, z: 30};
 
 		this.scene.addToScene(plane);
@@ -55,9 +63,15 @@ class FirstExample {
 			cube.rotate({x: 0, y: 0, z: 1}, deltaTime * 0.2 * index);
 		}
 
+		for (const [index, cube] of this.cubesOnRenderTextures.entries()) {
+			cube.rotate({x: 0, y: 1, z: 0}, deltaTime);
+			cube.rotate({x: 0, y: 0, z: 1}, deltaTime * 0.2 * index);
+		}
+
 		this.cameraOrbitController.update(deltaTime);
 
 		this.renderer.drawScene(this.scene, this.camera);
+		this.renderer.drawScene(this.renderTextureScene, this.renderCamera, this.renderTexture);
 
 		requestAnimationFrame(this.renderFunc);
 	}
@@ -104,4 +118,4 @@ class FirstExample {
 		return [cube, cube2, cube3];
 	}
 }
-export {FirstExample};
+export {RenderToTexture};
