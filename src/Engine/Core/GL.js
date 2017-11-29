@@ -37,18 +37,18 @@ class GL {
 			fragmentShader = insertAt(fragmentShader, indexWhereDefinesWillInjected, programDefines);
 		}
 
-		// const programHash = this._computeHash(vertexShader + fragmentShader);
+		const programHash = this._computeHash(vertexShader + fragmentShader);
 
-		// if (this._programs.has(programHash)) {
-		// 	return this._programs.get(programHash);
-		// }
+		if (this._programs.has(programHash)) {
+			return this._programs.get(programHash);
+		}
 
 		const program = this._createProgram(
 			this._loadShader(this.glContext.VERTEX_SHADER, vertexShader),
 			this._loadShader(this.glContext.FRAGMENT_SHADER, fragmentShader)
 		);
 
-		// this._programs.set(programHash, program);
+		this._programs.set(programHash, program);
 
 		return program;
 	}
