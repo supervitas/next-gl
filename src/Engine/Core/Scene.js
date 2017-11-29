@@ -18,12 +18,16 @@ class Scene {
 		this.lights.set('SpotLight', []);
 		this.lights.set('PointLight', []);
 		this.lights.set('AmbientLight', []);
+
+		this._hasLights = false;
 	}
 
 	addToScene(sceneObject) {
 		this.sceneObjects.set(sceneObject.id, sceneObject);
 
 		if (sceneObject instanceof Light) {
+			this._hasLights = true;
+
 			this._addLight(sceneObject);
 			this._updateLightsUBO();
 		}
@@ -95,6 +99,13 @@ class Scene {
 	}
 
 	_updateLightsUBO() {
+		if (!this._hasLights) {
+			for (const [material, ubos] of this.UBOData.entries()) {
+				twgl.setBlockUniforms(ubos.lightUBO, {});
+				this._updateUBO(material.programInfo, ubos.lightUBO);
+			}
+			return;
+		}
 		for (const [lightType, lightsArray] of this.lights.entries()) {
 			if (lightType === 'AmbientLight') {
 				this._updateAmbientLightUBO(lightsArray);
@@ -129,12 +140,23 @@ class Scene {
 		}
 	}
 
+	update(camera) {
+		for (const sceneObject of this.sceneObjects.values()) {
+			sceneObject.updateWorldMatrix();
+		}
+
+		this._updateProjectionMatrixUBO(camera.viewProjectionMatrix);
+		this._updateCameraPositionUBO(camera.position.asArray());
+
+		this._updateLightsUBO();
+	}
+
 	_updateUBO(programInfo, ubo) {
 		twgl.setUniformBlock(this._gl.glContext, programInfo, ubo);
 		twgl.bindUniformBlock(this._gl.glContext, programInfo, ubo);
 	}
 
-	updateProjectionMatrixUBO(projectionMatrix) {
+	_updateProjectionMatrixUBO(projectionMatrix) {
 		for (const [material, ubos] of this.UBOData.entries()) {
 			twgl.setBlockUniforms(ubos.projectionMatrixUBO, {
 				uProjectionMatrix: projectionMatrix
@@ -144,7 +166,7 @@ class Scene {
 		}
 	}
 
-	updateCameraPositionUBO(position) {
+	_updateCameraPositionUBO(position) {
 		for (const [material, ubos] of this.UBOData.entries()) {
 
 			twgl.setBlockUniforms(ubos.viewPosition, {

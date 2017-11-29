@@ -2,7 +2,7 @@ import OrbitControls from 'orbit-controls';
 
 class CameraOrbitController {
 	constructor({camera, opts = {}}) {
-		this._camera = camera;		
+		this._camera = camera;
 		this._orbitControls = new OrbitControls(opts);
 	}
 

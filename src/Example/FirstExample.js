@@ -29,16 +29,18 @@ class FirstExample {
 		this.renderTextureScene = new Scene(this.gl);
 		this.renderCamera = new Camera({aspect});
 		this.renderCamera.position = [0, 5, 0];
+
 		this.renderTexture = new RenderTarget({gl: this.gl.glContext, width: 512, height: 512});
+		this.renderMaterial = new StandardMaterial({map: this.renderTexture.target.attachments[0], isDoubleSided: true});
 
 		this.cubesOnRenderTextures = this.addCubes(this.renderTextureScene);
 		this.renderTextureScene.addToScene(new AmbientLight({intensity: 0.8}));
 
 		this.cubes = this.addCubes(this.scene);
 
-		const plane = new Plane({ material: new StandardMaterial({map: this.renderTexture.target.attachments[0],
-			isDoubleSided: true}) });
-		plane.scale = {x: 30, y:1, z: 30};
+
+		const plane = new Plane({material: this.renderMaterial});
+		plane.scale = {x: 30, z: 30};
 
 		this.scene.addToScene(plane);
 
@@ -88,8 +90,7 @@ class FirstExample {
 
 	addCubes(scene) {
 		const mapMaterial = new StandardMaterial({
-			map: this.gl.loadTexture('src/Example/test_texture.jpg'),
-			isDoubleSided: true
+			map: this.gl.loadTexture('src/Example/test_texture.jpg')
 		});
 
 		const materialWithColor = new StandardMaterial({

@@ -17,10 +17,7 @@ class Renderer {
 
 		this._glContext.clear(this._glContext.COLOR_BUFFER_BIT | this._glContext.DEPTH_BUFFER_BIT);
 
-		this._updateWorldMatixForSceneObjects(scene);
-
-		scene.updateProjectionMatrixUBO(camera.viewProjectionMatrix);
-		scene.updateCameraPositionUBO(camera.position.asArray());
+		scene.update(camera);
 
 		for (const [program, renderable] of scene.renderablesByProgram.entries()) {
 
@@ -41,11 +38,6 @@ class Renderer {
 		}
 	}
 
-	_updateWorldMatixForSceneObjects(scene) {
-		for (const sceneObject of scene.sceneObjects.values()) {
-			sceneObject.updateWorldMatrix();
-		}
-	}
 
 	_updateRenderableUniforms(renderObject, {normalMatrix, modelWorldMatrix}) {
 		renderObject.material.uniforms.uNormalMatrix = normalMatrix;

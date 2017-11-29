@@ -1,5 +1,5 @@
 class Color {
-	constructor({r = 255, g = 255, b = 255} = {r: 255, g: 255, b: 255}) {
+	constructor({r = 255, g = 255, b = 255} = {}) {
 		this._r = r;
 		this._g = g;
 		this._b = b;
