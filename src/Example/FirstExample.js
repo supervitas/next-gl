@@ -30,7 +30,7 @@ class FirstExample {
 
 
 		const plane = new Plane({material: new StandardMaterial({
-			map: this.gl.loadTexture('src/Example/base_texture.png')
+			map: this.gl.loadTexture('src/Example/textures/base_texture.png')
 		})});
 		plane.scale = {x: 30, z: 30};
 
@@ -76,7 +76,7 @@ class FirstExample {
 
 	addCubes(scene) {
 		const mapMaterial = new StandardMaterial({
-			map: this.gl.loadTexture('src/Example/test_texture.jpg')
+			map: this.gl.loadTexture('src/Example/textures/test_texture.jpg')
 		});
 
 		const materialWithColor = new StandardMaterial({

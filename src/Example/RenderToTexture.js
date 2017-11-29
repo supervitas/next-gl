@@ -90,7 +90,7 @@ class RenderToTexture {
 
 	addCubes(scene) {
 		const mapMaterial = new StandardMaterial({
-			map: this.gl.loadTexture('src/Example/test_texture.jpg')
+			map: this.gl.loadTexture('src/Example/textures/test_texture.jpg')
 		});
 
 		const materialWithColor = new StandardMaterial({
