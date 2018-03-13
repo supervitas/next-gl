@@ -11,12 +11,6 @@ module.exports = {
 	},
 	performance: {
 		hints: false, 
-		maxAssetSize: 2000000, // int (in bytes),
-		maxEntrypointSize: 4000000, // int (in bytes)
-		assetFilter: function(assetFilename) { 
-			// Function predicate that provides asset filenames
-			return assetFilename.endsWith('.css') || assetFilename.endsWith('.js');
-		}
 	},
 	module: {
 		rules: [
@@ -29,5 +23,6 @@ module.exports = {
 	},
 	devtool: 'source-map',
 	plugins: [],
+	mode: 'development',
 
 };

@@ -12,6 +12,9 @@ class Renderer {
 	drawScene(scene, camera, target = null) {
 		if (target) { // render to texture
 			this._glContext.viewport(0, 0, target.width, target.height);
+			// this._glContext.disable(this._glContext.BLEND);
+			// this._glContext.blendFunc(this._glContext.SRC_ALPHA, this._glContext.ONE);
+			// this._glContext.enable(this._glContext.BLEND);
 			target.bindFrameBuffer();
 		}
 

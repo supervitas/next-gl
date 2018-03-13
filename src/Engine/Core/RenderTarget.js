@@ -4,7 +4,7 @@ class RenderTarget {
 	constructor({gl, width, height}) {
 		this._gl = gl;
 		this.attachments = [
-			{ format: gl.RGB, type: gl.UNSIGNED_BYTE, min: gl.LINEAR, wrap: gl.CLAMP_TO_EDGE },
+			{ format: gl.RGBA, type: gl.UNSIGNED_BYTE, min: gl.LINEAR, wrap: gl.CLAMP_TO_EDGE },
 			{ format: gl.DEPTH_STENCIL }
 		];
 

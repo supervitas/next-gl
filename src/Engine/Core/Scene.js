@@ -76,6 +76,17 @@ class Scene {
 		return this.sceneObjects.get(id);
 	}
 
+	update(camera) {
+		for (const sceneObject of this.sceneObjects.values()) {
+			sceneObject.updateWorldMatrix();
+		}
+
+		this._updateProjectionMatrixUBO(camera.viewProjectionMatrix);
+		this._updateCameraPositionUBO(camera.position.asArray());
+
+		this._updateLightsUBO();
+	}
+
 	_addLight(light) {
 		let lightArray;
 
@@ -138,17 +149,6 @@ class Scene {
 			twgl.setBlockUniforms(ubo, {});
 			this._updateUBO(material.programInfo, ubo);
 		}
-	}
-
-	update(camera) {
-		for (const sceneObject of this.sceneObjects.values()) {
-			sceneObject.updateWorldMatrix();
-		}
-
-		this._updateProjectionMatrixUBO(camera.viewProjectionMatrix);
-		this._updateCameraPositionUBO(camera.position.asArray());
-
-		this._updateLightsUBO();
 	}
 
 	_updateUBO(programInfo, ubo) {

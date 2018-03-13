@@ -10,7 +10,7 @@ class SceneObject {
 		this.name = name || `SceneObject#${this.id}`;
 		this.vao = null;
 
-		if (material !== null) {
+		if (material) {
 			this.material = material;
 		}
 
@@ -33,9 +33,7 @@ class SceneObject {
 	updateWorldMatrix(parentWorldMatrix) {
 		if (parentWorldMatrix) {
 			glmatrix.mat4.multiply(this.worldMatrix, parentWorldMatrix, this.localMatrix);
-		}
-
-		else if (!this.parent) {
+		} else if (!this.parent) {
 			glmatrix.mat4.copy(this.worldMatrix, this.localMatrix);
 		}
 
@@ -51,14 +49,17 @@ class SceneObject {
 				this.parent.children.splice(index, 1);
 			}
 		}
+
 		if (parent) {
 			parent.children.push(this);
 		}
+
 		this.parent = parent;
 	}
 
 	removeChild(child) {
 		const index = this.children.indexOf(child);
+
 		if (index !== -1) {
 			this.children.splice(index, 1);
 			child.parent = null;
@@ -80,15 +81,9 @@ class SceneObject {
 	}
 
 	set position(position) {
-		if (Array.isArray(position)) {
-			this._position.x = position[0];
-			this._position.y = position[1];
-			this._position.z = position[2];
-		} else {
-			Object.keys(position).forEach((key) => {
-				this._position[key] = position[key];
-			});
-		}
+		Object.keys(position).forEach((key) => {
+			this._position[key] = position[key];
+		});
 
 		glmatrix.mat4.translate(this.localMatrix, this.localMatrix, this._position.asArray());
 

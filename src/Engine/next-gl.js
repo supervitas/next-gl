@@ -17,6 +17,7 @@ export {Plane} from './Core/Primitives/Plane';
 
 
 export {Camera} from './Core/Camera/Camera';
+export {OrthographicCamera} from './Core/Camera/OrthographicCamera';
 export {CameraOrbitController} from './Core/Camera/CameraOrbitController';
 
 export {DirectLight} from './Core/Lights/DirectLight';

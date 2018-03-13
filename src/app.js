@@ -1,5 +1,6 @@
 import './app.css';
 import {FirstExample} from './Example/FirstExample';
+import {OrthographicExample} from "./Example/OrthographicCamera";
 
 class App {
 	constructor() {
