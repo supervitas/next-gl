@@ -5,28 +5,23 @@ class Plane extends SceneObject {
 	constructor({material = new StandardMaterial()}) {
 		super({material});
 
-		const positions = Plane._getPosition();
-		const vertexNormals = Plane._getVertexNormals();
-		const uv = Plane._getUV();
-		const indices = Plane._getIndices();
-
 		this.attributes = {
-			aVertexPosition: { numComponents: 3, data: positions },
-			aTextureCoord: { numComponents: 2, data: uv},
-			aVertexNormal:   { numComponents: 3, data: vertexNormals},
-			indices:  { numComponents: 3, data: indices},
+			aVertexPosition: { numComponents: 3, data: Plane.vertexPositions },
+			aTextureCoord: { numComponents: 2, data: Plane.uv},
+			aVertexNormal:   { numComponents: 3, data: Plane.vertexNormals},
+			indices:  { numComponents: 3, data: Plane.indices},
 		};
 
 		this.bufferInfo = null;
 		this.vao = null;
 	}
 
-	static _getIndices() {
+	static get indices() {
 		return [
 			0,  1,  2,      0,  2,  3,
 		];
 	}
-	static _getUV() {
+	static get uv() {
 		return [
 			0.0,  0.0,
 			1.0,  0.0,
@@ -34,7 +29,7 @@ class Plane extends SceneObject {
 			0.0,  1.0,
 		];
 	}
-	static _getVertexNormals() {
+	static get vertexNormals() {
 		return [
 			0.0, 1.0,  0.0,
 			0.0, 1.0,  0.0,
@@ -43,7 +38,7 @@ class Plane extends SceneObject {
 		];
 	}
 
-	static _getPosition() {
+	static get vertexPositions() {
 		return [
 			-1.0, 0.0, -1.0,
 			-1.0, 0.0, 1.0,
