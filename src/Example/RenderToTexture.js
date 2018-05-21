@@ -1,5 +1,5 @@
 import {StandardMaterial, GL, Renderer, RenderTarget, Cube, Plane,
-	Color, Camera, CameraOrbitController, Scene, DirectLight,
+	Color, PerspectiveCamera, CameraOrbitController, Scene, DirectLight,
 	AmbientLight, PointLight, SpotLight} from '../Engine/next-gl';
 
 class RenderToTexture {
@@ -12,7 +12,7 @@ class RenderToTexture {
 		this.scene = new Scene(this.gl);
 
 		const aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
-		this.camera = new Camera({near: 1, far: 1000, aspect});
+		this.camera = new PerspectiveCamera({near: 1, far: 1000, aspect});
 		this.cameraOrbitController = new CameraOrbitController({
 			camera: this.camera,
 			opts: {
@@ -27,7 +27,7 @@ class RenderToTexture {
 		this.renderFunc = this.render.bind(this);
 
 		this.renderTextureScene = new Scene(this.gl);
-		this.renderCamera = new Camera({aspect});
+		this.renderCamera = new PerspectiveCamera({aspect});
 		this.renderCamera.position = [0, 5, 0];
 
 		this.renderTexture = new RenderTarget({gl: this.gl.glContext, width: 512, height: 512});

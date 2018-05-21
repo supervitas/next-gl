@@ -1,7 +1,7 @@
 import * as glmatrix from 'gl-matrix';
 import {GLMath} from '../../Math/GLMath';
 
-class Camera {
+class PerspectiveCamera {
 	constructor({near = 1, far = 1000, aspect = 0, fov = 45} = {}) {
 
 		this._zNear = near;
@@ -10,7 +10,6 @@ class Camera {
 
 		this._cameraTarget = GLMath.createVec3();
 		this._cameraPosition = GLMath.createVec3();
-		this._rotationAxis = GLMath.createVec3();
 
 		this._fov = GLMath.degToRad(fov);
 
@@ -60,7 +59,7 @@ class Camera {
 			});
 		}
 
-		glmatrix.mat4.translate(this.cameraMatrix, this.cameraMatrix, this._cameraPosition.asArray());
+		glmatrix.mat4.fromTranslation(this.cameraMatrix, this._cameraPosition.asArray());
 		this._updateCameraMatrix();
 	}
 
@@ -98,4 +97,4 @@ class Camera {
 		glmatrix.mat4.multiply(this.viewProjectionMatrix, this.projectionMatrix, this.viewMatrix);
 	}
 }
-export {Camera};
+export {PerspectiveCamera};

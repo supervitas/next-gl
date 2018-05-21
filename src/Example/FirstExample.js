@@ -1,5 +1,5 @@
 import {StandardMaterial, GL, Renderer, Cube, Plane,
-	Color, Camera, CameraOrbitController, Scene, DirectLight,
+	Color, PerspectiveCamera, CameraOrbitController, Scene, DirectLight,
 	AmbientLight, PointLight, SpotLight} from '../Engine/next-gl';
 
 class FirstExample {
@@ -12,7 +12,7 @@ class FirstExample {
 		this.scene = new Scene(this.gl);
 
 		const aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
-		this.camera = new Camera({near: 1, far: 1000, aspect});
+		this.camera = new PerspectiveCamera({near: 1, far: 1000, aspect});
 		this.cameraOrbitController = new CameraOrbitController({
 			camera: this.camera,
 			opts: {
@@ -51,8 +51,8 @@ class FirstExample {
 		}
 
 		for (const [index, cube] of this.cubes.entries()) {
-			cube.rotate({x: 0, y: 1, z: 0}, deltaTime);
-			cube.rotate({x: 0, y: 0, z: 1}, deltaTime * 0.2 * index);
+			cube.rotateY(deltaTime);
+			cube.rotateZ(deltaTime * 0.2 * index);
 		}
 
 		this.cameraOrbitController.update(deltaTime);

@@ -85,7 +85,7 @@ class SceneObject {
 			this._position[key] = position[key];
 		});
 
-		glmatrix.mat4.translate(this.localMatrix, this.localMatrix, this._position.asArray());
+		glmatrix.mat4.fromTranslation(this.localMatrix,  this._position.asArray());
 
 		this.updateMatrices();
 	}
@@ -110,7 +110,7 @@ class SceneObject {
 			this._scale[key] = scale[key];
 		});
 
-		glmatrix.mat4.scale(this.localMatrix, this.localMatrix, this._scale.asArray());
+		glmatrix.mat4.fromScaling(this.localMatrix, this._scale.asArray());
 
 		this.updateMatrices();
 	}
@@ -124,8 +124,23 @@ class SceneObject {
 			this._rotationAxis[key] = vecRotateAxis[key];
 		});
 
-		glmatrix.mat4.rotate(this.localMatrix, this.localMatrix, angle, this._rotationAxis.asArray());
+		glmatrix.mat4.fromRotation(this.localMatrix, angle, this._rotationAxis.asArray());
 
+		this.updateMatrices();
+	}
+
+	rotateY(angle) {
+		glmatrix.mat4.rotate(this.localMatrix, this.localMatrix, angle, [angle > 0 ? 1 : -1, 0, 0]);
+		this.updateMatrices();
+	}
+
+	rotateX(angle) {
+		glmatrix.mat4.rotate(this.localMatrix, this.localMatrix, angle, [0, angle > 0 ? 1 : -1, 0]);
+		this.updateMatrices();
+	}
+
+	rotateZ(angle) {
+		glmatrix.mat4.rotate(this.localMatrix, this.localMatrix, angle, [0, 0, angle > 0 ? 1 : -1]);
 		this.updateMatrices();
 	}
 

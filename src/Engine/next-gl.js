@@ -16,7 +16,7 @@ export {Cube} from './Core/Primitives/Cube';
 export {Plane} from './Core/Primitives/Plane';
 
 
-export {Camera} from './Core/Camera/Camera';
+export {PerspectiveCamera} from './Core/Camera/PerspectiveCamera';
 export {OrthographicCamera} from './Core/Camera/OrthographicCamera';
 export {CameraOrbitController} from './Core/Camera/CameraOrbitController';
 

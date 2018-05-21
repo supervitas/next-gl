@@ -5,7 +5,7 @@ import {OrthographicExample} from "./Example/OrthographicCamera";
 class App {
 	constructor() {
 		this._canvas = document.getElementById('glcanvas');
-		this._example = new FirstExample(this._canvas);
+		this._example = new OrthographicExample(this._canvas);
 	}
 
 }

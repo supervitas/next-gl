@@ -11,8 +11,11 @@ class OrthographicExample {
 
 		this.scene = new Scene(this.gl);
 
-		const aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
-		this.camera = new OrthographicCamera({near: 1, far: 1000, aspect});
+		const w = this.gl.glContext.canvas.clientWidth;
+		const h = this.gl.glContext.canvas.clientHeight;
+
+		this.camera = new OrthographicCamera({left: w / -2, right: w /  2, top: h / 2, bottom: h / -2, near: 1, far: 1000});
+		window.x = this.camera;
 
 
 		this.renderer = new Renderer({gl: this.gl});
@@ -44,8 +47,8 @@ class OrthographicExample {
 		}
 
 		for (const [index, cube] of this.cubes.entries()) {
-			cube.rotate({x: 0, y: 1, z: 0}, deltaTime);
-			cube.rotate({x: 0, y: 0, z: 1}, deltaTime * 0.2 * index);
+			cube.rotateY(deltaTime);
+			cube.rotateZ(deltaTime * 0.2 * index);
 		}
 
 
@@ -57,9 +60,6 @@ class OrthographicExample {
 	createLight() {
 		const ambientLight = new AmbientLight({intensity: 0.2});
 		const dirLight = new DirectLight({intensity: 0.2, direction: [0.15, 0.8, 0.75], position: [0, 10, 0]});
-
-		this.camera.position = dirLight.position;
-		window.x = this.camera;
 
 		this.scene.addToScene(dirLight);
 		this.scene.addToScene(ambientLight);
