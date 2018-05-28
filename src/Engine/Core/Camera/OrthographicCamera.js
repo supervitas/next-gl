@@ -55,8 +55,6 @@ class OrthographicCamera {
 			this._bottom,
 			this._top,
 			this._zNear, this._zFar);
-
-		glmatrix.mat4.multiply(this.viewProjectionMatrix, this.viewProjectionMatrix, this.cameraMatrix);
 	}
 }
 export {OrthographicCamera};

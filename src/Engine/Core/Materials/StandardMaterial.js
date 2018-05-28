@@ -4,7 +4,7 @@ import vertexShader from './shaders/Standard.vert';
 import twgl from 'twgl-base.js';
 
 class StandardMaterial {
-	constructor({color = new Color(), map = null, isDoubleSided = false, useDepthTest = true} = {}) {
+	constructor({color = new Color(), map = null, isDoubleSided = false, useDepthTest = true, opacity = 1} = {}) {
 		this.defines = new Map();
 		this.uniforms = {};
 
@@ -12,6 +12,9 @@ class StandardMaterial {
 		this.isDoubleSided = isDoubleSided;
 		this.color = color.toRGB();
 		this.programInfo = null;
+
+		this.opacity = opacity;
+		this.uniforms.opacity = this.opacity;
 
 		if (map) {
 			this.defines.set('USE_MAP', true);

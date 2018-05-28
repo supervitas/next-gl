@@ -27,10 +27,11 @@ class FirstExample {
 		this.renderFunc = this.render.bind(this);
 
 		this.cubes = this.addCubes(this.scene);
+		this.addTransparentCubes();
 
 
 		const plane = new Plane({material: new StandardMaterial({
-			map: this.gl.loadTexture('src/Example/textures/base_texture.png')
+			map: this.gl.loadTexture('src/Example/textures/test_texture.jpg')
 		})});
 		plane.scale = {x: 30, z: 30};
 
@@ -64,14 +65,14 @@ class FirstExample {
 
 	createLight() {
 		const ambientLight = new AmbientLight({intensity: 0.2});
-		const dirLight = new DirectLight({intensity: 0.2, direction: [0.15, 0.8, 0.75], position: [0, 10, 0]});
+		const dirLight = new DirectLight({intensity: 0.5, direction: [0.15, 0.8, 0.75]});
 		const pointLight = new PointLight({intensity: 0.3, position: [-25, 5, 0]});
 		const spotLight = new SpotLight({intensity: 0.1, position: [0, 5, -18], innerLimit: 3, outerLimit: 31});
 
 		this.scene.addToScene(dirLight);
-		this.scene.addToScene(pointLight);
 		this.scene.addToScene(ambientLight);
-		this.scene.addToScene(spotLight);
+		// this.scene.addToScene(pointLight);
+		// this.scene.addToScene(spotLight);
 	}
 
 	addCubes(scene) {
@@ -102,6 +103,19 @@ class FirstExample {
 		cube4.setParent(cube3);
 
 		return [cube, cube2, cube3];
+	}
+
+	addTransparentCubes() {
+		const transpMat = new StandardMaterial({
+			color: new Color({r: 10, g: 30, b: 100}),
+			opacity: 0.5
+		});
+
+		const cube = new Cube({ material: transpMat});
+		cube.position = {x: 0, y: 5, z: -3};
+		cube.scale = {x: 3, y: 3, z: 3};
+
+		this.scene.addToScene(cube);
 	}
 }
 export {FirstExample};

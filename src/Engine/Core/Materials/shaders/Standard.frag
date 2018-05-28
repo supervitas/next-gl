@@ -41,6 +41,7 @@ uniform Lights {
 } u_lights;
 
 uniform vec3 uColor;
+uniform float opacity;
 
 #ifdef USE_MAP
 	uniform sampler2D map;
@@ -124,7 +125,7 @@ void calcSceneLights(vec3 normal, inout vec3 lighting, inout vec3 specular) {
 }
 
 void main() {
-  	highp vec3 texelColor = uColor;
+  	highp vec4 texelColor = vec4(1.0);
 
   	vec3 normal = normalize(vNormal);
 
@@ -134,9 +135,12 @@ void main() {
   	calcSceneLights(normal, lighting, specular);
 
 	#ifdef USE_MAP
-		texelColor = texture(map, vTextureCoord).rgb * texelColor;
+		texelColor = texture(map, vTextureCoord);
 	#endif
 
-	texelColor.rgb *= lighting + specular;
-	resultColor = vec4(texelColor.rgb, 1.0);
+
+	texelColor.rgb *= uColor * (lighting + specular);
+	texelColor.a *= opacity;
+
+	resultColor = texelColor;
 }

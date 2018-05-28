@@ -94,6 +94,7 @@ class GL {
 		gl.enable(gl.DEPTH_TEST);
 		gl.enable(gl.CULL_FACE);
 		gl.depthFunc(gl.LEQUAL);
+		gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
 
 		return gl;
 	}

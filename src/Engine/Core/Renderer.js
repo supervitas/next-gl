@@ -22,15 +22,39 @@ class Renderer {
 
 		scene.update(camera);
 
+		this._glContext.disable(this._glContext.BLEND);
+		this._glContext.enable(this._glContext.DEPTH_TEST);
+
 		for (const [program, renderable] of scene.renderablesByProgram.entries()) {
 
 			this._glContext.useProgram(program);
 
 			for (const sceneObject of renderable.sceneObjects) {
-				if (!sceneObject.visible) continue;
+				if (!sceneObject.visible || sceneObject.material.opacity !== 1) continue;
 
 				this._depthTest(sceneObject.material.depthTest);
 				this._useFaceCulluing(sceneObject.material.isDoubleSided);
+
+				this._glContext.bindVertexArray(sceneObject.vao);
+
+				this._updateRenderableUniforms(sceneObject, {normalMatrix: sceneObject.normalMatrix, modelWorldMatrix: sceneObject.worldMatrix});
+
+				twgl.drawBufferInfo(this._glContext, sceneObject.bufferInfo);
+			}
+		}
+
+
+		this._glContext.enable(this._glContext.BLEND);
+		this._glContext.disable(this._glContext.DEPTH_TEST);
+
+		for (const [program, renderable] of scene.renderablesByProgram.entries()) {
+
+			this._glContext.useProgram(program);
+
+			for (const sceneObject of renderable.sceneObjects) {
+				if (!sceneObject.visible || sceneObject.material.opacity === 1) continue;
+
+				// this._useFaceCulluing(sceneObject.material.isDoubleSided);
 
 				this._glContext.bindVertexArray(sceneObject.vao);
 

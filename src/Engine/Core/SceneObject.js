@@ -23,6 +23,7 @@ class SceneObject {
 
 		this._visible = true;
 		this.frustrumCulled = true;
+		this.renderOrder = 0;
 
 		this.normalMatrix = glmatrix.mat4.create();
 
@@ -85,7 +86,7 @@ class SceneObject {
 			this._position[key] = position[key];
 		});
 
-		glmatrix.mat4.fromTranslation(this.localMatrix,  this._position.asArray());
+		glmatrix.mat4.translate(this.localMatrix, this.localMatrix,  this._position.asArray());
 
 		this.updateMatrices();
 	}
@@ -110,7 +111,7 @@ class SceneObject {
 			this._scale[key] = scale[key];
 		});
 
-		glmatrix.mat4.fromScaling(this.localMatrix, this._scale.asArray());
+		glmatrix.mat4.scale(this.localMatrix, this.localMatrix, this._scale.asArray());
 
 		this.updateMatrices();
 	}
