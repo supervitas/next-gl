@@ -54,7 +54,8 @@ class Renderer {
 			for (const sceneObject of renderable.sceneObjects) {
 				if (!sceneObject.visible || sceneObject.material.opacity === 1) continue;
 
-				// this._useFaceCulluing(sceneObject.material.isDoubleSided);
+				this._useFaceCulluing(sceneObject.material.isDoubleSided);
+				this._glContext.blendFunc(this._glContext.SRC_ALPHA, this._glContext.ONE); // todo from material
 
 				this._glContext.bindVertexArray(sceneObject.vao);
 
