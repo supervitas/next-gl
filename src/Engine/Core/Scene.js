@@ -9,7 +9,12 @@ import {SpotLight} from './Lights/SpotLight';
 class Scene {
 	constructor(gl) {
 		this._gl = gl;
-		this.renderablesByProgram = new Map();
+
+		this.renderList = new Map();
+		this.renderList.set('opaque', new Map());
+		this.renderList.set('transparent', new Map());
+
+
 		this.sceneObjects = new Map();
 		this.UBOData = new Map();
 
@@ -41,11 +46,15 @@ class Scene {
 			this._updateLightsUBO();
 		}
 
-		if (this.renderablesByProgram.has(sceneObject.material.programInfo.program)) {
-			const renderable = this.renderablesByProgram.get(sceneObject.material.programInfo.program);
+		const renderList = sceneObject.material.opacity !== 1 ?
+			this.renderList.get('transparent') :
+			this.renderList.get('opaque');
+
+		if (renderList.has(sceneObject.material.programInfo.program)) {
+			const renderable = renderList.get(sceneObject.material.programInfo.program);
 			renderable.sceneObjects.push(sceneObject);
 		} else {
-			this.renderablesByProgram.set(sceneObject.material.programInfo.program, {sceneObjects: [sceneObject]});
+			renderList.set(sceneObject.material.programInfo.program, {sceneObjects: [sceneObject]});
 		}
 	}
 
@@ -58,7 +67,11 @@ class Scene {
 		}
 
 		if (object.material) {
-			const renderable = this.renderablesByProgram.get(sceneObject.material.program);
+			const renderList = sceneObject.material.opacity !== 1 ?
+				this.renderList.get('transparent') :
+				this.renderList.get('opaque');
+
+			const renderable = renderList.get(sceneObject.material.program);
 			const index = renderable.sceneObjects.indexOf(sceneObject);
 			renderable.sceneObjects.splice(index, 1);
 		}

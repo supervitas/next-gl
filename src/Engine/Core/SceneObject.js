@@ -22,13 +22,60 @@ class SceneObject {
 		this.parent = null;
 
 		this._visible = true;
+		this._renderOrder = 0;
 		this.frustrumCulled = true;
-		this.renderOrder = 0;
 
 		this.normalMatrix = glmatrix.mat4.create();
 
 		this.localMatrix = glmatrix.mat4.create();
 		this.worldMatrix = glmatrix.mat4.create();
+	}
+
+	set position(position) {
+		Object.keys(position).forEach((key) => {
+			this._position[key] = position[key];
+		});
+
+		glmatrix.mat4.translate(this.localMatrix, this.localMatrix,  this._position.asArray());
+
+		this.updateMatrices();
+	}
+
+	get position() {
+		return this._position;
+	}
+
+	set visible(isVisible) {
+		this._visible = false;
+		for (const child of this.children) {
+			child.visible = isVisible;
+		}
+	}
+
+	get visible() {
+		return this._visible;
+	}
+
+	set scale(scale) {
+		Object.keys(scale).forEach((key) => {
+			this._scale[key] = scale[key];
+		});
+
+		glmatrix.mat4.scale(this.localMatrix, this.localMatrix, this._scale.asArray());
+
+		this.updateMatrices();
+	}
+
+	get scale() {
+		return this._scale;
+	}
+
+	get renderOrder() {
+		return this._renderOrder;
+	}
+
+	set renderOrder(ro) {
+		this._renderOrder = ro;
 	}
 
 	updateWorldMatrix(parentWorldMatrix) {
@@ -79,45 +126,6 @@ class SceneObject {
 	calculateBBox() {
 
 
-	}
-
-	set position(position) {
-		Object.keys(position).forEach((key) => {
-			this._position[key] = position[key];
-		});
-
-		glmatrix.mat4.translate(this.localMatrix, this.localMatrix,  this._position.asArray());
-
-		this.updateMatrices();
-	}
-
-	get position() {
-		return this._position;
-	}
-
-	set visible(isVisible) {
-		this._visible = false;
-		for (const child of this.children) {
-			child.visible = isVisible;
-		}
-	}
-
-	get visible() {
-		return this._visible;
-	}
-
-	set scale(scale) {
-		Object.keys(scale).forEach((key) => {
-			this._scale[key] = scale[key];
-		});
-
-		glmatrix.mat4.scale(this.localMatrix, this.localMatrix, this._scale.asArray());
-
-		this.updateMatrices();
-	}
-
-	get scale() {
-		return this._scale;
 	}
 
 	rotate(vecRotateAxis, angle) {

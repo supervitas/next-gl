@@ -108,7 +108,7 @@ class FirstExample {
 	addTransparentCubes() {
 		const transpMat = new StandardMaterial({
 			color: new Color({r: 10, g: 30, b: 100}),
-			opacity: 0.5
+			opacity: 0.6
 		});
 
 		const cube = new Cube({ material: transpMat});
@@ -116,6 +116,17 @@ class FirstExample {
 		cube.scale = {x: 3, y: 3, z: 3};
 
 		this.scene.addToScene(cube);
+
+		const transpMat2 = new StandardMaterial({
+			color: new Color({r: 150, g: 130, b: 10}),
+			opacity: 0.3
+		});
+
+		const cube2 = new Cube({ material: transpMat2});
+		cube2.position = {x: 3, y: 5, z: -5};
+		cube2.scale = {x: 3, y: 3, z: 3};
+
+		this.scene.addToScene(cube2);
 	}
 }
 export {FirstExample};

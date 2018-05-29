@@ -22,40 +22,29 @@ class Renderer {
 
 		scene.update(camera);
 
+
 		this._glContext.disable(this._glContext.BLEND);
 		this._glContext.enable(this._glContext.DEPTH_TEST);
 
-		for (const [program, renderable] of scene.renderablesByProgram.entries()) {
-
-			this._glContext.useProgram(program);
-
-			for (const sceneObject of renderable.sceneObjects) {
-				if (!sceneObject.visible || sceneObject.material.opacity !== 1) continue;
-
-				this._depthTest(sceneObject.material.depthTest);
-				this._useFaceCulluing(sceneObject.material.isDoubleSided);
-
-				this._glContext.bindVertexArray(sceneObject.vao);
-
-				this._updateRenderableUniforms(sceneObject, {normalMatrix: sceneObject.normalMatrix, modelWorldMatrix: sceneObject.worldMatrix});
-
-				twgl.drawBufferInfo(this._glContext, sceneObject.bufferInfo);
-			}
-		}
-
+		this._render(scene.renderList.get('opaque'));
 
 		this._glContext.enable(this._glContext.BLEND);
 		this._glContext.disable(this._glContext.DEPTH_TEST);
 
-		for (const [program, renderable] of scene.renderablesByProgram.entries()) {
+		this._render(scene.renderList.get('transparent'));
+	}
+
+	_render(renderList) {
+		for (const [program, renderable] of renderList.entries()) {
 
 			this._glContext.useProgram(program);
 
 			for (const sceneObject of renderable.sceneObjects) {
-				if (!sceneObject.visible || sceneObject.material.opacity === 1) continue;
+				if (!sceneObject.visible) continue;
 
-				this._useFaceCulluing(sceneObject.material.isDoubleSided);
 				this._glContext.blendFunc(this._glContext.SRC_ALPHA, this._glContext.ONE); // todo from material
+				this._depthTest(sceneObject.material.depthTest);
+				this._useFaceCulluing(sceneObject.material.isDoubleSided);
 
 				this._glContext.bindVertexArray(sceneObject.vao);
 
