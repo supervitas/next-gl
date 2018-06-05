@@ -1,6 +1,6 @@
 import {StandardMaterial, GL, Renderer, Cube, Plane,
-	Color, PerspectiveCamera, CameraOrbitController, Scene, DirectLight,
-	AmbientLight, PointLight, SpotLight} from '../Engine/next-gl';
+	Color, PerspectiveCamera, OrthographicCamera, CameraOrbitController, Scene, DirectLight,
+	AmbientLight, PointLight, SpotLight, RenderTarget} from '../Engine/next-gl';
 
 class FirstExample {
 	constructor(domElement) {
@@ -11,8 +11,8 @@ class FirstExample {
 
 		this.scene = new Scene(this.gl);
 
-		const aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
-		this.camera = new PerspectiveCamera({near: 1, far: 1000, aspect});
+		this.aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
+		this.camera = new PerspectiveCamera({near: 1, far: 1000, aspect: this.aspect});
 		this.cameraOrbitController = new CameraOrbitController({
 			camera: this.camera,
 			opts: {
@@ -38,6 +38,7 @@ class FirstExample {
 		this.scene.addToScene(plane);
 
 		this.createLight();
+		this.createShadowMap();
 
 		requestAnimationFrame(this.renderFunc);
 	}
@@ -59,15 +60,19 @@ class FirstExample {
 		this.cameraOrbitController.update(deltaTime);
 
 		this.renderer.drawScene(this.scene, this.camera);
+		this.renderer.drawScene(this.scene, this.shadowCamera);
 
 		requestAnimationFrame(this.renderFunc);
 	}
 
 	createLight() {
 		const ambientLight = new AmbientLight({intensity: 0.2});
-		const dirLight = new DirectLight({intensity: 0.5, direction: [0.15, 0.8, 0.75]});
+		const dirLight = new DirectLight({intensity: 0.5, direction: [0.35, 0.8, 0.75], position: [3, 5, 0]});
 		const pointLight = new PointLight({intensity: 0.3, position: [-25, 5, 0]});
-		const spotLight = new SpotLight({intensity: 0.1, position: [0, 5, -18], innerLimit: 3, outerLimit: 31});
+		const spotLight = new SpotLight({intensity: 0.4,
+			position: [0, 15, -18],
+			innerLimit: 3, outerLimit: 31});
+
 
 		this.scene.addToScene(dirLight);
 		this.scene.addToScene(ambientLight);
@@ -127,6 +132,33 @@ class FirstExample {
 		cube2.scale = {x: 3, y: 3, z: 3};
 
 		this.scene.addToScene(cube2);
+	}
+
+	createShadowMap() {
+		const shadowMap = new RenderTarget({
+			gl: this.gl.glContext,
+			width: this.gl.glContext.canvas.clientWidth,
+			height:  this.gl.glContext.canvas.clientHeight
+		});
+
+		const w = this.gl.glContext.canvas.clientWidth;
+		const h = this.gl.glContext.canvas.clientHeight;
+
+
+		this.shadowCamera = new OrthographicCamera({
+			left: w / -2,
+			right: w /  2,
+			top: h / 2,
+			bottom: h / -2,
+			near: 1, far: 1000
+		});
+		window.x = this.shadowCamera;
+		// this.shadowCamera.position = [0, 5, -18];
+
+		// this.shadowCamera.target = [0.35, 0.8, 0.75];
+	}
+	updateShadowCamera() {
+
 	}
 }
 export {FirstExample};

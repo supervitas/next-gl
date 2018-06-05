@@ -11,10 +11,15 @@ class OrthographicCamera {
 		this._top = top;
 
 		this._cameraPosition = GLMath.createVec3();
+		this._cameraTarget = GLMath.createVec3();
 
+		this.viewMatrix = glmatrix.mat4.create();
 		this.cameraMatrix = glmatrix.mat4.create();
+		this.projectionMatrix = glmatrix.mat4.create();
 		this.viewProjectionMatrix = glmatrix.mat4.create();
-		this._updateProjectionMatrix();
+
+
+		this._updateProjectionAndCamera();
 	}
 
 	get zNear() {
@@ -27,12 +32,12 @@ class OrthographicCamera {
 
 	set zNear(near) {
 		this._zNear = near;
-		this._updateProjectionMatrix();
+		this._updateProjectionAndCamera();
 	}
 
 	set zFar(far) {
 		this._zFar = far;
-		this._updateProjectionMatrix();
+		this._updateProjectionAndCamera();
 	}
 
 	get position() {
@@ -48,13 +53,44 @@ class OrthographicCamera {
 		this._updateProjectionMatrix();
 	}
 
-	_updateProjectionMatrix() {
-		glmatrix.mat4.ortho(this.viewProjectionMatrix,
+	get target() {
+		return this._cameraTarget;
+	}
+
+	set target (target) {
+		if (Array.isArray(target)) {
+			this._cameraTarget.x = target[0];
+			this._cameraTarget.y = target[1];
+			this._cameraTarget.z = target[2];
+		} else {
+			Object.keys(target).forEach((key) => {
+				this._cameraTarget[key] = target[key];
+			});
+		}
+
+		glmatrix.mat4.targetTo(this.cameraMatrix, this._cameraPosition.asArray(), this._cameraTarget.asArray(), [0, 1, 0]);
+
+		this._updateProjectionMatrix();
+	}
+
+
+	_updateProjectionAndCamera() {
+		this._updateOrthographicMatrix();
+		this._updateProjectionMatrix();
+	}
+
+	_updateOrthographicMatrix() {
+		glmatrix.mat4.ortho(this.projectionMatrix,
 			this._left,
 			this._right,
 			this._bottom,
 			this._top,
 			this._zNear, this._zFar);
+	}
+
+	_updateProjectionMatrix() {
+		glmatrix.mat4.invert(this.viewMatrix, this.cameraMatrix);
+		glmatrix.mat4.multiply(this.viewProjectionMatrix, this.projectionMatrix, this.viewMatrix);
 	}
 }
 export {OrthographicCamera};

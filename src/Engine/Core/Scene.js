@@ -89,7 +89,7 @@ class Scene {
 		return this.sceneObjects.get(id);
 	}
 
-	update(camera) {
+	_update(camera) {
 		for (const sceneObject of this.sceneObjects.values()) {
 			sceneObject.updateWorldMatrix();
 		}
