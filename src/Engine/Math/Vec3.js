@@ -9,6 +9,12 @@ class Vec3 {
 		return [this.x, this.y, this.z];
 	}
 
+	fromArray(arr) {
+		this.x = arr[0];
+		this.y = arr[1];
+		this.z = arr[2];
+	}
+
 	crossProduct(vec) {
 		return {
 			x: this.y * vec.y - this.z * vec.y,
@@ -48,7 +54,12 @@ class Vec3 {
 			y: this.y / magnitude,
 			z: this.z / magnitude
 		};
+	}
 
+	copy(vec) {
+		this.x = vec.x;
+		this.y = vec.y;
+		this.z = vec.z;
 	}
 
 	magnitude() {

@@ -49,7 +49,7 @@ class OrthographicCamera {
 			this._cameraPosition[key] = position[key];
 		});
 
-		glmatrix.mat4.fromTranslation(this.cameraMatrix, this._cameraPosition.asArray());
+		glmatrix.mat4.targetTo(this.cameraMatrix, this._cameraPosition.asArray(), this._cameraTarget.asArray(), [0, 1, 0]);
 		this._updateProjectionMatrix();
 	}
 

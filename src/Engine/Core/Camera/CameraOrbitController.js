@@ -61,8 +61,8 @@ class CameraOrbitController {
 
 	update() {
 		this._orbitControls.update();
-		this._camera.position = this._orbitControls.position;
-		this._camera.target = this._orbitControls.target;
+		this._camera.position.fromArray(this._orbitControls.position);
+		this._camera.target.fromArray(this._orbitControls.target);
 	}
 }
 export {CameraOrbitController};

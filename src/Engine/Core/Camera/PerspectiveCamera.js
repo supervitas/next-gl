@@ -1,5 +1,5 @@
 import * as glmatrix from 'gl-matrix';
-import {GLMath} from '../../Math/GLMath';
+import {Vec3, GLMath} from '../../Math/GLMath';
 
 class PerspectiveCamera {
 	constructor({near = 1, far = 1000, aspect = 0, fov = 45} = {}) {
@@ -8,20 +8,40 @@ class PerspectiveCamera {
 		this._zFar = far;
 		this._aspect = aspect;
 
-		this._cameraTarget = GLMath.createVec3();
-		this._cameraPosition = GLMath.createVec3();
+		const that = this;
 
 		this._fov = GLMath.degToRad(fov);
 
+
 		this.projectionMatrix = glmatrix.mat4.create();
+		this.cameraMatrix = glmatrix.mat4.create();
+		this.viewMatrix = glmatrix.mat4.create();
+		this.viewProjectionMatrix = glmatrix.mat4.create();
 
 		this._updateProjectionMatrix();
 
-		this.cameraMatrix = glmatrix.mat4.create();
+		this.target = new Proxy(new Vec3(), {
+			set(obj, prop, value) {
+				obj[prop] = value;
 
-		this.viewMatrix = glmatrix.mat4.create();
+				glmatrix.mat4.targetTo(that.cameraMatrix, that.position.asArray(), that.target.asArray(), [0, 1, 0]);
+				that._updateCameraMatrix();
 
-		this.viewProjectionMatrix = glmatrix.mat4.create();
+				return true;
+			}
+		});
+
+		this.position = new Proxy(new Vec3(), {
+			set(obj, prop, value) {
+				obj[prop] = value;
+
+				glmatrix.mat4.fromTranslation(that.cameraMatrix, that.position.asArray());
+				that._updateCameraMatrix();
+
+				return true;
+			}
+		});
+
 	}
 
 	set zNear(near) {
@@ -44,44 +64,6 @@ class PerspectiveCamera {
 		this._updateProjectionAndCamera();
 	}
 
-	get position() {
-		return this._cameraPosition;
-	}
-
-	set position(position) {
-		if (Array.isArray(position)) {
-			this._cameraPosition.x = position[0];
-			this._cameraPosition.y = position[1];
-			this._cameraPosition.z = position[2];
-		} else {
-			Object.keys(position).forEach((key) => {
-				this._cameraPosition[key] = position[key];
-			});
-		}
-
-		glmatrix.mat4.fromTranslation(this.cameraMatrix, this._cameraPosition.asArray());
-		this._updateCameraMatrix();
-	}
-
-	get target() {
-		return this._cameraTarget;
-	}
-
-	set target (target) {
-		if (Array.isArray(target)) {
-			this._cameraTarget.x = target[0];
-			this._cameraTarget.y = target[1];
-			this._cameraTarget.z = target[2];
-		} else {
-			Object.keys(target).forEach((key) => {
-				this._cameraTarget[key] = target[key];
-			});
-		}
-
-		glmatrix.mat4.targetTo(this.cameraMatrix, this._cameraPosition.asArray(), this._cameraTarget.asArray(), [0, 1, 0]);
-
-		this._updateCameraMatrix();
-	}
 
 	_updateProjectionAndCamera() {
 		this._updateProjectionMatrix();

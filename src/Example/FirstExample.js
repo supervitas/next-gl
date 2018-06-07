@@ -60,7 +60,7 @@ class FirstExample {
 		this.cameraOrbitController.update(deltaTime);
 
 		this.renderer.drawScene(this.scene, this.camera);
-		this.renderer.drawScene(this.scene, this.shadowCamera);
+		// this.renderer.drawScene(this.scene, this.shadowCamera);
 
 		requestAnimationFrame(this.renderFunc);
 	}

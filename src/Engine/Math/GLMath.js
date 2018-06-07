@@ -20,4 +20,4 @@ class GLMath {
 	}
 
 }
-export {GLMath};
+export {GLMath, Vec3};
