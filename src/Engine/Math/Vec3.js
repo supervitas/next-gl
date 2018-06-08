@@ -15,6 +15,12 @@ class Vec3 {
 		this.z = arr[2];
 	}
 
+	set({x = this.x, y = this.y, z = this.z}) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+
 	crossProduct(vec) {
 		return {
 			x: this.y * vec.y - this.z * vec.y,
@@ -60,6 +66,8 @@ class Vec3 {
 		this.x = vec.x;
 		this.y = vec.y;
 		this.z = vec.z;
+
+		return this;
 	}
 
 	magnitude() {

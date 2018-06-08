@@ -3,15 +3,12 @@ import {Vec3, GLMath} from '../../Math/GLMath';
 
 class PerspectiveCamera {
 	constructor({near = 1, far = 1000, aspect = 0, fov = 45} = {}) {
-
-		this._zNear = near;
-		this._zFar = far;
+		this._near = near;
+		this._far = far;
 		this._aspect = aspect;
-
-		const that = this;
-
 		this._fov = GLMath.degToRad(fov);
 
+		const that = this;
 
 		this.projectionMatrix = glmatrix.mat4.create();
 		this.cameraMatrix = glmatrix.mat4.create();
@@ -20,8 +17,8 @@ class PerspectiveCamera {
 
 		this._updateProjectionMatrix();
 
-		this.target = new Proxy(new Vec3(), {
-			set(obj, prop, value) {
+		const positionAndTargetHandler = {
+			set(obj, prop, value)  {
 				obj[prop] = value;
 
 				glmatrix.mat4.targetTo(that.cameraMatrix, that.position.asArray(), that.target.asArray(), [0, 1, 0]);
@@ -29,34 +26,41 @@ class PerspectiveCamera {
 
 				return true;
 			}
-		});
+		};
 
-		this.position = new Proxy(new Vec3(), {
-			set(obj, prop, value) {
-				obj[prop] = value;
-
-				glmatrix.mat4.fromTranslation(that.cameraMatrix, that.position.asArray());
-				that._updateCameraMatrix();
-
-				return true;
-			}
-		});
-
+		this.target = new Proxy(new Vec3(), positionAndTargetHandler);
+		this.position = new Proxy(new Vec3(), positionAndTargetHandler);
 	}
 
-	set zNear(near) {
-		this._zNear = near;
+	get near() {
+		return this._near;
+	}
+
+	set near(near) {
+		this._near = near;
 		this._updateProjectionAndCamera();
 	}
 
-	set zFar(far) {
-		this._zFar = far;
+	get far() {
+		return this._far;
+	}
+
+	set far(far) {
+		this._far = far;
 		this._updateProjectionAndCamera();
+	}
+
+	get fov() {
+		return this._fov;
 	}
 
 	set fov(fov) {
-		this._fov = fov;
+		this._fov = GLMath.degToRad(fov);
 		this._updateProjectionAndCamera();
+	}
+
+	get aspect() {
+		return this._aspect;
 	}
 
 	set aspect(aspect) {
@@ -71,7 +75,7 @@ class PerspectiveCamera {
 	}
 
 	_updateProjectionMatrix() {
-		glmatrix.mat4.perspective(this.projectionMatrix, this._fov, this._aspect, this._zNear, this._zFar);
+		glmatrix.mat4.perspective(this.projectionMatrix, this._fov, this._aspect, this._near, this._far);
 	}
 
 	_updateCameraMatrix() {

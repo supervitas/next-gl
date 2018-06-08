@@ -13,6 +13,7 @@ class FirstExample {
 
 		this.aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
 		this.camera = new PerspectiveCamera({near: 1, far: 1000, aspect: this.aspect});
+
 		this.cameraOrbitController = new CameraOrbitController({
 			camera: this.camera,
 			opts: {
@@ -33,7 +34,8 @@ class FirstExample {
 		const plane = new Plane({material: new StandardMaterial({
 			map: this.gl.loadTexture('src/Example/textures/test_texture.jpg')
 		})});
-		plane.scale = {x: 30, z: 30};
+
+		plane.scale.set({x: 30, z: 30});
 
 		this.scene.addToScene(plane);
 
@@ -90,19 +92,19 @@ class FirstExample {
 		});
 
 		const cube = new Cube({ material: mapMaterial});
-		cube.position = {x: 0, y: 5, z: -18};
+		cube.position.copy({x: 0, y: 5, z: -18});
 		scene.addToScene(cube);
 
 		const cube2 = new Cube({ material: materialWithColor});
-		cube2.position = {x: 5, y: 5, z: -18};
+		cube2.position.copy({x: 5, y: 5, z: -18});
 		scene.addToScene(cube2);
 
 		const cube3 = new Cube({ material: materialWithColor});
-		cube3.position = {x: -5, y: 5, z: -18};
+		cube3.position.copy({x: -5, y: 5, z: -18});
 		scene.addToScene(cube3);
 
 		const cube4 = new Cube({ material: materialWithColor});
-		cube4.position = {x: -5, y: 15, z: -18};
+		cube4.position.copy({x: -5, y: 15, z: -18});
 		scene.addToScene(cube4);
 
 		cube4.setParent(cube3);
@@ -117,8 +119,8 @@ class FirstExample {
 		});
 
 		const cube = new Cube({ material: transpMat});
-		cube.position = {x: 0, y: 5, z: -3};
-		cube.scale = {x: 3, y: 3, z: 3};
+		cube.position.copy({x: 0, y: 5, z: -3});
+		cube.scale.set({x: 3, y: 3, z: 3});
 
 		this.scene.addToScene(cube);
 
@@ -128,8 +130,8 @@ class FirstExample {
 		});
 
 		const cube2 = new Cube({ material: transpMat2});
-		cube2.position = {x: 3, y: 5, z: -5};
-		cube2.scale = {x: 3, y: 3, z: 3};
+		cube2.position.copy({x: 3, y: 5, z: -5});
+		cube2.scale.set({x: 3, y: 3, z: 3});
 
 		this.scene.addToScene(cube2);
 	}

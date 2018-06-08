@@ -14,9 +14,32 @@ class SceneObject {
 			this.material = material;
 		}
 
-		this._position = new Vec3();
+		const that = this;
+
 		this._rotationAxis = new Vec3();
-		this._scale = new Vec3(1, 1, 1);
+
+		this.position = new Proxy(new Vec3(), {
+			set(obj, prop, value) {
+				obj[prop] = value;
+
+				glmatrix.mat4.translate(that.localMatrix, that.localMatrix,  that.position.asArray());
+				that.updateMatrices();
+
+				return true;
+			}
+		});
+
+		this.scale = new Proxy(new Vec3(1, 1, 1), {
+			set(obj, prop, value) {
+				obj[prop] = value;
+
+				glmatrix.mat4.scale(that.localMatrix, that.localMatrix, that.scale.asArray());
+
+				that.updateMatrices();
+
+				return true;
+			}
+		});
 
 		this.children = [];
 		this.parent = null;
@@ -26,23 +49,8 @@ class SceneObject {
 		this.frustrumCulled = true;
 
 		this.normalMatrix = glmatrix.mat4.create();
-
 		this.localMatrix = glmatrix.mat4.create();
 		this.worldMatrix = glmatrix.mat4.create();
-	}
-
-	set position(position) {
-		Object.keys(position).forEach((key) => {
-			this._position[key] = position[key];
-		});
-
-		glmatrix.mat4.translate(this.localMatrix, this.localMatrix,  this._position.asArray());
-
-		this.updateMatrices();
-	}
-
-	get position() {
-		return this._position;
 	}
 
 	set visible(isVisible) {
@@ -56,19 +64,6 @@ class SceneObject {
 		return this._visible;
 	}
 
-	set scale(scale) {
-		Object.keys(scale).forEach((key) => {
-			this._scale[key] = scale[key];
-		});
-
-		glmatrix.mat4.scale(this.localMatrix, this.localMatrix, this._scale.asArray());
-
-		this.updateMatrices();
-	}
-
-	get scale() {
-		return this._scale;
-	}
 
 	get renderOrder() {
 		return this._renderOrder;
