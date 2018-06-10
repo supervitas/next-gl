@@ -17,12 +17,15 @@ class SceneObject {
 		const that = this;
 
 		this._rotationAxis = new Vec3();
+		this.normalMatrix = glmatrix.mat4.create();
+		this.localMatrix = glmatrix.mat4.create();
+		this.worldMatrix = glmatrix.mat4.create();
 
 		this.position = new Proxy(new Vec3(), {
 			set(obj, prop, value) {
 				obj[prop] = value;
 
-				glmatrix.mat4.translate(that.localMatrix, that.localMatrix,  that.position.asArray());
+				that._updateMatrix();
 				that.updateMatrices();
 
 				return true;
@@ -33,8 +36,7 @@ class SceneObject {
 			set(obj, prop, value) {
 				obj[prop] = value;
 
-				glmatrix.mat4.scale(that.localMatrix, that.localMatrix, that.scale.asArray());
-
+				that._updateMatrix();
 				that.updateMatrices();
 
 				return true;
@@ -47,10 +49,6 @@ class SceneObject {
 		this._visible = true;
 		this._renderOrder = 0;
 		this.frustrumCulled = true;
-
-		this.normalMatrix = glmatrix.mat4.create();
-		this.localMatrix = glmatrix.mat4.create();
-		this.worldMatrix = glmatrix.mat4.create();
 	}
 
 	set visible(isVisible) {
@@ -131,6 +129,13 @@ class SceneObject {
 		glmatrix.mat4.fromRotation(this.localMatrix, angle, this._rotationAxis.asArray());
 
 		this.updateMatrices();
+	}
+
+	_updateMatrix() {
+		glmatrix.mat4.identity(this.localMatrix);
+		glmatrix.mat4.translate(this.localMatrix, this.localMatrix,  this.position.asArray());
+		glmatrix.mat4.scale(this.localMatrix, this.localMatrix, this.scale.asArray());
+
 	}
 
 	rotateY(angle) {

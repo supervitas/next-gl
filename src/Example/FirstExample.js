@@ -131,7 +131,8 @@ class FirstExample {
 
 		const cube2 = new Cube({ material: transpMat2});
 		cube2.position.copy({x: 3, y: 5, z: -5});
-		cube2.scale.set({x: 3, y: 3, z: 3});
+		cube2.scale.set({x: 3, y: 3, z: 4});
+
 
 		this.scene.addToScene(cube2);
 	}
