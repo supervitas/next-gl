@@ -10,9 +10,9 @@ class GL {
 		this._transparent = transparent ? 0.0 : 1.0;
 		this._antialias = antialias;
 
-		this.glContext = this._initWebGL();
+		this.context = this._initWebGL();
 
-		if (!this.glContext) return;
+		if (!this.context) return;
 
 		this.realPixels = pixelRatio;
 
@@ -46,8 +46,8 @@ class GL {
 		}
 
 		const program = this._createProgram(
-			this._loadShader(this.glContext.VERTEX_SHADER, vertexShader),
-			this._loadShader(this.glContext.FRAGMENT_SHADER, fragmentShader)
+			this._loadShader(this.context.VERTEX_SHADER, vertexShader),
+			this._loadShader(this.context.FRAGMENT_SHADER, fragmentShader)
 		);
 
 		this._programs.set(programHash, program);
@@ -56,7 +56,7 @@ class GL {
 	}
 
 	checkAndResize() {
-		const canvas = this.glContext.canvas;
+		const canvas = this.context.canvas;
 
 		const displayWidth = Math.floor(canvas.clientWidth * this.realPixels);
 		const displayHeight = Math.floor(canvas.clientHeight * this.realPixels);
@@ -69,14 +69,14 @@ class GL {
 
 			needResize = true;
 		}
-		this.glContext.bindFramebuffer(this.glContext.FRAMEBUFFER, null);
-		this.glContext.viewport(0, 0, this.glContext.drawingBufferWidth, this.glContext.drawingBufferHeight);
+		this.context.bindFramebuffer(this.context.FRAMEBUFFER, null);
+		this.context.viewport(0, 0, this.context.drawingBufferWidth, this.context.drawingBufferHeight);
 
 		return needResize;
 	}
 
 	loadTexture(src) {
-		const texture = twgl.createTexture(this.glContext, {
+		const texture = twgl.createTexture(this.context, {
 			src,
 		});
 
@@ -102,26 +102,26 @@ class GL {
 
 
 	_loadShader(type, source) {
-		const shader = this.glContext.createShader(type);
-		this.glContext.shaderSource(shader, source);
-		this.glContext.compileShader(shader);
-		if (!this.glContext.getShaderParameter(shader, this.glContext.COMPILE_STATUS)) {
-			console.error('An error occurred compiling the shaders: ' + this.glContext.getShaderInfoLog(shader));
-			this.glContext.deleteShader(shader);
+		const shader = this.context.createShader(type);
+		this.context.shaderSource(shader, source);
+		this.context.compileShader(shader);
+		if (!this.context.getShaderParameter(shader, this.context.COMPILE_STATUS)) {
+			console.error('An error occurred compiling the shaders: ' + this.context.getShaderInfoLog(shader));
+			this.context.deleteShader(shader);
 			return null;
 		}
 		return shader;
 	}
 
 	_createProgram(vertexShader, fragmentShader) {
-		const shaderProgram = this.glContext.createProgram();
+		const shaderProgram = this.context.createProgram();
 
-		this.glContext.attachShader(shaderProgram, vertexShader);
-		this.glContext.attachShader(shaderProgram, fragmentShader);
-		this.glContext.linkProgram(shaderProgram);
+		this.context.attachShader(shaderProgram, vertexShader);
+		this.context.attachShader(shaderProgram, fragmentShader);
+		this.context.linkProgram(shaderProgram);
 
-		if (!this.glContext.getProgramParameter(shaderProgram, this.glContext.LINK_STATUS)) {
-			console.error(`Unable to initialize the shader program: ${this.glContext.getProgramInfoLog(shaderProgram)}`);
+		if (!this.context.getProgramParameter(shaderProgram, this.context.LINK_STATUS)) {
+			console.error(`Unable to initialize the shader program: ${this.context.getProgramInfoLog(shaderProgram)}`);
 			return null;
 		}
 

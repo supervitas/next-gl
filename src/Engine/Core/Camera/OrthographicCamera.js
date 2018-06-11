@@ -22,7 +22,7 @@ class OrthographicCamera {
 				obj[prop] = value;
 
 				glmatrix.mat4.targetTo(that.cameraMatrix, that.position.asArray(), that.target.asArray(), [0, 1, 0]);
-				that._updateCameraMatrix();
+				that._updateProjectionMatrix();
 
 				return true;
 			}

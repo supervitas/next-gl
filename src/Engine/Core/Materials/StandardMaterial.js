@@ -33,7 +33,7 @@ class StandardMaterial {
 		if (this.programInfo) return;
 
 		const program = gl.initProgram(vertexShader, fragmentShader, this.defines);
-		this.programInfo = twgl.createProgramInfoFromProgram(gl.glContext, program);
+		this.programInfo = twgl.createProgramInfoFromProgram(gl.context, program);
 	}
 }
 export {StandardMaterial};

@@ -112,8 +112,8 @@ class SceneObject {
 			this.material.createMaterial(gl);
 		}
 
-		this.bufferInfo = twgl.createBufferInfoFromArrays(gl.glContext, this.attributes);
-		this.vao = twgl.createVAOFromBufferInfo(gl.glContext, this.material.programInfo.attribSetters, this.bufferInfo);
+		this.bufferInfo = twgl.createBufferInfoFromArrays(gl.context, this.attributes);
+		this.vao = twgl.createVAOFromBufferInfo(gl.context, this.material.programInfo.attribSetters, this.bufferInfo);
 	}
 
 	calculateBBox() {

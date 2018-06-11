@@ -11,7 +11,7 @@ class RenderToTexture {
 
 		this.scene = new Scene(this.gl);
 
-		const aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
+		const aspect = this.gl.context.canvas.clientWidth / this.gl.context.canvas.clientHeight;
 		this.camera = new PerspectiveCamera({near: 1, far: 1000, aspect});
 		this.cameraOrbitController = new CameraOrbitController({
 			camera: this.camera,
@@ -30,7 +30,7 @@ class RenderToTexture {
 		this.renderCamera = new PerspectiveCamera({aspect});
 		this.renderCamera.position = [0, 5, 0];
 
-		this.renderTexture = new RenderTarget({gl: this.gl.glContext, width: 512, height: 512});
+		this.renderTexture = new RenderTarget({gl: this.gl.context, width: 512, height: 512});
 		this.renderMaterial = new StandardMaterial({map: this.renderTexture.target.attachments[0], isDoubleSided: true});
 
 		this.cubesOnRenderTextures = this.addCubes(this.renderTextureScene);
@@ -55,7 +55,7 @@ class RenderToTexture {
 		this._lastDT = dt;
 
 		if (this.gl.checkAndResize()) {
-			this.camera.aspect = this.gl.glContext.canvas.clientWidth / this.gl.glContext.canvas.clientHeight;
+			this.camera.aspect = this.gl.context.canvas.clientWidth / this.gl.context.canvas.clientHeight;
 		}
 
 		for (const [index, cube] of this.cubes.entries()) {

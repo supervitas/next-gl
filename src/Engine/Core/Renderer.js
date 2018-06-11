@@ -3,7 +3,7 @@ import twgl from 'twgl-base.js';
 class Renderer {
 	constructor({gl}) {
 		this._gl = gl;
-		this._glContext = gl.glContext;
+		this._glContext = gl.context;
 
 		this._glDepthTest = this._glContext.getParameter(this._glContext.DEPTH_TEST);
 		this._glCullFace = this._glContext.getParameter(this._glContext.CULL_FACE);
