@@ -1,6 +1,7 @@
 export {StandardMaterial} from './Core/Materials/StandardMaterial';
 
 export {GLMath} from './Math/GLMath';
+export {Vec3} from './Math/Vec3';
 
 export {Color} from './Core/Color';
 

@@ -12,5 +12,6 @@ class Color {
 			b: this._b / 255
 		};
 	}
+
 }
 export {Color};

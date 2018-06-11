@@ -1,6 +1,6 @@
 import {StandardMaterial, GL, Renderer, Cube, Plane,
 	Color, PerspectiveCamera, OrthographicCamera, CameraOrbitController, Scene, DirectLight,
-	AmbientLight, PointLight, SpotLight, RenderTarget} from '../Engine/next-gl';
+	AmbientLight, PointLight, SpotLight, RenderTarget, Vec3} from '../Engine/next-gl';
 
 class FirstExample {
 	constructor(domElement) {
@@ -69,10 +69,11 @@ class FirstExample {
 
 	createLight() {
 		const ambientLight = new AmbientLight({intensity: 0.2});
-		const dirLight = new DirectLight({intensity: 0.5, direction: [0.35, 0.8, 0.75], position: [3, 5, 0]});
-		const pointLight = new PointLight({intensity: 0.3, position: [-25, 5, 0]});
+		const dirLight = new DirectLight({intensity: 0.6, direction: new Vec3(0.35, 0.8, 0.75),
+			position: new Vec3(3, 15, 0)});
+		const pointLight = new PointLight({intensity: 0.3, position: new Vec3(-25, 5, 0)});
 		const spotLight = new SpotLight({intensity: 0.4,
-			position: [0, 15, -18],
+			position: new Vec3(0, 15, -5),
 			innerLimit: 3, outerLimit: 31});
 
 

@@ -91,7 +91,9 @@ class Scene {
 
 	_update(camera) {
 		for (const sceneObject of this.sceneObjects.values()) {
-			sceneObject.updateWorldMatrix();
+			if (sceneObject.updateWorldMatrix) {
+				sceneObject.updateWorldMatrix();
+			}
 		}
 
 		this._updateProjectionMatrixUBO(camera.viewProjectionMatrix);
@@ -195,10 +197,10 @@ class Scene {
 			for (const [index, dirLight] of light.entries()) {
 
 				twgl.setBlockUniforms(ubos.lightUBO, {
-					[`directLight[${index}].u_direction`]: dirLight.direction,
+					[`directLight[${index}].u_direction`]: dirLight.direction.asArray(),
 					[`directLight[${index}].u_color`]: [dirLight.color.r, dirLight.color.g, dirLight.color.b],
 					[`directLight[${index}].u_intencity`]: dirLight.intencity,
-					[`directLight[${index}].u_position`]: dirLight.position
+					[`directLight[${index}].u_position`]: dirLight.position.asArray()
 				});
 
 				this._updateUBO(material.programInfo, ubos.lightUBO);
@@ -225,7 +227,7 @@ class Scene {
 				twgl.setBlockUniforms(ubos.lightUBO, {
 					[`pointLight[${index}].u_color`]: [pointLight.color.r, pointLight.color.g, pointLight.color.b],
 					[`pointLight[${index}].u_intencity`]: pointLight.intencity,
-					[`pointLight[${index}].u_position`]: pointLight.position
+					[`pointLight[${index}].u_position`]: pointLight.position.asArray()
 				});
 
 				this._updateUBO(material.programInfo, ubos.lightUBO);
@@ -239,8 +241,8 @@ class Scene {
 				twgl.setBlockUniforms(ubos.lightUBO, {
 					[`spotLight[${index}].u_color`]: [spotLight.color.r, spotLight.color.g, spotLight.color.b],
 					[`spotLight[${index}].u_intencity`]: spotLight.intencity,
-					[`spotLight[${index}].u_position`]: spotLight.position,
-					[`spotLight[${index}].u_light_direction`]: spotLight.direction,
+					[`spotLight[${index}].u_position`]: spotLight.position.asArray(),
+					[`spotLight[${index}].u_light_direction`]: spotLight.direction.asArray(),
 					[`spotLight[${index}].u_innerLimit`]: spotLight.innerLimit,
 					[`spotLight[${index}].u_outerLimit`]: spotLight.outerLimit
 				});

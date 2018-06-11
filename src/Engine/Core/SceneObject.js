@@ -6,7 +6,7 @@ let ID = 0;
 
 class SceneObject {
 	constructor({material = null, name = null} = {}) {
-		this.id = ID++;
+		this.id = `SceneObject${++ID}`;
 		this.name = name || `SceneObject#${this.id}`;
 		this.vao = null;
 
