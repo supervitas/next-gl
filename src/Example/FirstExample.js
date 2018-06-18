@@ -1,6 +1,6 @@
 import {StandardMaterial, GL, Renderer, Cube, Plane,
 	Color, PerspectiveCamera, OrthographicCamera, CameraOrbitController, Scene, DirectLight,
-	AmbientLight, PointLight, SpotLight, RenderTarget, Vec3} from '../Engine/next-gl';
+	AmbientLight, PointLight, SpotLight, RenderTarget, Vec3, DepthMaterial} from '../Engine/next-gl';
 
 class FirstExample {
 	constructor(domElement) {
@@ -28,7 +28,7 @@ class FirstExample {
 		this.renderFunc = this.render.bind(this);
 
 		this.cubes = this.addCubes(this.scene);
-		this.addTransparentCubes();
+		// this.addTransparentCubes();
 
 
 		const plane = new Plane({material: new StandardMaterial({
@@ -40,7 +40,6 @@ class FirstExample {
 		this.scene.addToScene(plane);
 
 		this.createLight();
-		this.createShadowMap();
 
 		requestAnimationFrame(this.renderFunc);
 	}
@@ -62,7 +61,6 @@ class FirstExample {
 		this.cameraOrbitController.update(deltaTime);
 
 		this.renderer.drawScene(this.scene, this.camera);
-		this.renderer.drawScene(this.scene, this.shadowCamera);
 
 		requestAnimationFrame(this.renderFunc);
 	}
@@ -71,7 +69,7 @@ class FirstExample {
 		const ambientLight = new AmbientLight({intensity: 0.2});
 		const dirLight = new DirectLight({intensity: 0.6, direction: new Vec3(0.35, 0.8, 0.75),
 			position: new Vec3(3, 15, 0)});
-		this.dLight = dirLight;
+
 		const pointLight = new PointLight({intensity: 0.3, position: new Vec3(-25, 5, 0)});
 		const spotLight = new SpotLight({intensity: 0.4,
 			position: new Vec3(0, 15, -5),
@@ -85,8 +83,8 @@ class FirstExample {
 	}
 
 	addCubes(scene) {
-		const mapMaterial = new StandardMaterial({
-			map: this.gl.loadTexture('src/Example/textures/test_texture.jpg')
+		const mapMaterial = new DepthMaterial({
+
 		});
 
 		const materialWithColor = new StandardMaterial({
@@ -139,32 +137,5 @@ class FirstExample {
 		this.scene.addToScene(cube2);
 	}
 
-	createShadowMap() {
-		const shadowMap = new RenderTarget({
-			gl: this.gl.context,
-			width: this.gl.context.canvas.clientWidth,
-			height:  this.gl.context.canvas.clientHeight
-		});
-
-		const w = this.gl.context.canvas.clientWidth;
-		const h = this.gl.context.canvas.clientHeight;
-
-
-		this.shadowCamera = new OrthographicCamera({
-			left: w / -2,
-			right: w /  2,
-			top: h / 2,
-			bottom: h / -2,
-			near: 1, far: 1000
-		});
-		window.x = this.shadowCamera;
-		this.shadowCamera.position.copy(this.dLight.position);
-		// this.shadowCamera.position = [0, 5, -18];
-
-		// this.shadowCamera.target = [0.35, 0.8, 0.75];
-	}
-	updateShadowCamera() {
-
-	}
 }
 export {FirstExample};

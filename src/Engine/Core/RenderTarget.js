@@ -4,14 +4,17 @@ class RenderTarget {
 	constructor({gl, width, height}) {
 		this._gl = gl;
 		this.attachments = [
-			{ format: gl.RGBA, type: gl.UNSIGNED_BYTE, min: gl.LINEAR, wrap: gl.CLAMP_TO_EDGE },
-			{ format: gl.DEPTH_STENCIL }
+			{ internalFormat: gl.DEPTH_COMPONENT24, format: gl.DEPTH_COMPONENT, type: gl.UNSIGNED_INT, min: gl.NEAREST, wrap: gl.CLAMP_TO_EDGE },
 		];
 
 		this.width = width;
 		this.height = height;
 
-		this.target = twgl.createFramebufferInfo(gl, this.attachments, width, height);
+		this.target = twgl.createFramebufferInfo(this._gl, this.attachments, width, height);
+	}
+
+	updateSize(width = this.width, height = this.height) {
+		this.target = twgl.createFramebufferInfo(this._gl, this.attachments, width, height);
 	}
 
 	bindFrameBuffer() {

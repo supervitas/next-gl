@@ -5,7 +5,7 @@
     "css-loader": "^0.26.1",
     "eslint": "^4.6.1",
     "file-loader": "^0.9.0",
-    "gl-matrix": "^2.4.0",
+    "gl-matrix": "latest",
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
     "gulp": "^3.9.1",
@@ -13,7 +13,7 @@
     "webpack-dev-server": "^3.1.1",
     "webpack": "^4.4.1",
     "webpack-glsl-loader": "^1.0.1",
-    "twgl-base.js": "^3.7.0"
+    "twgl-base.js": "latest"
   },
   "scripts": {
     "start": "gulp serve"

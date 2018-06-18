@@ -1,4 +1,5 @@
 export {StandardMaterial} from './Core/Materials/StandardMaterial';
+export {DepthMaterial} from './Core/Materials/DepthMaterial';
 
 export {GLMath} from './Math/GLMath';
 export {Vec3} from './Math/Vec3';

@@ -22,6 +22,9 @@ class StandardMaterial {
 			this.uniforms.map = this.map;
 		}
 
+		this.depthMap = map;
+		this.uniforms.depthMap = map;
+
 		this.uniforms.uColor = [
 			this.color.r,
 			this.color.g,

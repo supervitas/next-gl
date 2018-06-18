@@ -1,5 +1,6 @@
 import * as glmatrix from 'gl-matrix';
-import {Vec3, GLMath} from '../../Math/GLMath';
+import {GLMath} from '../../Math/GLMath';
+import {Vec3} from '../../Math/Vec3';
 
 class PerspectiveCamera {
 	constructor({near = 1, far = 1000, aspect = 0, fov = 45} = {}) {

@@ -34,23 +34,32 @@ class Vec3 {
 	}
 
 	sub(vec) {
-		return {
-			x: this.x - vec.x,
-			y: this.y - vec.y,
-			z: this.z - vec.z
-		};
+		this.x -= vec.x;
+		this.y -= vec.y;
+		this.z -= vec.z;
+
+		return this;
+	}
+
+	subScalar(scalar) {
+		this.x -= scalar;
+		this.y -= scalar;
+		this.z -= scalar;
+
+		return this;
 	}
 
 	add(vec) {
-		return {
-			x: this.x + vec.x,
-			y: this.y + vec.y,
-			z: this.z + vec.z
-		};
+		this.x += vec.x;
+		this.y += vec.y;
+		this.z += vec.z;
+
+		return this;
 	}
 
 	normalize() {
 		const magnitude = this.magnitude();
+
 		if (magnitude === 0) {
 			return {x: 0, y: 0, z: 0};
 		}

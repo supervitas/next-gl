@@ -43,6 +43,8 @@ uniform Lights {
 uniform vec3 uColor;
 uniform float opacity;
 
+uniform sampler2D shadowMap;
+
 #ifdef USE_MAP
 	uniform sampler2D map;
 #endif
@@ -135,7 +137,8 @@ void main() {
   	calcSceneLights(normal, lighting, specular);
 
 	#ifdef USE_MAP
-		texelColor = texture(map, vTextureCoord);
+		texelColor = texture(shadowMap, vTextureCoord);
+
 	#endif
 
 

@@ -1,6 +1,3 @@
-import {Vec3} from './Vec3';
-import {Matrix} from './Matrix';
-
 class GLMath {
 	static radToDeg(r) {
 		return r * 180 / Math.PI;
@@ -11,4 +8,4 @@ class GLMath {
 	}
 
 }
-export {GLMath, Vec3};
+export {GLMath};

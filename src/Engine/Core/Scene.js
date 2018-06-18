@@ -5,15 +5,18 @@ import {PointLight} from './Lights/PointLight';
 
 import twgl from 'twgl-base.js';
 import {SpotLight} from './Lights/SpotLight';
+import {ShadowRenderer} from './Shadows/ShadowRenderer';
+import {DepthMaterial} from "./Materials/DepthMaterial";
 
 class Scene {
 	constructor(gl) {
 		this._gl = gl;
 
+		this.shadowRT = [];
+
 		this.renderList = new Map();
 		this.renderList.set('opaque', new Map());
 		this.renderList.set('transparent', new Map());
-
 
 		this.sceneObjects = new Map();
 		this.UBOData = new Map();
@@ -25,6 +28,8 @@ class Scene {
 		this.lights.set('AmbientLight', []);
 
 		this._hasLights = false;
+
+		this._materialsWithNoLights = ['DepthMaterial'];
 	}
 
 	addToScene(sceneObject) {
@@ -46,15 +51,17 @@ class Scene {
 			this._updateLightsUBO();
 		}
 
-		const renderList = sceneObject.material.opacity !== 1 ?
-			this.renderList.get('transparent') :
-			this.renderList.get('opaque');
+
+		const renderList = this._getRenderList(sceneObject);
 
 		if (renderList.has(sceneObject.material.programInfo.program)) {
 			const renderable = renderList.get(sceneObject.material.programInfo.program);
 			renderable.sceneObjects.push(sceneObject);
 		} else {
-			renderList.set(sceneObject.material.programInfo.program, {sceneObjects: [sceneObject]});
+			renderList.set(sceneObject.material.programInfo.program, {
+				sceneObjects: [sceneObject],
+				material: sceneObject.material
+			});
 		}
 	}
 
@@ -67,9 +74,7 @@ class Scene {
 		}
 
 		if (object.material) {
-			const renderList = sceneObject.material.opacity !== 1 ?
-				this.renderList.get('transparent') :
-				this.renderList.get('opaque');
+			const renderList = this._getRenderList(sceneObject);
 
 			const renderable = renderList.get(sceneObject.material.program);
 			const index = renderable.sceneObjects.indexOf(sceneObject);
@@ -111,6 +116,11 @@ class Scene {
 
 		if (light instanceof DirectLight) {
 			lightArray = this.lights.get('DirectLight');
+			// this.shadowRT.push(new ShadowRenderer({gl: this._gl, light}));
+			// const obj = this.getObjectById('SceneObject7');
+
+
+			// obj.material.uniforms.shadowMap =  this.shadowRT[0].shadowMap.target.attachments[0];
 		}
 
 		if (light instanceof PointLight) {
@@ -127,11 +137,14 @@ class Scene {
 	_updateLightsUBO() {
 		if (!this._hasLights) {
 			for (const [material, ubos] of this.UBOData.entries()) {
-				twgl.setBlockUniforms(ubos.lightUBO, {});
-				this._updateUBO(material.programInfo, ubos.lightUBO);
+				if (!this._materialsWithNoLights.includes(material.constructor.name)) {
+					twgl.setBlockUniforms(ubos.lightUBO, {});
+					this._updateUBO(material.programInfo, ubos.lightUBO);
+				}
 			}
 			return;
 		}
+
 		for (const [lightType, lightsArray] of this.lights.entries()) {
 			if (lightType === 'AmbientLight') {
 				this._updateAmbientLightUBO(lightsArray);
@@ -153,10 +166,13 @@ class Scene {
 
 	_createUBO(material) {
 		const ubos = {
-			lightUBO: twgl.createUniformBlockInfo(this._gl.context, material.programInfo, 'Lights'),
 			projectionMatrixUBO: twgl.createUniformBlockInfo(this._gl.context, material.programInfo, 'Projection'),
 			viewPosition: twgl.createUniformBlockInfo(this._gl.context, material.programInfo, 'View'),
 		};
+
+		if (!this._materialsWithNoLights.includes(material.constructor.name)) {
+			ubos.lightUBO = twgl.createUniformBlockInfo(this._gl.context, material.programInfo, 'Lights');
+		}
 
 		this.UBOData.set(material, ubos);
 
@@ -166,9 +182,25 @@ class Scene {
 		}
 	}
 
+	_bindUBOByMaterial(material) {
+		const uboInfo = this.UBOData.get(material);
+		Object.values(uboInfo).forEach((ubo) => {
+			twgl.setUniformBlock(this._gl.context, material.programInfo, ubo);
+		});
+
+		twgl.bindUniformBlock(this._gl.context,  material.programInfo, ubo);
+	}
+
 	_updateUBO(programInfo, ubo) {
 		twgl.setUniformBlock(this._gl.context, programInfo, ubo);
-		twgl.bindUniformBlock(this._gl.context, programInfo, ubo);
+	}
+
+	_iterateUBO(func, excludeMaterials = this._materialsWithNoLights) {
+		for (const [material, ubos] of this.UBOData.entries()) {
+			if (!excludeMaterials.includes(material.constructor.name)) {
+				func(material, ubos);
+			}
+		}
 	}
 
 	_updateProjectionMatrixUBO(projectionMatrix) {
@@ -193,7 +225,7 @@ class Scene {
 	}
 
 	_updateDirectLightUBO(light) {
-		for (const [material, ubos] of this.UBOData.entries()) {
+		this._iterateUBO((material, ubos) => {
 			for (const [index, dirLight] of light.entries()) {
 
 				twgl.setBlockUniforms(ubos.lightUBO, {
@@ -205,11 +237,11 @@ class Scene {
 
 				this._updateUBO(material.programInfo, ubos.lightUBO);
 			}
-		}
+		});
 	}
 
 	_updateAmbientLightUBO(ambientLights) {
-		for (const [material, ubos] of this.UBOData.entries()) {
+		this._iterateUBO((material, ubos) => {
 			for (const [index, ambientLight] of ambientLights.entries()) {
 				twgl.setBlockUniforms(ubos.lightUBO, {
 					[`ambientLight[${index}].u_color`]: [ambientLight.color.r, ambientLight.color.g, ambientLight.color.b],
@@ -218,11 +250,11 @@ class Scene {
 
 				this._updateUBO(material.programInfo, ubos.lightUBO);
 			}
-		}
+		});
 	}
 
 	_updatePointLightUBO(pointLights) {
-		for (const [material, ubos] of this.UBOData.entries()) {
+		this._iterateUBO((material, ubos) => {
 			for (const [index, pointLight] of pointLights.entries()) {
 				twgl.setBlockUniforms(ubos.lightUBO, {
 					[`pointLight[${index}].u_color`]: [pointLight.color.r, pointLight.color.g, pointLight.color.b],
@@ -232,11 +264,11 @@ class Scene {
 
 				this._updateUBO(material.programInfo, ubos.lightUBO);
 			}
-		}
+		});
 	}
 
 	_updateSpotLightUBO(spotLights) {
-		for (const [material, ubos] of this.UBOData.entries()) {
+		this._iterateUBO((material, ubos) => {
 			for (const [index, spotLight] of spotLights.entries()) {
 				twgl.setBlockUniforms(ubos.lightUBO, {
 					[`spotLight[${index}].u_color`]: [spotLight.color.r, spotLight.color.g, spotLight.color.b],
@@ -249,7 +281,13 @@ class Scene {
 
 				this._updateUBO(material.programInfo, ubos.lightUBO);
 			}
-		}
+		});
+	}
+
+	_getRenderList(sceneObject) {
+		return (sceneObject.material.opacity && sceneObject.material.opacity !== 1) ?
+			this.renderList.get('transparent') :
+			this.renderList.get('opaque');
 	}
 }
 export {Scene};
