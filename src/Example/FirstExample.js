@@ -83,15 +83,11 @@ class FirstExample {
 	}
 
 	addCubes(scene) {
-		const mapMaterial = new DepthMaterial({
-
-		});
-
 		const materialWithColor = new StandardMaterial({
 			color: new Color({r: 50, g: 60, b: 10})
 		});
 
-		const cube = new Cube({ material: mapMaterial});
+		const cube = new Cube({ material: materialWithColor});
 		cube.position.copy({x: 0, y: 5, z: -18});
 		scene.addToScene(cube);
 

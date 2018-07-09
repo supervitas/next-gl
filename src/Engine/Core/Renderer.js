@@ -1,8 +1,19 @@
 import twgl from 'twgl-base.js';
+import {DepthMaterial} from './Materials/DepthMaterial';
 
 class Renderer {
 	constructor({gl}) {
 		this._context = gl.context;
+
+		this._depthMaterial = new DepthMaterial();
+		this._depthMaterial.createMaterial(gl);
+
+		this._viewProjectionUBO = null;
+
+		this._depthUBO = {
+			projectionMatrixUBO: twgl.createUniformBlockInfo(this._context, this._depthMaterial.programInfo, 'Projection'),
+			viewPosition: twgl.createUniformBlockInfo(this._context, this._depthMaterial .programInfo, 'View'),
+		};
 
 		this._glDepthTest = this._context.getParameter(this._context.DEPTH_TEST);
 		this._glCullFace = this._context.getParameter(this._context.CULL_FACE);
@@ -31,22 +42,61 @@ class Renderer {
 			shadowRT.shadowMap.bindFrameBuffer();
 			scene._update(shadowRT.shadowCamera);
 			this._context.clear(this._context.COLOR_BUFFER_BIT | this._context.DEPTH_BUFFER_BIT);
-			this._renderObjects(scene, true);
+
+			this._renderShadowMap(scene, shadowRT.shadowCamera);
 		}
 	}
 
-	_renderObjects(scene, shadowPass = false) {
-		if (!shadowPass) {
-			this._context.disable(this._context.BLEND);
-			this._context.enable(this._context.DEPTH_TEST);
-		}
+	_renderShadowMap(scene, camera) {
+		const render = (renderList) => {
+			for (const [program, renderable] of renderList.entries()) {
+				for (const sceneObject of renderable.sceneObjects) {
+					if (!sceneObject.visible) continue;
+
+					this._useFaceCulluing(sceneObject.material.isDoubleSided);
+					this._context.bindVertexArray(sceneObject.vao);
+
+					twgl.setUniforms(this._depthMaterial.programInfo.uniformSetters,
+						{normalMatrix: sceneObject.normalMatrix,
+							modelWorldMatrix: sceneObject.worldMatrix
+						});
+
+					twgl.drawBufferInfo(this._context, sceneObject.bufferInfo);
+				}
+			}
+		};
+
+
+		// todo refactor
+		const opaque = scene.renderList.get('opaque');
+		const trasparent = scene.renderList.get('transparent');
+
+		this._context.useProgram(this._depthMaterial.programInfo.program);
+
+		twgl.setBlockUniforms(this._depthUBO.projectionMatrixUBO, {
+			uProjectionMatrix: camera.viewProjectionMatrix,
+		});
+
+		twgl.setUniformBlock(this._context, this._depthMaterial.programInfo, this._depthUBO.projectionMatrixUBO);
+
+		twgl.setBlockUniforms(this._depthUBO.viewPosition, {
+			uViewWorldPosition: camera.position.asArray()
+		});
+		twgl.setUniformBlock(this._context, this._depthMaterial.programInfo, this._depthUBO.viewPosition);
+
+
+		render(opaque);
+		render(trasparent);
+	}
+
+	_renderObjects(scene) {
+		this._context.disable(this._context.BLEND);
+		this._context.enable(this._context.DEPTH_TEST);
 
 		this._render(scene, scene.renderList.get('opaque'));
 
-		if (!shadowPass) {
-			this._context.enable(this._context.BLEND);
-			this._context.disable(this._context.DEPTH_TEST);
-		}
+		this._context.enable(this._context.BLEND);
+		this._context.disable(this._context.DEPTH_TEST);
 
 		this._render(scene, scene.renderList.get('transparent'));
 	}

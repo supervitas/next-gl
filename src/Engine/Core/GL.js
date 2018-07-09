@@ -92,8 +92,6 @@ class GL {
 		}
 
 		gl.clearColor(this._clearColor.x, this._clearColor.y, this._clearColor.z, this._transparent);
-		gl.clearDepth(1.0);
-		gl.enable(gl.DEPTH_TEST);
 		gl.enable(gl.CULL_FACE);
 		gl.depthFunc(gl.LEQUAL);
 

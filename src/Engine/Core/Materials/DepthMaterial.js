@@ -4,7 +4,7 @@ import vertexShader from './shaders/Depth.vert';
 import twgl from 'twgl-base.js';
 
 class DepthMaterial {
-	constructor({} = {}) {
+	constructor() {
 		this.defines = new Map();
 		this.uniforms = {};
 
@@ -15,7 +15,6 @@ class DepthMaterial {
 
 	createMaterial(gl) {
 		if (this.programInfo) return;
-
 		const program = gl.initProgram(vertexShader, fragmentShader, this.defines);
 		this.programInfo = twgl.createProgramInfoFromProgram(gl.context, program);
 	}

@@ -5,6 +5,7 @@ uniform mat4 uModelWorldMatrix;
 
 uniform Projection {
   	mat4 uProjectionMatrix;
+  	mat4 uDirectShadowMapMatrix;
 };
 
 uniform View {
@@ -19,6 +20,7 @@ out highp vec2 vTextureCoord;
 out vec3 vNormal;
 out vec3 vSurfaceToView;
 out vec3 vSurfaceWorldPosition;
+out vec4 vShadowCoord;
 
 void main() {
 	vTextureCoord = aTextureCoord;
@@ -28,5 +30,14 @@ void main() {
 	vSurfaceWorldPosition = (uModelWorldMatrix * aVertexPosition).xyz;
 	vSurfaceToView = uViewWorldPosition - vSurfaceWorldPosition;
 
+	mat4 biasMatrix = mat4(
+		0.5, 0.0, 0.0, 0.0,
+		0.0, 0.5, 0.0, 0.0,
+		0.0, 0.0, 0.5, 0.0,
+		0.5, 0.5, 0.5, 1.0
+    );
+
+
+	vShadowCoord = biasMatrix * uDirectShadowMapMatrix * uModelWorldMatrix * aVertexPosition;
 	gl_Position = uProjectionMatrix * uModelWorldMatrix * aVertexPosition;
 }

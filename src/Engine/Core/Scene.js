@@ -116,11 +116,10 @@ class Scene {
 
 		if (light instanceof DirectLight) {
 			lightArray = this.lights.get('DirectLight');
-			// this.shadowRT.push(new ShadowRenderer({gl: this._gl, light}));
-			// const obj = this.getObjectById('SceneObject7');
+			this.shadowRT.push(new ShadowRenderer({gl: this._gl, light}));
+			const obj = this.getObjectById('SceneObject5'); // todo remove
 
-
-			// obj.material.uniforms.shadowMap =  this.shadowRT[0].shadowMap.target.attachments[0];
+			obj.material.uniforms.shadowMap = this.shadowRT[0].shadowMap.target.attachments[0];
 		}
 
 		if (light instanceof PointLight) {
@@ -187,8 +186,6 @@ class Scene {
 		Object.values(uboInfo).forEach((ubo) => {
 			twgl.setUniformBlock(this._gl.context, material.programInfo, ubo);
 		});
-
-		twgl.bindUniformBlock(this._gl.context,  material.programInfo, ubo);
 	}
 
 	_updateUBO(programInfo, ubo) {
@@ -206,7 +203,8 @@ class Scene {
 	_updateProjectionMatrixUBO(projectionMatrix) {
 		for (const [material, ubos] of this.UBOData.entries()) {
 			twgl.setBlockUniforms(ubos.projectionMatrixUBO, {
-				uProjectionMatrix: projectionMatrix
+				uProjectionMatrix: projectionMatrix,
+				uDirectShadowMapMatrix: this.shadowRT[0].shadowCamera.viewProjectionMatrix // todo all direct lights
 			});
 
 			this._updateUBO(material.programInfo, ubos.projectionMatrixUBO);

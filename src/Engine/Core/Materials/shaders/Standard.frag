@@ -54,6 +54,7 @@ in vec3 vSurfaceWorldPosition;
 
 in highp vec2 vTextureCoord;
 in vec3 vNormal;
+in vec4 vShadowCoord;
 
 out vec4 resultColor;
 
@@ -126,6 +127,17 @@ void calcSceneLights(vec3 normal, inout vec3 lighting, inout vec3 specular) {
 	}
 }
 
+float shadowCalculation(vec4 fragPosLightSpace, sampler2D u_shadowMap, float bias) {
+   // perform perspective divide and map to [0,1] range
+   vec3 projCoords = fragPosLightSpace.xyz/fragPosLightSpace.w;
+   projCoords = projCoords * 0.5 + 0.5;
+   float shadowDepth = texture(u_shadowMap, projCoords.xy).r;
+   float depth = projCoords.z;
+   float shadow = step(depth-bias,shadowDepth);
+
+   return shadow;
+}
+
 void main() {
   	highp vec4 texelColor = vec4(1.0);
 
@@ -136,14 +148,21 @@ void main() {
 
   	calcSceneLights(normal, lighting, specular);
 
-	#ifdef USE_MAP
-		texelColor = texture(shadowMap, vTextureCoord);
+	float visibility = 1.0;
 
+	#ifdef USE_MAP
+		texelColor = texture(shadowMap, vShadowCoord.xy);
+//		texelColor = texture(map, vTextureCoord);
+//			if ( texture( shadowMap, vShadowCoord.xy ).z  <  vShadowCoord.z) {
+//        		visibility = 0.5;
+//        	}
+//		float shadow = shadowCalculation()
 	#endif
 
 
-	texelColor.rgb *= uColor * (lighting + specular);
-	texelColor.a *= opacity;
+//	texelColor.rgb *= uColor * ((lighting + specular) );
+//	texelColor.a *= opacity;
 
 	resultColor = texelColor;
+	// resultColor = vec4(vec3(visibility), 1.0);
 }
