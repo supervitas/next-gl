@@ -41,32 +41,12 @@ class Renderer {
 		for (const shadowRT of scene.shadowRT) {
 			shadowRT.shadowMap.bindFrameBuffer();
 			scene._update(shadowRT.shadowCamera);
-			this._context.clear(this._context.COLOR_BUFFER_BIT | this._context.DEPTH_BUFFER_BIT);
 
 			this._renderShadowMap(scene, shadowRT.shadowCamera);
 		}
 	}
 
 	_renderShadowMap(scene, camera) {
-		const render = (renderList) => {
-			for (const [program, renderable] of renderList.entries()) {
-				for (const sceneObject of renderable.sceneObjects) {
-					if (!sceneObject.visible) continue;
-
-					this._useFaceCulluing(sceneObject.material.isDoubleSided);
-					this._context.bindVertexArray(sceneObject.vao);
-
-					twgl.setUniforms(this._depthMaterial.programInfo.uniformSetters,
-						{normalMatrix: sceneObject.normalMatrix,
-							modelWorldMatrix: sceneObject.worldMatrix
-						});
-
-					twgl.drawBufferInfo(this._context, sceneObject.bufferInfo);
-				}
-			}
-		};
-
-
 		// todo refactor
 		const opaque = scene.renderList.get('opaque');
 		const trasparent = scene.renderList.get('transparent');
@@ -77,16 +57,15 @@ class Renderer {
 			uProjectionMatrix: camera.viewProjectionMatrix,
 		});
 
-		twgl.setUniformBlock(this._context, this._depthMaterial.programInfo, this._depthUBO.projectionMatrixUBO);
-
 		twgl.setBlockUniforms(this._depthUBO.viewPosition, {
 			uViewWorldPosition: camera.position.asArray()
 		});
+
 		twgl.setUniformBlock(this._context, this._depthMaterial.programInfo, this._depthUBO.viewPosition);
+		twgl.setUniformBlock(this._context, this._depthMaterial.programInfo, this._depthUBO.projectionMatrixUBO);
 
-
-		render(opaque);
-		render(trasparent);
+		this._shadowRender(opaque);
+		this._shadowRender(trasparent);
 	}
 
 	_renderObjects(scene) {
@@ -99,6 +78,24 @@ class Renderer {
 		this._context.disable(this._context.DEPTH_TEST);
 
 		this._render(scene, scene.renderList.get('transparent'));
+	}
+
+	_shadowRender(renderList) {
+		for (const [program, renderable] of renderList.entries()) {
+			for (const sceneObject of renderable.sceneObjects) {
+
+				if (!sceneObject.visible) continue;
+
+				this._useFaceCulluing(sceneObject.material.isDoubleSided);
+				this._context.bindVertexArray(sceneObject.vao);
+
+				this._depthMaterial.uniforms.uNormalMatrix = sceneObject.normalMatrix;
+				this._depthMaterial.uniforms.uModelWorldMatrix = sceneObject.worldMatrix;
+				twgl.setUniforms(this._depthMaterial.programInfo.uniformSetters, this._depthMaterial.uniforms);
+
+				twgl.drawBufferInfo(this._context, sceneObject.bufferInfo);
+			}
+		}
 	}
 
 	_render(scene, renderList) {

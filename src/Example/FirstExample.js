@@ -87,6 +87,8 @@ class FirstExample {
 			color: new Color({r: 50, g: 60, b: 10})
 		});
 
+		const depth = new DepthMaterial();
+
 		const cube = new Cube({ material: materialWithColor});
 		cube.position.copy({x: 0, y: 5, z: -18});
 		scene.addToScene(cube);

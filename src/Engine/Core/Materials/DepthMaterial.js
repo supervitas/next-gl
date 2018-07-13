@@ -15,6 +15,7 @@ class DepthMaterial {
 
 	createMaterial(gl) {
 		if (this.programInfo) return;
+
 		const program = gl.initProgram(vertexShader, fragmentShader, this.defines);
 		this.programInfo = twgl.createProgramInfoFromProgram(gl.context, program);
 	}

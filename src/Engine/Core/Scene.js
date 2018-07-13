@@ -6,7 +6,6 @@ import {PointLight} from './Lights/PointLight';
 import twgl from 'twgl-base.js';
 import {SpotLight} from './Lights/SpotLight';
 import {ShadowRenderer} from './Shadows/ShadowRenderer';
-import {DepthMaterial} from "./Materials/DepthMaterial";
 
 class Scene {
 	constructor(gl) {

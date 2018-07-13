@@ -151,7 +151,7 @@ void main() {
 	float visibility = 1.0;
 
 	#ifdef USE_MAP
-		texelColor = texture(shadowMap, vShadowCoord.xy);
+		texelColor = texture(shadowMap, vShadowCoord.xy) * 144.;
 //		texelColor = texture(map, vTextureCoord);
 //			if ( texture( shadowMap, vShadowCoord.xy ).z  <  vShadowCoord.z) {
 //        		visibility = 0.5;
@@ -160,9 +160,7 @@ void main() {
 	#endif
 
 
-//	texelColor.rgb *= uColor * ((lighting + specular) );
-//	texelColor.a *= opacity;
-
+	texelColor.rgb *= uColor * ((lighting + specular) );
+	texelColor.a *= opacity;
 	resultColor = texelColor;
-	// resultColor = vec4(vec3(visibility), 1.0);
 }
