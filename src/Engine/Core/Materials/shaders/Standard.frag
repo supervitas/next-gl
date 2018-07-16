@@ -1,5 +1,6 @@
 #version 300 es
 precision highp float;
+//precision highp sampler2DShadow;
 
 const int MAX_POINT_LIGHTS_IN_ARRAY = 2;
 const int MAX_DIRECT_LIGHTS_IN_ARRAY = 2;
@@ -43,6 +44,7 @@ uniform Lights {
 uniform vec3 uColor;
 uniform float opacity;
 
+//uniform sampler2DShadow shadowMap;
 uniform sampler2D shadowMap;
 
 #ifdef USE_MAP
@@ -151,16 +153,28 @@ void main() {
 	float visibility = 1.0;
 
 	#ifdef USE_MAP
-		texelColor = texture(shadowMap, vShadowCoord.xy) * 144.;
-//		texelColor = texture(map, vTextureCoord);
-//			if ( texture( shadowMap, vShadowCoord.xy ).z  <  vShadowCoord.z) {
-//        		visibility = 0.5;
-//        	}
-//		float shadow = shadowCalculation()
+		texelColor = texture(map, vTextureCoord);
+
+//		vec2 poissonDisk[4] = vec2[](
+//          vec2( -0.94201624, -0.39906216 ),
+//          vec2( 0.94558609, -0.76890725 ),
+//          vec2( -0.094184101, -0.92938870 ),
+//          vec2( 0.34495938, 0.29387760 )
+//        );
+//
+//        for (int i=0;i<4;i++){
+//          if ( texture( shadowMap, vShadowCoord.xy + poissonDisk[i]/700.0 ).r  <  vShadowCoord.z - 0.005 ) {
+//            visibility -= 0.2;
+//          }
+//        }
+
+		if ( texture( shadowMap, vShadowCoord.xy ).r  <  vShadowCoord.z - 0.005) {
+			visibility = 0.5;
+		}
 	#endif
 
 
-	texelColor.rgb *= uColor * ((lighting + specular) );
+	texelColor.rgb *= uColor * ((lighting + specular)) * visibility;
 	texelColor.a *= opacity;
 	resultColor = texelColor;
 }

@@ -64,8 +64,15 @@ class Renderer {
 		twgl.setUniformBlock(this._context, this._depthMaterial.programInfo, this._depthUBO.viewPosition);
 		twgl.setUniformBlock(this._context, this._depthMaterial.programInfo, this._depthUBO.projectionMatrixUBO);
 
+		this._context.clear(this._context.COLOR_BUFFER_BIT | this._context.DEPTH_BUFFER_BIT);
+
+		this._context.enable(this._context.CULL_FACE);
+		// this._context.cullFace(this._context.FRONT);
+
 		this._shadowRender(opaque);
 		this._shadowRender(trasparent);
+
+		// this._context.cullFace(this._context.BACK);
 	}
 
 	_renderObjects(scene) {
@@ -86,7 +93,6 @@ class Renderer {
 
 				if (!sceneObject.visible) continue;
 
-				this._useFaceCulluing(sceneObject.material.isDoubleSided);
 				this._context.bindVertexArray(sceneObject.vao);
 
 				this._depthMaterial.uniforms.uNormalMatrix = sceneObject.normalMatrix;

@@ -7,7 +7,14 @@ class ShadowRenderer {
 		this.shadowMap = new RenderTarget({
 			gl: this.gl.context,
 			width: this.gl.context.canvas.clientWidth * this.gl.realPixels,
-			height:  this.gl.context.canvas.clientHeight * this.gl.realPixels
+			height:  this.gl.context.canvas.clientHeight * this.gl.realPixels,
+			attachments: [{
+				internalFormat: this.gl.context.DEPTH_COMPONENT32F,
+				format: this.gl.context.DEPTH_COMPONENT,
+				type: this.gl.context.FLOAT,
+				min: this.gl.context.NEAREST, mag: this.gl.context.NEAREST,
+				wrap: this.gl.context.CLAMP_TO_EDGE
+			}],
 		});
 
 		const w = this.gl.context.canvas.clientWidth;
