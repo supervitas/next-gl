@@ -22,18 +22,6 @@ module.exports = (opts = {}) => {
 			test: /\.css$/, loader: 'style-loader!css-loader',
 		},
 		{
-			test: /\.(gif|png|jpe?g)$/i,
-			loader: 'file-loader?name=dist/images/[name].[ext]',
-		},
-		{
-			test: /\.woff2?$/,
-			loader: 'url-loader?name=dist/fonts/[name].[ext]&limit=10000&mimetype=application/font-woff',
-		},
-		{
-			test: /\.(ttf|eot|svg)$/,
-			loader: 'file-loader?name=dist/fonts/[name].[ext]',
-		},
-		{
 			test: /\.(glsl|vert|frag)$/,
 			loader: 'webpack-glsl-loader',
 		},
@@ -48,6 +36,12 @@ module.exports = (opts = {}) => {
 	return {
 		entry: {
 			app: ['./src/app.js'],
+		},
+		resolve: {
+			alias: {
+				'twgl-base.js': path.resolve(__dirname, 'libs/twgl.js'),
+			},
+			symlinks: false,
 		},
 		output: {
 			path: path.resolve(__dirname, 'dist'),

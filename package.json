@@ -12,8 +12,7 @@
     "orbit-controls": "^1.2.0",
     "webpack-dev-server": "^3.1.1",
     "webpack": "^4.4.1",
-    "webpack-glsl-loader": "^1.0.1",
-    "twgl-base.js": "latest"
+    "webpack-glsl-loader": "^1.0.1"
   },
   "scripts": {
     "start": "gulp serve"

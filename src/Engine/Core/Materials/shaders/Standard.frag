@@ -1,6 +1,9 @@
 #version 300 es
+#define EPSILON 0.00001
+
+
 precision highp float;
-//precision highp sampler2DShadow;
+precision highp sampler2DShadow;
 
 const int MAX_POINT_LIGHTS_IN_ARRAY = 2;
 const int MAX_DIRECT_LIGHTS_IN_ARRAY = 2;
@@ -44,8 +47,8 @@ uniform Lights {
 uniform vec3 uColor;
 uniform float opacity;
 
-//uniform sampler2DShadow shadowMap;
-uniform sampler2D shadowMap;
+uniform sampler2DShadow shadowMap;
+//uniform sampler2D shadowMap;
 
 #ifdef USE_MAP
 	uniform sampler2D map;
@@ -140,6 +143,17 @@ float shadowCalculation(vec4 fragPosLightSpace, sampler2D u_shadowMap, float bia
    return shadow;
 }
 
+//float unpackFloat(vec4 rgbaDepth) {
+//	const vec4 bitShift = vec4(1.0 / (256.0 * 256.0 * 256.0), 1.0 / (256.0 * 256.0), 1.0 / 256.0, 1.0);
+//	return dot(rgbaDepth, bitShift);
+//}
+//
+//float linearizeDepth(float z) {
+//	z = z * 2.0 - 1.0;
+//	return 1.0 / (camera_params.z * z + camera_params.w);
+//}
+
+
 void main() {
   	highp vec4 texelColor = vec4(1.0);
 
@@ -155,22 +169,36 @@ void main() {
 	#ifdef USE_MAP
 		texelColor = texture(map, vTextureCoord);
 
-//		vec2 poissonDisk[4] = vec2[](
-//          vec2( -0.94201624, -0.39906216 ),
-//          vec2( 0.94558609, -0.76890725 ),
-//          vec2( -0.094184101, -0.92938870 ),
-//          vec2( 0.34495938, 0.29387760 )
-//        );
-//
-//        for (int i=0;i<4;i++){
-//          if ( texture( shadowMap, vShadowCoord.xy + poissonDisk[i]/700.0 ).r  <  vShadowCoord.z - 0.005 ) {
-//            visibility -= 0.2;
-//          }
+		vec2 poissonDisk[4] = vec2[](
+          vec2( -0.94201624, -0.39906216 ),
+          vec2( 0.94558609, -0.76890725 ),
+          vec2( -0.094184101, -0.92938870 ),
+          vec2( 0.34495938, 0.29387760 )
+        );
+
+		vec3 shadowCoord = vec3(vShadowCoord.x, vShadowCoord.y, vShadowCoord.z - 0.005);
+
+//        for (int i = 0; i < 4; i++) {
+//        	float shadow = texture(shadowMap, vec3(vShadowCoord.xy, vShadowCoord.z + poissonDisk[i] / 700.0));
+//          	visibility -= shadow;
 //        }
 
-		if ( texture( shadowMap, vShadowCoord.xy ).r  <  vShadowCoord.z - 0.005) {
-			visibility = 0.5;
-		}
+
+//  		shadowCoord.z -= 0.005;
+		float shadow = texture(shadowMap, shadowCoord);
+		visibility = shadow;
+//
+//		if (shadow < vShadowCoord.z) {
+//			visibility = 0.5;
+//		}
+
+
+//		if (shadow != 0.0) {
+//			visibility = 0.5;
+//		}
+//		if ( texture( shadowMap, vShadowCoord ).r  <  vShadowCoord.z - 0.005) {
+//			visibility = 0.5;
+//		}
 	#endif
 
 
