@@ -49,6 +49,14 @@ class Vec3 {
 		return this;
 	}
 
+	multiplyScalar(scalar) {
+		this.x *= scalar;
+		this.y *= scalar;
+		this.z *= scalar;
+
+		return this;
+	}
+
 	add(vec) {
 		this.x += vec.x;
 		this.y += vec.y;

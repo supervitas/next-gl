@@ -16,7 +16,7 @@ class ShadowRenderer {
 				format: context.DEPTH_COMPONENT,
 				type: context.FLOAT,
 				compareMode: context.COMPARE_REF_TO_TEXTURE,
-				min: context.NEAREST, mag: context.NEAREST,
+				min: context.LINEAR, mag: context.LINEAR,
 				wrap: context.CLAMP_TO_EDGE
 			}],
 		});
@@ -33,7 +33,7 @@ class ShadowRenderer {
 			near: 1, far: 1000
 		});
 
-		this.shadowCamera.position.copy(light.position);
+		this.shadowCamera.position.copy(light.position).multiplyScalar(light.shadowDistanceMultiplier);
 		this.shadowCamera.target.copy(light.direction);
 	}
 

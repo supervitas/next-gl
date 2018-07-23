@@ -176,29 +176,15 @@ void main() {
           vec2( 0.34495938, 0.29387760 )
         );
 
-		vec3 shadowCoord = vec3(vShadowCoord.x, vShadowCoord.y, vShadowCoord.z - 0.005);
+		vec3 shadowCoord = vec3(vShadowCoord.x, vShadowCoord.y, vShadowCoord.z - 0.0001);
 
 //        for (int i = 0; i < 4; i++) {
 //        	float shadow = texture(shadowMap, vec3(vShadowCoord.xy, vShadowCoord.z + poissonDisk[i] / 700.0));
 //          	visibility -= shadow;
 //        }
 
-
-//  		shadowCoord.z -= 0.005;
 		float shadow = texture(shadowMap, shadowCoord);
 		visibility = shadow;
-//
-//		if (shadow < vShadowCoord.z) {
-//			visibility = 0.5;
-//		}
-
-
-//		if (shadow != 0.0) {
-//			visibility = 0.5;
-//		}
-//		if ( texture( shadowMap, vShadowCoord ).r  <  vShadowCoord.z - 0.005) {
-//			visibility = 0.5;
-//		}
 	#endif
 
 
