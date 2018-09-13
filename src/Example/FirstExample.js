@@ -16,11 +16,7 @@ class FirstExample {
 
 		this.cameraOrbitController = new CameraOrbitController({
 			camera: this.camera,
-			opts: {
-				element: this._domElement,
-				target: [0, 5, 0],
-				distance: 20
-			}
+			canvas: this._domElement
 		});
 
 		this.renderer = new Renderer({gl: this.gl});
@@ -57,8 +53,6 @@ class FirstExample {
 			cube.rotateY(deltaTime);
 			cube.rotateZ(deltaTime * 0.2 * index);
 		}
-
-		this.cameraOrbitController.update(deltaTime);
 
 		this.renderer.drawScene(this.scene, this.camera);
 
