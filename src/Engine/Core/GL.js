@@ -70,7 +70,7 @@ class GL {
 			needResize = true;
 		}
 
-		this.context.viewport(0, 0, this.context.drawingBufferWidth, this.context.drawingBufferHeight);
+		this.context.viewport(0, 0, canvas.width, canvas.height);
 
 		return needResize;
 	}

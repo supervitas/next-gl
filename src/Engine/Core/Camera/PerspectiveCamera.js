@@ -66,7 +66,8 @@ class PerspectiveCamera {
 
 	set aspect(aspect) {
 		this._aspect = aspect;
-		this._updateProjectionAndCamera();
+
+		this._updateProjectionMatrix();
 		this._updateCameraMatrix();
 	}
 
