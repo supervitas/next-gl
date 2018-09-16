@@ -2,16 +2,13 @@ import {Color} from '../Color';
 import fragmentShader from './shaders/Standard.frag';
 import vertexShader from './shaders/Standard.vert';
 import twgl from 'twgl-base.js';
+import {BasicMaterial} from "./BasicMaterial";
 
-class StandardMaterial {
+class StandardMaterial extends BasicMaterial {
 	constructor({color = new Color(), map = null, isDoubleSided = false, useDepthTest = true, opacity = 1} = {}) {
-		this.defines = new Map();
-		this.uniforms = {};
-
-		this.depthTest = useDepthTest;
-		this.isDoubleSided = isDoubleSided;
+		super({isDoubleSided, useDepthTest, vertexShader, fragmentShader});
 		this.color = color.toRGB();
-		this.programInfo = null;
+
 
 		this.opacity = opacity;
 		this.uniforms.opacity = this.opacity;
@@ -35,8 +32,8 @@ class StandardMaterial {
 	createMaterial(gl) {
 		if (this.programInfo) return;
 
-		const program = gl.initProgram(vertexShader, fragmentShader, this.defines);
-		this.programInfo = twgl.createProgramInfoFromProgram(gl.context, program);
+		super.createMaterial(gl);
 	}
 }
+
 export {StandardMaterial};
