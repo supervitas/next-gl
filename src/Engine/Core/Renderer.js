@@ -38,7 +38,7 @@ class Renderer {
 	_renderShadowRT(scene) {
 		this._context.enable(this._context.DEPTH_TEST);
 
-		for (const shadowRT of scene.shadowRT) {
+		for (const shadowRT of scene._shadowRT) {
 			shadowRT.shadowMap.bindFrameBuffer();
 			scene._update(shadowRT.shadowCamera);
 

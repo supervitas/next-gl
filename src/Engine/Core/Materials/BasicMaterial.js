@@ -18,6 +18,7 @@ class BasicMaterial {
 	}
 
 	createMaterial(gl) {
+		if (this.programInfo) return;
 
 		this._includeChunks();
 

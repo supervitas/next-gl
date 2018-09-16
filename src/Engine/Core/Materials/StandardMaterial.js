@@ -28,12 +28,6 @@ class StandardMaterial extends BasicMaterial {
 			this.color.b
 		];
 	}
-
-	createMaterial(gl) {
-		if (this.programInfo) return;
-
-		super.createMaterial(gl);
-	}
 }
 
 export {StandardMaterial};

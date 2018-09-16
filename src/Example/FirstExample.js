@@ -32,8 +32,8 @@ class FirstExample {
 		})});
 
 		plane.scale.set({x: 30, z: 30});
-
 		this.scene.addToScene(plane);
+		this.scene.shadowRecievers.push(plane);
 
 		this.createLight();
 
@@ -63,6 +63,8 @@ class FirstExample {
 		const ambientLight = new AmbientLight({intensity: 0.2});
 		const dirLight = new DirectLight({intensity: 0.6, direction: new Vec3(0.35, 0.8, 0.75),
 			position: new Vec3(3, 15, 0)});
+		this.scene.shadowLights.push(dirLight);
+
 
 		const pointLight = new PointLight({intensity: 0.3, position: new Vec3(-25, 5, 0)});
 		const spotLight = new SpotLight({intensity: 0.4,
@@ -80,8 +82,6 @@ class FirstExample {
 		const materialWithColor = new StandardMaterial({
 			color: new Color({r: 50, g: 60, b: 10})
 		});
-
-		const depth = new DepthMaterial();
 
 		const cube = new Cube({ material: materialWithColor});
 		cube.position.copy({x: 0, y: 5, z: -18});

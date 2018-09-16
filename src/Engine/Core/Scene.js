@@ -11,7 +11,47 @@ class Scene {
 	constructor(gl) {
 		this._gl = gl;
 
-		this.shadowRT = [];
+		this._shadowRT = [];
+		
+		const self = this;
+
+		this.shadowLights = new Proxy([], {
+			set(target, property, value) {			
+				target[property] = value;
+			
+				if (value instanceof Light) {
+					self._shadowRT.push(new ShadowRenderer({gl: self._gl, light: value}));
+				
+					for (const recievers of self.shadowRecievers) {
+						for (const shadowRT of self._shadowRT) {  // todo multiple
+							recievers.material.uniforms.shadowMap = shadowRT.shadowMap.target.attachments[0];
+						}
+					}
+				}
+				
+				return true;
+			},
+
+			get(target, property) {					
+				return target[property];
+			},
+		});
+
+		this.shadowRecievers = new Proxy([], {
+			set(target, property, value) {			
+				target[property] = value;
+
+				for (const shadowRT of self._shadowRT) {  // todo multiple
+					value.material.uniforms.shadowMap = shadowRT.shadowMap.target.attachments[0];
+				}
+
+				return true;
+			},
+
+			get(target, property) {					
+				return target[property];
+			},
+		});
 
 		this.renderList = new Map();
 		this.renderList.set('opaque', new Map());
@@ -114,11 +154,7 @@ class Scene {
 		}
 
 		if (light instanceof DirectLight) {
-			lightArray = this.lights.get('DirectLight');
-			this.shadowRT.push(new ShadowRenderer({gl: this._gl, light}));
-			const obj = this.getObjectById('SceneObject5'); // todo remove
-
-			obj.material.uniforms.shadowMap = this.shadowRT[0].shadowMap.target.attachments[0];
+			lightArray = this.lights.get('DirectLight');		
 		}
 
 		if (light instanceof PointLight) {
@@ -203,7 +239,7 @@ class Scene {
 		for (const [material, ubos] of this.UBOData.entries()) {
 			twgl.setBlockUniforms(ubos.projectionMatrixUBO, {
 				uProjectionMatrix: projectionMatrix,
-				uDirectShadowMapMatrix: this.shadowRT[0].shadowCamera.viewProjectionMatrix // todo all direct lights
+				uDirectShadowMapMatrix: this._shadowRT[0].shadowCamera.viewProjectionMatrix // todo all direct lights
 			});
 
 			this._updateUBO(material.programInfo, ubos.projectionMatrixUBO);
