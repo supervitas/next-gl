@@ -46,6 +46,7 @@ class SceneObject {
 		this.children = [];
 		this.parent = null;
 
+		this.castShadow = false;
 		this._visible = true;
 		this._renderOrder = 0;
 		this.frustrumCulled = true;

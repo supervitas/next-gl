@@ -85,18 +85,22 @@ class FirstExample {
 
 		const cube = new Cube({ material: materialWithColor});
 		cube.position.copy({x: 0, y: 5, z: -18});
+		cube.castShadow = true;
 		scene.addToScene(cube);
 
 		const cube2 = new Cube({ material: materialWithColor});
 		cube2.position.copy({x: 5, y: 5, z: -18});
+		cube2.castShadow = true;
 		scene.addToScene(cube2);
 
 		const cube3 = new Cube({ material: materialWithColor});
 		cube3.position.copy({x: -5, y: 5, z: -18});
+		cube3.castShadow = true;
 		scene.addToScene(cube3);
 
 		const cube4 = new Cube({ material: materialWithColor});
 		cube4.position.copy({x: -5, y: 15, z: -18});
+		cube4.castShadow = true;
 		scene.addToScene(cube4);
 
 		cube4.setParent(cube3);

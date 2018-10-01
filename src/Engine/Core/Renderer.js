@@ -12,7 +12,7 @@ class Renderer {
 
 		this._depthUBO = {
 			projectionMatrixUBO: twgl.createUniformBlockInfo(this._context, this._depthMaterial.programInfo, 'Projection'),
-			viewPosition: twgl.createUniformBlockInfo(this._context, this._depthMaterial .programInfo, 'View'),
+			viewPosition: twgl.createUniformBlockInfo(this._context, this._depthMaterial.programInfo, 'View'),
 		};
 
 		this._glDepthTest = this._context.getParameter(this._context.DEPTH_TEST);
@@ -91,7 +91,7 @@ class Renderer {
 		for (const [program, renderable] of renderList.entries()) {
 			for (const sceneObject of renderable.sceneObjects) {
 
-				if (!sceneObject.visible) continue;
+				if (!sceneObject.visible || !sceneObject.castShadow) continue;
 
 				this._context.bindVertexArray(sceneObject.vao);
 

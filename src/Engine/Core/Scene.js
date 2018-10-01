@@ -16,7 +16,7 @@ class Scene {
 		const self = this;
 
 		this.shadowLights = new Proxy([], {
-			set(target, property, value) {			
+			set(target, property, value) {
 				target[property] = value;
 			
 				if (value instanceof Light) {
@@ -32,13 +32,13 @@ class Scene {
 				return true;
 			},
 
-			get(target, property) {					
+			get(target, property) {
 				return target[property];
 			},
 		});
 
 		this.shadowRecievers = new Proxy([], {
-			set(target, property, value) {			
+			set(target, property, value) {
 				target[property] = value;
 
 				for (const shadowRT of self._shadowRT) {  // todo multiple
@@ -48,7 +48,7 @@ class Scene {
 				return true;
 			},
 
-			get(target, property) {					
+			get(target, property) {
 				return target[property];
 			},
 		});
