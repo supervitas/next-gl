@@ -5,14 +5,12 @@ import twgl from 'twgl-base.js';
 let ID = 0;
 
 class SceneObject {
-	constructor({material = null, name = null} = {}) {
+	constructor({material = undefined, name = null} = {}) {
 		this.id = `SceneObject${++ID}`;
 		this.name = name || `SceneObject#${this.id}`;
 		this.vao = null;
 
-		if (material) {
-			this.material = material;
-		}
+		this.material = material;
 
 		const that = this;
 
@@ -108,13 +106,11 @@ class SceneObject {
 		}
 	}
 
-	initObject(gl) {
-		if (!this.material.programInfo) {
-			this.material.createMaterial(gl);
+	_createVao(gl) {
+		if (this.material) {
+			this.bufferInfo = twgl.createBufferInfoFromArrays(gl.context, this.attributes);
+			this.vao = twgl.createVAOFromBufferInfo(gl.context, this.material.programInfo.attribSetters, this.bufferInfo);
 		}
-
-		this.bufferInfo = twgl.createBufferInfoFromArrays(gl.context, this.attributes);
-		this.vao = twgl.createVAOFromBufferInfo(gl.context, this.material.programInfo.attribSetters, this.bufferInfo);
 	}
 
 	calculateBBox() {

@@ -2,22 +2,11 @@
 import fragmentShader from './shaders/Depth.frag';
 import vertexShader from './shaders/Depth.vert';
 import twgl from 'twgl-base.js';
+import {BasicMaterial} from "./BasicMaterial";
 
-class DepthMaterial {
+class DepthMaterial extends BasicMaterial {
 	constructor() {
-		this.defines = new Map();
-		this.uniforms = {};
-
-		this.depthTest = true;
-		this.isDoubleSided = false;
-		this.programInfo = null;
-	}
-
-	createMaterial(gl) {
-		if (this.programInfo) return;
-
-		const program = gl.initProgram(vertexShader, fragmentShader, this.defines);
-		this.programInfo = twgl.createProgramInfoFromProgram(gl.context, program);
+		super({useDepthTest: true, isDoubleSided: true, vertexShader, fragmentShader});
 	}
 }
 export {DepthMaterial};

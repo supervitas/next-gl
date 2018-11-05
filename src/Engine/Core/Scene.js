@@ -7,9 +7,22 @@ import twgl from 'twgl-base.js';
 import {SpotLight} from './Lights/SpotLight';
 import {ShadowRenderer} from './Shadows/ShadowRenderer';
 
+
+
+const noLightsMaterials = ['DepthMaterial'];
+
 class Scene {
-	constructor(gl) {
-		this._gl = gl;
+	constructor() {
+		this._gl = null;
+		this.sceneObjects = new Map();
+		this.renderList = new Map();
+		this.renderList.set('opaque', new Map());
+		this.renderList.set('transparent', new Map());
+
+
+		this.UBOData = new Map();
+
+		this.lights = {directLights: [], spotLights: [], pointLights: [], ambientLights: []};
 
 		this._shadowRT = [];
 		
@@ -19,12 +32,12 @@ class Scene {
 			set(target, property, value) {
 				target[property] = value;
 			
-				if (value instanceof Light) {
+				if (value instanceof Light) { // only direct light supported
 					self._shadowRT.push(new ShadowRenderer({gl: self._gl, light: value}));
 				
-					for (const recievers of self.shadowRecievers) {
+					for (const receivers of self.shadowRecievers) {
 						for (const shadowRT of self._shadowRT) {  // todo multiple
-							recievers.material.uniforms.shadowMap = shadowRT.shadowMap.target.attachments[0];
+							receivers.material.uniforms.shadowMap = shadowRT.shadowMap.target.attachments[0];
 						}
 					}
 				}
@@ -42,7 +55,7 @@ class Scene {
 				target[property] = value;
 
 				for (const shadowRT of self._shadowRT) {  // todo multiple
-					value.material.uniforms.shadowMap = shadowRT.shadowMap.target.attachments[0];
+					value.material.uniforms.shadowMap = shadowRT.shadowMap;
 				}
 
 				return true;
@@ -52,50 +65,26 @@ class Scene {
 				return target[property];
 			},
 		});
-
-		this.renderList = new Map();
-		this.renderList.set('opaque', new Map());
-		this.renderList.set('transparent', new Map());
-
-		this.sceneObjects = new Map();
-		this.UBOData = new Map();
-
-		this.lights = new Map();
-		this.lights.set('DirectLight', []);
-		this.lights.set('SpotLight', []);
-		this.lights.set('PointLight', []);
-		this.lights.set('AmbientLight', []);
-
-		this._hasLights = false;
-
-		this._materialsWithNoLights = ['DepthMaterial'];
 	}
 
 	addToScene(sceneObject) {
 		this.sceneObjects.set(sceneObject.id, sceneObject);
 
 		if (sceneObject instanceof Light) {
-			this._hasLights = true;
-
 			this._addLight(sceneObject);
-			this._updateLightsUBO();
+			// this._updateLightsUBO();
 		}
+	}
 
-		if (!sceneObject.material) return; // empty object
-
-		sceneObject.initObject(this._gl);
-
-		if (!this.UBOData.has(sceneObject.material)) {
-			this._createUBO(sceneObject.material);
-			this._updateLightsUBO();
-		}
-
-
+	_addToRenderList(sceneObject) {
 		const renderList = this._getRenderList(sceneObject);
 
 		if (renderList.has(sceneObject.material.programInfo.program)) {
 			const renderable = renderList.get(sceneObject.material.programInfo.program);
-			renderable.sceneObjects.push(sceneObject);
+
+			if (!renderable.sceneObjects.includes(sceneObject)) {
+				renderable.sceneObjects.push(sceneObject);
+			}
 		} else {
 			renderList.set(sceneObject.material.programInfo.program, {
 				sceneObjects: [sceneObject],
@@ -133,6 +122,25 @@ class Scene {
 		return this.sceneObjects.get(id);
 	}
 
+	_updateMaterials(gl) {
+		this._gl = gl;
+
+		for (const sceneObject of this.sceneObjects.values()) {
+			if (sceneObject.material && sceneObject.material.needsUpdate) {
+				sceneObject.material.initMaterial(gl, this.lights);
+				this._addToRenderList(sceneObject);
+
+				if (!this.UBOData.has(sceneObject.material)) {
+					this._createUBO(sceneObject.material);
+				}
+			}
+
+			if (sceneObject.material && !sceneObject.vao) {
+				sceneObject._createVao(gl);
+			}
+		}
+	}
+
 	_update(camera) {
 		for (const sceneObject of this.sceneObjects.values()) {
 			if (sceneObject.updateWorldMatrix) {
@@ -150,49 +158,41 @@ class Scene {
 		let lightArray;
 
 		if (light instanceof AmbientLight) {
-			lightArray = this.lights.get('AmbientLight');
+			lightArray = this.lights.ambientLights;
 		}
 
 		if (light instanceof DirectLight) {
-			lightArray = this.lights.get('DirectLight');		
+			lightArray = this.lights.directLights;
 		}
 
 		if (light instanceof PointLight) {
-			lightArray = this.lights.get('PointLight');
+			lightArray = this.lights.pointLights;
 		}
 
 		if (light instanceof SpotLight) {
-			lightArray = this.lights.get('SpotLight');
+			lightArray = this.lights.spotLights;
 		}
 
 		lightArray.push(light);
 	}
 
 	_updateLightsUBO() {
-		if (!this._hasLights) {
-			for (const [material, ubos] of this.UBOData.entries()) {
-				if (!this._materialsWithNoLights.includes(material.constructor.name)) {
-					twgl.setBlockUniforms(ubos.lightUBO, {});
-					this._updateUBO(material.programInfo, ubos.lightUBO);
-				}
-			}
-			return;
-		}
+		for (const [lightType, lightsArray] of Object.entries(this.lights)) {
+			if (lightsArray.length === 0) continue;
 
-		for (const [lightType, lightsArray] of this.lights.entries()) {
-			if (lightType === 'AmbientLight') {
+			if (lightType === 'ambientLights') {
 				this._updateAmbientLightUBO(lightsArray);
 			}
 
-			if (lightType === 'DirectLight') {
+			if (lightType === 'directLights') {
 				this._updateDirectLightUBO(lightsArray);
 			}
 
-			if (lightType === 'SpotLight') {
+			if (lightType === 'spotLights') {
 				this._updateSpotLightUBO(lightsArray);
 			}
 
-			if (lightType === 'PointLight') {
+			if (lightType === 'pointLights') {
 				this._updatePointLightUBO(lightsArray);
 			}
 		}
@@ -204,7 +204,7 @@ class Scene {
 			viewPosition: twgl.createUniformBlockInfo(this._gl.context, material.programInfo, 'View'),
 		};
 
-		if (!this._materialsWithNoLights.includes(material.constructor.name)) {
+		if (!noLightsMaterials.includes(material.constructor.name)) {
 			ubos.lightUBO = twgl.createUniformBlockInfo(this._gl.context, material.programInfo, 'Lights');
 		}
 
@@ -227,7 +227,7 @@ class Scene {
 		twgl.setUniformBlock(this._gl.context, programInfo, ubo);
 	}
 
-	_iterateUBO(func, excludeMaterials = this._materialsWithNoLights) {
+	_iterateUBO(func, excludeMaterials = noLightsMaterials) {
 		for (const [material, ubos] of this.UBOData.entries()) {
 			if (!excludeMaterials.includes(material.constructor.name)) {
 				func(material, ubos);
@@ -239,7 +239,7 @@ class Scene {
 		for (const [material, ubos] of this.UBOData.entries()) {
 			twgl.setBlockUniforms(ubos.projectionMatrixUBO, {
 				uProjectionMatrix: projectionMatrix,
-				uDirectShadowMapMatrix: this._shadowRT[0].shadowCamera.viewProjectionMatrix // todo all direct lights
+				// uDirectShadowMapMatrix: this._shadowRT[0].shadowCamera.viewProjectionMatrix // todo all direct lights
 			});
 
 			this._updateUBO(material.programInfo, ubos.projectionMatrixUBO);
@@ -318,7 +318,7 @@ class Scene {
 	}
 
 	_getRenderList(sceneObject) {
-		return (sceneObject.material.opacity && sceneObject.material.opacity !== 1) ?
+		return sceneObject.material.transparent ?
 			this.renderList.get('transparent') :
 			this.renderList.get('opaque');
 	}

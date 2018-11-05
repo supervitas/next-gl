@@ -1,6 +1,6 @@
 import {StandardMaterial, GL, Renderer, Cube, Plane,
-	Color, PerspectiveCamera, OrthographicCamera, CameraOrbitController, Scene, DirectLight,
-	AmbientLight, PointLight, SpotLight, RenderTarget, Vec3, DepthMaterial} from '../Engine/next-gl';
+	Color, PerspectiveCamera, CameraOrbitController, Scene, DirectLight,
+	AmbientLight, PointLight, SpotLight, Vec3} from '../Engine/next-gl';
 
 class FirstExample {
 	constructor(domElement) {
@@ -9,7 +9,7 @@ class FirstExample {
 
 		this.gl = new GL({domElement: this._domElement});
 
-		this.scene = new Scene(this.gl);
+		this.scene = new Scene();
 
 		this.aspect = this.gl.context.canvas.clientWidth / this.gl.context.canvas.clientHeight;
 		this.camera = new PerspectiveCamera({near: 1, far: 1000, aspect: this.aspect});
@@ -33,7 +33,7 @@ class FirstExample {
 
 		plane.scale.set({x: 30, z: 30});
 		this.scene.addToScene(plane);
-		this.scene.shadowRecievers.push(plane);
+		// this.scene.shadowRecievers.push(plane);
 
 		this.createLight();
 
@@ -63,7 +63,7 @@ class FirstExample {
 		const ambientLight = new AmbientLight({intensity: 0.2});
 		const dirLight = new DirectLight({intensity: 0.6, direction: new Vec3(0.35, 0.8, 0.75),
 			position: new Vec3(3, 15, 0)});
-		this.scene.shadowLights.push(dirLight);
+		// this.scene.shadowLights.push(dirLight);
 
 
 		const pointLight = new PointLight({intensity: 0.3, position: new Vec3(-25, 5, 0)});

@@ -7,7 +7,7 @@ class ShadowRenderer {
 
 		const context = gl.context;
 
-		this.shadowMap = new RenderTarget({
+		this._shadowMap = new RenderTarget({
 			gl: context,
 			width: context.canvas.clientWidth * this.gl.realPixels,
 			height: context.canvas.clientHeight * this.gl.realPixels,
@@ -35,6 +35,10 @@ class ShadowRenderer {
 
 		this.shadowCamera.position.copy(light.position).multiplyScalar(light.shadowDistanceMultiplier);
 		this.shadowCamera.target.copy(light.direction);
+	}
+
+	get shadowMap() {
+		return this._shadowMap.target.attachments[0];
 	}
 
 }

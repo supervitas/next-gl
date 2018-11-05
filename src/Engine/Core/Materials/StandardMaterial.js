@@ -9,8 +9,8 @@ class StandardMaterial extends BasicMaterial {
 		super({isDoubleSided, useDepthTest, vertexShader, fragmentShader});
 		this.color = color.toRGB();
 
-
 		this.opacity = opacity;
+		this.transparent = opacity < 1;
 		this.uniforms.opacity = this.opacity;
 
 		if (map) {

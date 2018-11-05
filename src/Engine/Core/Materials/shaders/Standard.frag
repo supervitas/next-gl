@@ -1,14 +1,8 @@
 #version 300 es
 #define EPSILON 0.00001
 
-
 precision highp float;
 precision highp sampler2DShadow;
-
-const int MAX_POINT_LIGHTS_IN_ARRAY = 2;
-const int MAX_DIRECT_LIGHTS_IN_ARRAY = 2;
-const int MAX_SPOT_LIGHTS_IN_ARRAY = 2;
-const int MAX_AMBIENT_LIGHTS_IN_ARRAY = 2;
 
 
 #include <direct_light>
@@ -17,10 +11,21 @@ const int MAX_AMBIENT_LIGHTS_IN_ARRAY = 2;
 #include <spot_light>
 
 uniform Lights {
-	DirectLight directLight[MAX_DIRECT_LIGHTS_IN_ARRAY];
-	PointLight pointLight[MAX_POINT_LIGHTS_IN_ARRAY];
-	SpotLight spotLight[MAX_SPOT_LIGHTS_IN_ARRAY];
-	AmbientLight ambientLight[MAX_AMBIENT_LIGHTS_IN_ARRAY];
+	#if DIRECT_LIGHTS > 0
+		DirectLight directLight[DIRECT_LIGHTS];
+	#endif
+
+	#if POINT_LIGHTS > 0
+		PointLight pointLight[POINT_LIGHTS];
+	#endif
+
+	#if SPOT_LIGHTS > 0
+		SpotLight spotLight[SPOT_LIGHTS];
+	#endif
+
+	#if AMBIENT_LIGHTS > 0
+		AmbientLight ambientLight[AMBIENT_LIGHTS];
+	#endif
 } u_lights;
 
 uniform vec3 uColor;
@@ -36,7 +41,7 @@ uniform sampler2DShadow shadowMap;
 in vec3 vSurfaceToView;
 in vec3 vSurfaceWorldPosition;
 
-in highp vec2 vTextureCoord;
+in highp vec2 vUV;
 in vec3 vNormal;
 in vec4 vShadowCoord;
 
@@ -49,46 +54,54 @@ vec3 calcSpecular(vec3 normal, vec3 halfVector, float intencity, vec3 specularCo
 void calcSceneLights(vec3 normal, inout vec3 lighting, inout vec3 specular) {
  	vec3 surfaceToViewDirection = normalize(vSurfaceToView);
 
-	for (int i = 0; i < MAX_DIRECT_LIGHTS_IN_ARRAY; i++) {
+	#if DIRECT_LIGHTS > 0
+		for (int i = 0; i < DIRECT_LIGHTS; i++) {
 
-		vec3 surfaceToDirectLightDirection = normalize(u_lights.directLight[i].u_position - vSurfaceWorldPosition);
-		vec3 halfVectorFromDirectLight = normalize(surfaceToDirectLightDirection + surfaceToViewDirection);
+			vec3 surfaceToDirectLightDirection = normalize(u_lights.directLight[i].u_position - vSurfaceWorldPosition);
+			vec3 halfVectorFromDirectLight = normalize(surfaceToDirectLightDirection + surfaceToViewDirection);
 
-		vec3 directLight = calcDirectLight(u_lights.directLight[i], normal);
-		vec3 specularForDirectLight = calcSpecular(normal, halfVectorFromDirectLight, u_lights.directLight[i].u_intencity, u_lights.directLight[i].u_color);
+			vec3 directLight = calcDirectLight(u_lights.directLight[i], normal);
+			vec3 specularForDirectLight = calcSpecular(normal, halfVectorFromDirectLight, u_lights.directLight[i].u_intencity, u_lights.directLight[i].u_color);
 
-		lighting += directLight;
-		specular += specularForDirectLight;
-	}
+			lighting += directLight;
+			specular += specularForDirectLight;
+		}
+	#endif
 
-	for (int i = 0; i < MAX_POINT_LIGHTS_IN_ARRAY; i++) {
-		vec3 surfaceToPointLightDirection = normalize(u_lights.pointLight[i].u_position - vSurfaceWorldPosition);
-		vec3 halfVectorFromPointLight = normalize(surfaceToPointLightDirection + surfaceToViewDirection);
+	#if POINT_LIGHTS > 0
+		for (int i = 0; i < POINT_LIGHTS; i++) {
+			vec3 surfaceToPointLightDirection = normalize(u_lights.pointLight[i].u_position - vSurfaceWorldPosition);
+			vec3 halfVectorFromPointLight = normalize(surfaceToPointLightDirection + surfaceToViewDirection);
 
 
-		vec3 pointLight = calcPointLight(u_lights.pointLight[i], normal, surfaceToPointLightDirection);
-		vec3 specularForPointLight = calcSpecular(normal, halfVectorFromPointLight, u_lights.pointLight[i].u_intencity, u_lights.pointLight[i].u_color);
+			vec3 pointLight = calcPointLight(u_lights.pointLight[i], normal, surfaceToPointLightDirection);
+			vec3 specularForPointLight = calcSpecular(normal, halfVectorFromPointLight, u_lights.pointLight[i].u_intencity, u_lights.pointLight[i].u_color);
 
-		lighting += pointLight;
-		specular += specularForPointLight;
+			lighting += pointLight;
+			specular += specularForPointLight;
 
-	}
+		}
+	#endif
 
-	for (int i = 0; i < MAX_SPOT_LIGHTS_IN_ARRAY; i++) {
-		vec3 surfaceToSpotLightDirection = normalize(u_lights.spotLight[i].u_position - vSurfaceWorldPosition);
-		vec3 halfVectorFromSpotLight = normalize(surfaceToSpotLightDirection + surfaceToViewDirection);
+	#if SPOT_LIGHTS > 0
+		for (int i = 0; i < SPOT_LIGHTS; i++) {
+			vec3 surfaceToSpotLightDirection = normalize(u_lights.spotLight[i].u_position - vSurfaceWorldPosition);
+			vec3 halfVectorFromSpotLight = normalize(surfaceToSpotLightDirection + surfaceToViewDirection);
 
-		vec3 spotLight = calcSpotLight(u_lights.spotLight[i], normal, surfaceToSpotLightDirection);
-		vec3 specularForSpotLight = calcSpecular(normal, halfVectorFromSpotLight, u_lights.spotLight[i].u_intencity, u_lights.spotLight[i].u_color);
+			vec3 spotLight = calcSpotLight(u_lights.spotLight[i], normal, surfaceToSpotLightDirection);
+			vec3 specularForSpotLight = calcSpecular(normal, halfVectorFromSpotLight, u_lights.spotLight[i].u_intencity, u_lights.spotLight[i].u_color);
 
-		lighting += spotLight;
-		specular += specularForSpotLight;
-	}
+			lighting += spotLight;
+			specular += specularForSpotLight;
+		}
+	#endif
 
-	for (int i = 0; i < MAX_AMBIENT_LIGHTS_IN_ARRAY; i++) {
-		vec3 ambientLight = calcAmbientLight(u_lights.ambientLight[i]);
-		lighting += ambientLight;
-	}
+	#if AMBIENT_LIGHTS > 0
+		for (int i = 0; i < AMBIENT_LIGHTS; i++) {
+			vec3 ambientLight = calcAmbientLight(u_lights.ambientLight[i]);
+			lighting += ambientLight;
+		}
+	#endif
 }
 
 
@@ -105,8 +118,8 @@ void main() {
 	float visibility = 1.0;
 
 	#ifdef USE_MAP
-		texelColor = texture(map, vTextureCoord);
-		vec3 shadowCoord = vec3(vShadowCoord.x, vShadowCoord.y, vShadowCoord.z - 0.0001);
+		texelColor = texture(map, vUV);
+		vec3 shadowCoord = vec3(vShadowCoord.x, vShadowCoord.y, vShadowCoord.z - 0.0001);// bias needed to be setted
 
 		float shadow = texture(shadowMap, shadowCoord);
 		visibility = shadow;

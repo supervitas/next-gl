@@ -29,7 +29,7 @@ class GL {
 			let programDefines = '';
 
 			for (const [key, value] of defines) {
-				programDefines += `#define ${key} = ${value};\n`;
+				programDefines += `#define ${key} ${value}\n`;
 			}
 
 			const firstLine = vertexShader.split('\n')[0];

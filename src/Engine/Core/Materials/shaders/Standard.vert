@@ -16,14 +16,14 @@ layout (location = 0) in vec4 aVertexPosition;
 layout (location = 1) in vec3 aVertexNormal;
 layout (location = 2) in vec2 aTextureCoord;
 
-out highp vec2 vTextureCoord;
+out highp vec2 vUV;
 out vec3 vNormal;
 out vec3 vSurfaceToView;
 out vec3 vSurfaceWorldPosition;
 out vec4 vShadowCoord;
 
 void main() {
-	vTextureCoord = aTextureCoord;
+	vUV = aTextureCoord;
 
 	vNormal = mat3(uNormalMatrix) * aVertexNormal;
 

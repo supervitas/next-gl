@@ -4,9 +4,10 @@ import {DepthMaterial} from './Materials/DepthMaterial';
 class Renderer {
 	constructor({gl}) {
 		this._context = gl.context;
+		this._gl = gl;
 
 		this._depthMaterial = new DepthMaterial();
-		this._depthMaterial.createMaterial(gl);
+		this._depthMaterial.initMaterial(gl);
 
 		this._viewProjectionUBO = null;
 
@@ -25,6 +26,8 @@ class Renderer {
 			this._context.viewport(0, 0, target.width, target.height);
 			target.bindFrameBuffer();
 		}
+
+		scene._updateMaterials(this._gl);
 
 		this._context.clear(this._context.COLOR_BUFFER_BIT | this._context.DEPTH_BUFFER_BIT);
 		this._renderShadowRT(scene);
@@ -49,7 +52,7 @@ class Renderer {
 	_renderShadowMap(scene, camera) {
 		// todo refactor
 		const opaque = scene.renderList.get('opaque');
-		const trasparent = scene.renderList.get('transparent');
+		const transparent = scene.renderList.get('transparent');
 
 		this._context.useProgram(this._depthMaterial.programInfo.program);
 
@@ -67,12 +70,9 @@ class Renderer {
 		this._context.clear(this._context.COLOR_BUFFER_BIT | this._context.DEPTH_BUFFER_BIT);
 
 		this._context.enable(this._context.CULL_FACE);
-		// this._context.cullFace(this._context.FRONT);
 
 		this._shadowRender(opaque);
-		this._shadowRender(trasparent);
-
-		// this._context.cullFace(this._context.BACK);
+		this._shadowRender(transparent);
 	}
 
 	_renderObjects(scene) {

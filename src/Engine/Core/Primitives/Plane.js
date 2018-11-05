@@ -18,9 +18,11 @@ class Plane extends SceneObject {
 
 	static get indices() {
 		return [
-			0,  1,  2,      0,  2,  3,
+			0,  1,  2,
+			0,  2,  3,
 		];
 	}
+
 	static get uv() {
 		return [
 			0.0,  0.0,
@@ -29,6 +31,7 @@ class Plane extends SceneObject {
 			0.0,  1.0,
 		];
 	}
+
 	static get vertexNormals() {
 		return [
 			0.0, 1.0,  0.0,

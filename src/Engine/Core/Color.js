@@ -14,4 +14,5 @@ class Color {
 	}
 
 }
+
 export {Color};

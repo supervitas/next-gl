@@ -26,6 +26,7 @@ class Cube extends SceneObject {
 			20, 21, 22,     20, 22, 23,   // left
 		];
 	}
+
 	static get uv() {
 		return [
 			// Front
@@ -60,6 +61,7 @@ class Cube extends SceneObject {
 			0.0,  1.0,
 		];
 	}
+
 	static get vertexNormals() {
 		return [
 			// Front
