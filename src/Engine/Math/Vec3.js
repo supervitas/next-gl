@@ -87,6 +87,10 @@ class Vec3 {
 		return this;
 	}
 
+	clone() {
+		return new Vec3(this.x, this.y, this.z);
+	}
+
 	magnitude() {
 		return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2) + Math.pow(this.z, 2));
 	}

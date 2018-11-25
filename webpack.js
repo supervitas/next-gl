@@ -24,6 +24,7 @@ const build = (cb) => {
 const runDevServer = () => {
 	const opts = {
 		prod: false,
+		watch: true
 	};
 
 	const config = require('./webpack.config')(opts);

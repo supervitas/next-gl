@@ -9,8 +9,6 @@ class PerspectiveCamera {
 		this._aspect = aspect;
 		this._fov = GLMath.degToRad(fov);
 
-		const that = this;
-
 		this.projectionMatrix = glmatrix.mat4.create();
 		this.cameraMatrix = glmatrix.mat4.create();
 		this.viewMatrix = glmatrix.mat4.create();
@@ -18,6 +16,7 @@ class PerspectiveCamera {
 
 		this._updateProjectionMatrix();
 
+		const that = this;
 		const positionAndTargetHandler = {
 			set(obj, prop, value)  {
 				obj[prop] = value;

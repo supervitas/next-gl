@@ -13,10 +13,13 @@ class FirstExample {
 
 		this.aspect = this.gl.context.canvas.clientWidth / this.gl.context.canvas.clientHeight;
 		this.camera = new PerspectiveCamera({near: 1, far: 1000, aspect: this.aspect});
+		this.camera.position.set({x: Math.PI / 2, y: 1, z: 20});
+
 
 		this.cameraOrbitController = new CameraOrbitController({
 			camera: this.camera,
-			canvas: this._domElement
+			canvas: this._domElement,
+			minZoom: 3
 		});
 
 		this.renderer = new Renderer({gl: this.gl});
